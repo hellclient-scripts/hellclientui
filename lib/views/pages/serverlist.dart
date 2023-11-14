@@ -12,14 +12,16 @@ class ServerList extends StatelessWidget {
     for (final server in appState.config.servers) {
       list.add(Card(
         child: ListTile(
-          leading: IconButton(
-            icon: Icon(Icons.cast_connected_outlined),
-            onPressed: () {
-              appState.currentServer = server;
-              // appState.connect(server);
-              Navigator.pushNamed(context, "/game");
-            },
-          ),
+          leading: Tooltip(
+              message: "连接服务器",
+              child: IconButton(
+                icon: Icon(Icons.cast_connected_outlined),
+                onPressed: () {
+                  appState.currentServer = server;
+                  // appState.connect(server);
+                  Navigator.pushNamed(context, "/game");
+                },
+              )),
           title: Text(server.name + " 服务器地址 " + server.host),
           subtitle: Text(
             "用户名 :" +
@@ -29,7 +31,10 @@ class ServerList extends StatelessWidget {
             textAlign: TextAlign.left,
           ),
           isThreeLine: true,
-          trailing: Icon(Icons.more_vert),
+          trailing: IconButton(
+            icon: Icon(Icons.more_vert),
+            onPressed: () {},
+          ),
         ),
       ));
     }

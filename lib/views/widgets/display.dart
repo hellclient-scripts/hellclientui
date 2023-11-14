@@ -17,7 +17,7 @@ class Display extends StatefulWidget {
 
 class DisplayState extends State<Display> {
   DisplayState();
-  RenderSettings renderSettings = RenderSettings();
+  late RenderSettings renderSettings;
   IOWebSocketChannel? channel;
   final repaint = Repaint();
   late Game game;
@@ -33,7 +33,8 @@ class DisplayState extends State<Display> {
   @override
   Widget build(BuildContext context) {
     var appState = context.watch<AppState>();
-    game = Game.create(appState.currentServer!, RenderSettings());
+    renderSettings = appState.renderSettings;
+    game = Game.create(appState.currentServer!, renderSettings);
     // renderer.init();
     game.connect();
     return Container(

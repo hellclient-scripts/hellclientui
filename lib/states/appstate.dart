@@ -12,7 +12,9 @@ import 'package:flutter/material.dart';
 class AppState extends ChangeNotifier {
   Config config = Config();
   String settingsPath = "";
+  String colorConfigPath = "";
   RenderSettings renderSettings = RenderSettings();
+  RenderConfig renderConfig = RenderConfig();
   int currentPage = 0;
   Server? currentServer;
   static Future<AppState> init() async {
@@ -25,7 +27,6 @@ class AppState extends ChangeNotifier {
       apppath = join(dir.path, "hellclientui");
     }
     state.settingsPath = join(apppath, "settings.json");
-    print(join(apppath, "settings.json"));
     final file = File(state.settingsPath);
     if (await file.exists()) {
       final Map<String, dynamic> config =
@@ -34,12 +35,30 @@ class AppState extends ChangeNotifier {
     } else {
       await state.save();
     }
+    state.colorConfigPath = join(apppath, "colors.json");
+
+    final colorfile = File(state.colorConfigPath);
+
+    if (await colorfile.exists()) {
+      final Map<String, dynamic> config =
+          json.decode(await file.readAsString());
+      state.renderConfig = RenderConfig.fromJson(config);
+    } else {
+      await state.saveColors();
+    }
+    state.renderSettings = state.renderConfig.getSettings();
     return state;
   }
 
   Future save() async {
     var data = jsonEncode(config);
     final file = File(settingsPath);
+    file.writeAsStringSync(data);
+  }
+
+  Future saveColors() async {
+    var data = jsonEncode(renderConfig);
+    final file = File(colorConfigPath);
     file.writeAsStringSync(data);
   }
 
