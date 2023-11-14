@@ -1,17 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/material.dart' as material;
-import 'package:flutter/services.dart';
-import 'package:hellclientui/models/message.dart';
 import 'package:hellclientui/states/appstate.dart';
 import 'package:provider/provider.dart';
 import '../../models/server.dart';
 import '../../models/rendersettings.dart';
 import '../../workers/renderer.dart';
 import '../../workers/game.dart';
-
 import 'package:web_socket_channel/io.dart';
-import 'dart:convert';
-import 'dart:ui' as ui;
 
 class Display extends StatefulWidget {
   const Display({super.key});
@@ -30,7 +25,7 @@ class DisplayState extends State<Display> {
   @override
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback((Duration time) {
-      game.output.renderer.draw();
+      game.onPostFrame(time);
     });
     super.initState();
   }

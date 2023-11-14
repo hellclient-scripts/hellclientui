@@ -88,5 +88,9 @@ class Game {
     });
   }
 
+  void onPostFrame(Duration time) {
+    output.renderer.draw();
+  }
+
   void start() {}
 }
