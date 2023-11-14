@@ -92,5 +92,11 @@ class Game {
     output.renderer.draw();
   }
 
+  void handleSend(String cmd) {
+    if (channel != null) {
+      channel!.sink.add("send " + json.encode(cmd));
+    }
+  }
+
   void start() {}
 }

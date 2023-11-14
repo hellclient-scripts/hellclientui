@@ -37,6 +37,9 @@ class DisplayState extends State<Display> {
     game = Game.create(appState.currentServer!, renderSettings);
     // renderer.init();
     game.connect();
+    var focusNode = FocusNode();
+    var inputController = TextEditingController();
+
     return Container(
         decoration: BoxDecoration(color: appState.renderSettings.background),
         child: Column(children: [
@@ -61,8 +64,25 @@ class DisplayState extends State<Display> {
                 ),
                 Expanded(
                     child: TextField(
-                  style: TextStyle(color: Colors.white),
-                  decoration: (InputDecoration(labelText: '输入')),
+                  controller: inputController,
+                  focusNode: focusNode,
+                  autofocus: true,
+                  style: TextStyle(
+                      color: Colors.white,
+                      fontSize: renderSettings.fontSize,
+                      height:
+                          renderSettings.lineheight / renderSettings.fontSize),
+                  decoration: (InputDecoration(
+                    hintText: "输入指令",
+                    border: OutlineInputBorder(),
+                  )),
+                  onSubmitted: (value) {
+                    game.handleSend(value);
+                    focusNode.requestFocus();
+                    inputController.selection = TextSelection(
+                        baseOffset: 0,
+                        extentOffset: inputController.value.text.length);
+                  },
                 )),
                 SizedBox(
                   width: 80,
