@@ -6,14 +6,15 @@ import 'package:path_provider/path_provider.dart';
 
 import '../models/config.dart';
 import '../models/server.dart';
-
+import '../models/rendersettings.dart';
 import 'package:flutter/material.dart';
 
 class AppState extends ChangeNotifier {
   Config config = Config();
   String settingsPath = "";
+  RenderSettings renderSettings = RenderSettings();
   int currentPage = 0;
-
+  Server? currentServer;
   static Future<AppState> init() async {
     var state = AppState();
     String apppath = "";

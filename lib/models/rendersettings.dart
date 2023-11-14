@@ -1,0 +1,46 @@
+import 'package:flutter/material.dart';
+
+class RenderSettings {
+  double fontSize = 13.0;
+  double lineheight = 20.0;
+  double linemiddle = 10.0;
+  double width = 1120;
+  double height = 1200;
+  int maxLines = 60;
+  late double linewidth = 80 * fontSize;
+  var background = Colors.black;
+  var color = const Color(0xffffffff);
+  var black = const Color.fromARGB(255, 0, 0, 0);
+  var red = const Color.fromARGB(255, 127, 0, 0);
+  var green = const Color.fromARGB(255, 0, 147, 0);
+  var yellow = const Color.fromARGB(255, 252, 127, 0);
+  var blue = const Color.fromARGB(255, 0, 0, 127);
+  var magenta = const Color.fromARGB(255, 156, 0, 156);
+  var cyan = const Color.fromARGB(255, 0, 147, 147);
+  var white = const Color.fromARGB(255, 210, 210, 210);
+  var brightBlack = const Color.fromARGB(255, 127, 127, 127);
+  var brightRed = const Color.fromARGB(255, 255, 0, 0);
+  var brightGreen = const Color.fromARGB(255, 0, 252, 0);
+  var brightYellow = const Color.fromARGB(255, 255, 255, 0);
+  var brightBlue = const Color.fromARGB(255, 0, 0, 252);
+  var brightMagenta = const Color.fromARGB(255, 255, 0, 255);
+  var brightCyan = const Color.fromARGB(255, 0, 255, 255);
+  var brightWhite = const Color.fromARGB(255, 255, 255, 255);
+  var echocolor = const Color.fromARGB(255, 0, 255, 255);
+  var echoicon = "↣";
+  var echoiconcolor = Colors.teal;
+  var systemcolor = Colors.red;
+  var systemicon = "⯳";
+  var systemiconcolor = Colors.purple;
+  var printcolor = const Color(0xFF00FA9A);
+  var printicon = "↢";
+  var printiconcolor = Colors.green;
+  var localbcinicon = "☎本地广播 ";
+  var globalbcinicon = "☎全局广播 ";
+  var localbcouticon = "☎本地广播出 ";
+  var globalbcouticon = "☎全集广播出 ";
+  var requesticon = "☎请求 ";
+  var responseicon = "☎响应 ";
+  var subnegicon = "☎非文本信息 ";
+  var bccolor = const Color.fromARGB(255, 127, 127, 127);
+}

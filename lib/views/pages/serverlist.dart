@@ -6,16 +6,21 @@ import '../../models/server.dart';
 class ServerList extends StatelessWidget {
   const ServerList({super.key, required this.servers});
   final List<Server> servers;
-  Widget buildList(AppState appState) {
+  Widget buildList(BuildContext context) {
+    var appState = context.watch<AppState>();
     final List<Widget> list = [];
     for (final server in appState.config.servers) {
       list.add(Card(
         child: ListTile(
           leading: IconButton(
             icon: Icon(Icons.cast_connected_outlined),
-            onPressed: () => {},
+            onPressed: () {
+              appState.currentServer = server;
+              // appState.connect(server);
+              Navigator.pushNamed(context, "/game");
+            },
           ),
-          title: Text("服务器地址 " + server.host),
+          title: Text(server.name + " 服务器地址 " + server.host),
           subtitle: Text(
             "用户名 :" +
                 (server.username.isEmpty ? '无' : server.username) +
@@ -33,12 +38,11 @@ class ServerList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var appState = context.watch<AppState>();
     Widget body;
     if (servers.isEmpty) {
       body = const Center(child: Text("还未添加服务器信息。"));
     } else {
-      body = buildList(appState);
+      body = buildList(context);
     }
 
     return Scaffold(
