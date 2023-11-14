@@ -45,16 +45,15 @@ class WordStyle {
   double fontSize = 0;
   TextStyle toTextStyle(RenderSettings settings) {
     var style = TextStyle(
-      fontFamily: "Mudmono",
+      fontFamily: settings.fontFamily,
       color: color,
       backgroundColor: background,
       fontSize: fontSize,
+      letterSpacing: settings.letterSpacing,
       fontWeight: bold ? FontWeight.bold : FontWeight.normal,
       decoration: underlined ? TextDecoration.underline : TextDecoration.none,
       fontStyle: blinking ? FontStyle.italic : FontStyle.normal,
-      wordSpacing: 0,
-      letterSpacing: 0,
-      fontFeatures: [ui.FontFeature.tabularFigures()],
+      // fontFeatures: [ui.FontFeature.tabularFigures()],
     );
     return style;
   }
@@ -82,15 +81,14 @@ class RenderingLine {
 
   void drawicon(LineStyle style, Color background) {
     var textstyle = TextStyle(
-      fontFamily: "Mudmono",
+      fontFamily: settings.fontFamily,
       color: style.iconcolor,
       backgroundColor: background,
       fontSize: settings.fontSize,
       fontWeight: FontWeight.normal,
       decoration: TextDecoration.none,
       fontStyle: FontStyle.normal,
-      wordSpacing: 0,
-      letterSpacing: 0,
+      letterSpacing: settings.letterSpacing,
       fontFeatures: [ui.FontFeature.tabularFigures()],
     );
 
