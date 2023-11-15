@@ -88,7 +88,8 @@ class DisplayState extends State<Display> {
   Widget build(BuildContext context) {
     var appState = context.watch<AppState>();
     renderSettings = appState.renderSettings;
-    double devicePixelRatio = MediaQuery.of(context).devicePixelRatio;
+    double devicePixelRatio =
+        renderSettings.hidpi ? MediaQuery.of(context).devicePixelRatio : 1.0;
     game =
         Game.create(appState.currentServer!, renderSettings, devicePixelRatio);
     // renderer.init();
