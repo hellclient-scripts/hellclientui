@@ -43,13 +43,13 @@ class WordStyle {
   bool underlined = false;
   bool blinking = false;
   double fontSize = 0;
-  TextStyle toTextStyle(RenderSettings settings) {
+  TextStyle toTextStyle(RenderSettings settings, double devicePixelRatio) {
     var style = TextStyle(
       fontFamily: settings.fontFamily,
       color: color,
       backgroundColor: background,
       fontSize: fontSize,
-      letterSpacing: settings.letterSpacing,
+      letterSpacing: settings.letterSpacing / devicePixelRatio,
       fontWeight: bold ? FontWeight.bold : FontWeight.normal,
       decoration: underlined ? TextDecoration.underline : TextDecoration.none,
       fontStyle: blinking ? FontStyle.italic : FontStyle.normal,
@@ -63,18 +63,23 @@ class RenderingLine {
   String id = "";
   int index = 0;
   double position = 0;
+  late double devicePixelRatio;
   late RenderSettings settings;
   late Canvas canvas;
   late ui.PictureRecorder recorder;
-  static RenderingLine create(Line raw, RenderSettings settings) {
+  static RenderingLine create(
+      Line raw, RenderSettings settings, double devicePixelRatio) {
     var line = RenderingLine();
     line.id = raw.id;
+    line.devicePixelRatio = devicePixelRatio;
     line.recorder = ui.PictureRecorder();
     line.canvas = Canvas(line.recorder);
     var paint = Paint();
     paint.color = settings.background;
     line.canvas.drawRect(
-        Rect.fromLTWH(0, 0, settings.width, settings.lineheight), paint);
+        Rect.fromLTWH(0, 0, settings.width * devicePixelRatio,
+            settings.lineheight * devicePixelRatio),
+        paint);
     line.settings = settings;
     return line;
   }
@@ -88,44 +93,52 @@ class RenderingLine {
       fontWeight: FontWeight.normal,
       decoration: TextDecoration.none,
       fontStyle: FontStyle.normal,
-      letterSpacing: settings.letterSpacing,
+      letterSpacing: settings.letterSpacing * devicePixelRatio,
       fontFeatures: [ui.FontFeature.tabularFigures()],
     );
 
     final span = TextSpan(text: style.icon, style: textstyle);
-    final painter = TextPainter(text: span, textDirection: TextDirection.ltr);
-    painter.layout(minWidth: 0, maxWidth: settings.width);
-    final offset =
-        Offset(position, (settings.lineheight - painter.size.height) / 2);
+    final painter = TextPainter(
+        text: span,
+        textDirection: TextDirection.ltr,
+        textScaleFactor: devicePixelRatio);
+    painter.layout(minWidth: 0, maxWidth: settings.width * devicePixelRatio);
+    final offset = Offset(position,
+        (devicePixelRatio * settings.lineheight - painter.size.height) / 2);
     painter.paint(canvas, offset);
     position = painter.size.width;
   }
 
   bool addText(String text, TextStyle style) {
     final span = TextSpan(text: text, style: style);
-    final painter = TextPainter(text: span, textDirection: TextDirection.ltr);
-    painter.layout(minWidth: 0, maxWidth: settings.width);
-    final offset =
-        Offset(position, (settings.lineheight - painter.size.height) / 2);
+    final painter = TextPainter(
+        text: span,
+        textDirection: TextDirection.ltr,
+        textScaleFactor: devicePixelRatio);
+    painter.layout(
+        minWidth: 0, maxWidth: settings.linewidth * devicePixelRatio);
+    final offset = Offset(position,
+        (devicePixelRatio * settings.lineheight - painter.size.height) / 2);
 
     var paint = Paint();
     paint.color = style.backgroundColor!;
     paint.style = PaintingStyle.fill;
     canvas.drawRect(
-        Rect.fromLTWH(position, 0, painter.size.width, settings.lineheight),
+        Rect.fromLTWH(position, 0, painter.size.width,
+            settings.lineheight * devicePixelRatio),
         paint);
     painter.paint(canvas, offset);
     position = position + painter.width;
-    return position >= settings.width;
+    return position >= settings.width * devicePixelRatio;
   }
 
   Future<Row> toRow() async {
     var row = Row();
     row.id = id;
     row.index = index;
-    row.image = await recorder
-        .endRecording()
-        .toImage(settings.width.toInt(), settings.lineheight.floor());
+    row.image = await recorder.endRecording().toImage(
+        (devicePixelRatio * settings.width).floor(),
+        (devicePixelRatio * settings.lineheight).floor());
 
     return row;
   }
@@ -144,11 +157,15 @@ class Row {
 }
 
 class Renderer {
-  Renderer({required this.renderSettings, required this.maxLines});
+  Renderer(
+      {required this.renderSettings,
+      required this.maxLines,
+      required this.devicePixelRatio});
   late ui.Picture current;
   int maxLines;
   Repaint repaint = Repaint();
   bool updated = false;
+  late double devicePixelRatio;
   void init() {
     resetFrame();
     current = pictureRecorder.endRecording();
@@ -185,8 +202,10 @@ class Renderer {
             row.image,
             Offset(
                 0,
-                renderSettings.height -
-                    (maxLines - index) * renderSettings.lineheight),
+                devicePixelRatio * renderSettings.height -
+                    (maxLines - index) *
+                        devicePixelRatio *
+                        renderSettings.lineheight),
             Paint());
         index++;
       }
@@ -208,14 +227,14 @@ class Renderer {
         bcolor = renderSettings.background;
       }
       var linestyle = getLineStyle(line);
-      var rendering = RenderingLine.create(line, settings);
+      var rendering = RenderingLine.create(line, settings, devicePixelRatio);
       var index = 0;
       if (!withouticon) {
         rendering.drawicon(linestyle, bcolor!);
       }
       for (final word in line.words) {
-        final textStyle =
-            getWordStyle(word, linestyle.color, bcolor!).toTextStyle(settings);
+        final textStyle = getWordStyle(word, linestyle.color, bcolor!)
+            .toTextStyle(settings, devicePixelRatio);
         for (final char in word.text.characters) {
           if (char == "\n" && nocr) {
             continue;
@@ -224,7 +243,7 @@ class Renderer {
             index++;
             rows.add(await rendering.toRow());
             updated = true;
-            rendering = RenderingLine.create(line, settings);
+            rendering = RenderingLine.create(line, settings, devicePixelRatio);
             rendering.index = index;
           }
         }

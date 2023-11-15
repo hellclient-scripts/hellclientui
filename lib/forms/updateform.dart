@@ -3,14 +3,15 @@ import 'package:hellclientui/states/appstate.dart';
 import 'package:provider/provider.dart';
 import '../models/server.dart';
 
-class CreateForm extends StatefulWidget {
-  const CreateForm({super.key});
+class UpdateForm extends StatefulWidget {
+  const UpdateForm({super.key});
 
   @override
-  State<CreateForm> createState() => CreateFormState();
+  State<UpdateForm> createState() => UpdateFormState();
 }
 
-class CreateFormState extends State<CreateForm> {
+class UpdateFormState extends State<UpdateForm> {
+  late Server origin;
   final host = TextEditingController();
   final username = TextEditingController();
   final password = TextEditingController();
@@ -26,15 +27,19 @@ class CreateFormState extends State<CreateForm> {
     super.dispose();
   }
 
-  void submit() {}
   @override
   Widget build(BuildContext context) {
     var appState = context.watch<AppState>();
-
+    origin = ModalRoute.of(context)!.settings.arguments as Server;
+    name.text = origin.name;
+    host.text = origin.host;
+    username.text = origin.username;
+    password.text = origin.password;
+    print(origin);
     return Form(
         key: _formKey,
         child: Padding(
-            padding: EdgeInsets.all(29),
+            padding: const EdgeInsets.all(29),
             child: Column(
               children: [
                 TextFormField(
@@ -60,7 +65,8 @@ class CreateFormState extends State<CreateForm> {
                     if (value.endsWith("/")) {
                       return '服务器地址不应该以/结尾';
                     }
-                    if (appState.config.hasServer(value)) {
+                    if (value != origin.host &&
+                        appState.config.hasServer(value)) {
                       return '服务器已存在';
                     }
                     return null;
@@ -88,12 +94,13 @@ class CreateFormState extends State<CreateForm> {
                       child: const Text("提交"),
                       onPressed: () {
                         if (_formKey.currentState!.validate()) {
-                          var server = Server();
-                          server.host = host.value.text;
-                          server.username = username.value.text;
-                          server.password = password.value.text;
-                          server.name = name.value.text;
-                          Navigator.pop(context, appState.addServer(server));
+                          origin.host = host.value.text;
+                          origin.username = username.value.text;
+                          origin.password = password.value.text;
+                          origin.name = name.value.text;
+                          appState.updated();
+                          appState.save();
+                          Navigator.pop(context, true);
                         }
                       },
                     ))

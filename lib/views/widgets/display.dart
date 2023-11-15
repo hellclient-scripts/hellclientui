@@ -30,29 +30,77 @@ class DisplayState extends State<Display> {
     super.initState();
   }
 
+  void connect() async {
+    try {
+      await game.connect((String msg) {
+        showErrorMessage(msg);
+      });
+    } catch (e) {
+      showErrorMessage(e.toString());
+    }
+  }
+
+  void showErrorMessage(String msg) {
+    var snackBar = SnackBar(
+      content: Text(msg),
+    );
+    ScaffoldMessenger.of(context).showSnackBar(snackBar);
+  }
+
+  Widget buildOutput(BuildContext context, double devicePixelRatio, Game game) {
+    var appState = context.watch<AppState>();
+    var renderSettings = appState.renderSettings;
+
+    return Positioned(
+        height: appState.renderSettings.height,
+        bottom: 0,
+        left: 0,
+        right: 0,
+        child: LayoutBuilder(builder: (context, constraints) {
+          var viewwidth = constraints.maxWidth;
+
+          Widget output = Transform.scale(
+              scale: 1 / devicePixelRatio,
+              alignment: Alignment.bottomLeft,
+              child: CustomPaint(
+                size: Size(appState.renderSettings.linewidth * devicePixelRatio,
+                    appState.renderSettings.height * devicePixelRatio),
+                painter: game.output,
+              ));
+          if (viewwidth <
+              appState.renderSettings.minChars * renderSettings.fontSize) {
+            output = FittedBox(
+                fit: BoxFit.fitWidth,
+                alignment: Alignment.bottomLeft,
+                child: Container(
+                  constraints: BoxConstraints(
+                    maxWidth: appState.renderSettings.minChars *
+                        renderSettings.fontSize,
+                  ),
+                  child: output,
+                ));
+          }
+          return output;
+        }));
+  }
+
   @override
   Widget build(BuildContext context) {
     var appState = context.watch<AppState>();
     renderSettings = appState.renderSettings;
-    game = Game.create(appState.currentServer!, renderSettings);
+    double devicePixelRatio = MediaQuery.of(context).devicePixelRatio;
+    game =
+        Game.create(appState.currentServer!, renderSettings, devicePixelRatio);
     // renderer.init();
-    game.connect();
     var focusNode = FocusNode();
     var inputController = TextEditingController();
-
+    connect();
     return Container(
         decoration: BoxDecoration(color: appState.renderSettings.background),
-        child: Column(children: [
+        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
           Expanded(
               child: Stack(children: [
-            Positioned(
-                width: appState.renderSettings.width,
-                height: appState.renderSettings.height,
-                bottom: 0,
-                left: 0,
-                child: CustomPaint(
-                  painter: game.output,
-                )),
+            buildOutput(context, devicePixelRatio, game),
           ])),
           Container(
             height: 30,

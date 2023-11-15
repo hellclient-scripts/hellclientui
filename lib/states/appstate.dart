@@ -53,6 +53,8 @@ class AppState extends ChangeNotifier {
   Future save() async {
     var data = jsonEncode(config);
     final file = File(settingsPath);
+    final folder = dirname(settingsPath);
+    await Directory(folder).create(recursive: true);
     file.writeAsStringSync(data);
   }
 
@@ -67,5 +69,18 @@ class AppState extends ChangeNotifier {
     save();
     notifyListeners();
     return Future<bool>.value(true);
+  }
+
+  Future<bool> removeServer(Server server) {
+    if (config.servers.remove(server)) {
+      save();
+      notifyListeners();
+      return Future<bool>.value(true);
+    }
+    return Future<bool>.value(false);
+  }
+
+  void updated() {
+    notifyListeners();
   }
 }

@@ -3,6 +3,31 @@ import 'package:hellclientui/states/appstate.dart';
 import 'package:provider/provider.dart';
 import '../../models/server.dart';
 
+Future<bool?> showDeleteConfirmDialog(BuildContext context) {
+  return showDialog<bool>(
+    context: context,
+    builder: (context) {
+      return AlertDialog(
+        title: const Text("确认"),
+        content: const Text("您确定要删除当前服务器吗?"),
+        actions: <Widget>[
+          TextButton(
+            child: const Text("取消"),
+            onPressed: () => Navigator.of(context).pop(), // 关闭对话框
+          ),
+          TextButton(
+            child: const Text("删除"),
+            onPressed: () {
+              //关闭对话框并返回true
+              Navigator.of(context).pop(true);
+            },
+          ),
+        ],
+      );
+    },
+  );
+}
+
 class ServerList extends StatelessWidget {
   const ServerList({super.key, required this.servers});
   final List<Server> servers;
@@ -11,6 +36,7 @@ class ServerList extends StatelessWidget {
     final List<Widget> list = [];
     for (final server in appState.config.servers) {
       list.add(Card(
+        key: Key(server.host),
         child: ListTile(
           leading: Tooltip(
               message: "连接服务器",
@@ -31,14 +57,44 @@ class ServerList extends StatelessWidget {
             textAlign: TextAlign.left,
           ),
           isThreeLine: true,
-          trailing: IconButton(
-            icon: Icon(Icons.more_vert),
-            onPressed: () {},
+          trailing: PopupMenuButton(
+            itemBuilder: (context) => [
+              const PopupMenuItem(
+                value: 'update',
+                child: Text('编辑'),
+              ),
+              const PopupMenuItem(
+                value: 'remove',
+                child: Text('删除'),
+              ),
+            ],
+            onSelected: (value) async {
+              switch (value) {
+                case 'update':
+                  Navigator.pushNamed(context, '/update', arguments: server);
+                  break;
+                case 'remove':
+                  if (await showDeleteConfirmDialog(context) == true) {
+                    appState.removeServer(server);
+                  }
+                  break;
+              }
+            },
           ),
         ),
       ));
     }
-    return ListView(children: list);
+    return ReorderableListView(
+        children: list,
+        onReorder: (oldIndex, newIndex) {
+          if (oldIndex < newIndex) {
+            newIndex -= 1;
+          }
+          final item = appState.config.servers.removeAt(oldIndex);
+          appState.config.servers.insert(newIndex, item);
+          appState.save();
+          appState.updated();
+        });
   }
 
   @override

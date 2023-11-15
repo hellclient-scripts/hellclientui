@@ -134,9 +134,10 @@ class RenderSettings {
   double lineheight = 20.0;
   double linemiddle = 10.0;
   double width = 1120;
-  double height = 1200;
-  int maxLines = 60;
+  double height = 2000;
+  int maxLines = 100;
   late double linewidth = 80 * fontSize;
+  int minChars = 40;
   var background = Colors.black;
   var color = const Color(0xffffffff);
   var black = const Color.fromARGB(255, 0, 0, 0);

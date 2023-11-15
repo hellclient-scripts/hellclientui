@@ -2,6 +2,7 @@ import 'package:hellclientui/models/server.dart';
 import 'package:flutter/material.dart';
 import '../models/rendersettings.dart';
 import 'package:web_socket_channel/io.dart';
+import 'package:web_socket_channel/web_socket_channel.dart';
 import 'dart:convert';
 import 'renderer.dart';
 import '../models/message.dart';
@@ -11,12 +12,15 @@ class Game {
   IOWebSocketChannel? channel;
   late Server server;
   late RenderPainter output;
-  static Game create(Server server, RenderSettings settings) {
+  static Game create(
+      Server server, RenderSettings settings, double devicepixelratio) {
     var game = Game();
     game.server = server;
     game.renderSettings = settings;
-    game.output = RenderPainter.create(
-        Renderer(renderSettings: settings, maxLines: settings.maxLines));
+    game.output = RenderPainter.create(Renderer(
+        renderSettings: settings,
+        maxLines: settings.maxLines,
+        devicePixelRatio: devicepixelratio));
     return game;
   }
 
@@ -57,7 +61,7 @@ class Game {
     }
   }
 
-  void connect() {
+  Future<void> connect(Function(String) errorhandler) async {
     final hosturi = Uri.parse(server.host);
     final String scheme;
     final String auth;
@@ -85,7 +89,11 @@ class Game {
     channel!.stream.listen((event) async {
       var msg = event as String;
       await onMessage(msg);
-    });
+    }, onError: (error) {
+      if (error is WebSocketChannelException) {
+        errorhandler((error as WebSocketChannelException).message!);
+      }
+    }, onDone: () {});
   }
 
   void onPostFrame(Duration time) {

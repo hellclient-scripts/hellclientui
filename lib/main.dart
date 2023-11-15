@@ -6,9 +6,11 @@ import 'package:provider/provider.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'views/pages/homepage.dart';
 import 'views/pages/createpage.dart';
+import 'views/pages/updatepage.dart';
 import 'views/pages/game.dart';
 
 void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
   var state = await AppState.init();
   runApp(MyApp(state: state));
 }
@@ -52,6 +54,7 @@ class MyApp extends StatelessWidget {
           routes: {
             "/": (context) => HomePage(),
             "/create": (context) => CreatePage(),
+            "/update": (context) => UpdatePage(),
             "/game": (context) => Game(),
           }),
     );

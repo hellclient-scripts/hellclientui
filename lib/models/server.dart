@@ -1,6 +1,5 @@
 class Server {
   Server();
-  String id = "";
   String host = "";
   String name = "";
   String username = "";
