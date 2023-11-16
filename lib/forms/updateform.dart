@@ -35,7 +35,6 @@ class UpdateFormState extends State<UpdateForm> {
     host.text = origin.host;
     username.text = origin.username;
     password.text = origin.password;
-    print(origin);
     return Form(
         key: _formKey,
         child: Padding(

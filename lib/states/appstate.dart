@@ -5,6 +5,7 @@ import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 
 import '../models/config.dart';
+import '../models/connecting.dart';
 import '../models/server.dart';
 import '../models/rendersettings.dart';
 import 'package:flutter/material.dart';
@@ -13,6 +14,7 @@ class AppState extends ChangeNotifier {
   Config config = Config();
   String settingsPath = "";
   String colorConfigPath = "";
+  final connecting = Connecting();
   RenderSettings renderSettings = RenderSettings();
   RenderConfig renderConfig = RenderConfig();
   int currentPage = 0;

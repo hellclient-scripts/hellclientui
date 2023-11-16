@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/material.dart' as material;
 import 'package:hellclientui/states/appstate.dart';
 import 'package:provider/provider.dart';
-import '../../models/server.dart';
 import '../../models/rendersettings.dart';
 import '../../workers/renderer.dart';
 import '../../workers/game.dart';
@@ -67,28 +66,42 @@ class DisplayState extends State<Display> {
   IOWebSocketChannel? channel;
   final repaint = Repaint();
   late Game game;
-  late Server server;
+  late void Function() disconnectedListener;
+
+  @override
+  void dispose() {
+    game.dispose();
+    super.dispose();
+  }
+
+  @override
+  void didUpdateWidget(old) {
+    super.didUpdateWidget(old);
+    game.dispose();
+  }
+
   @override
   void initState() {
+    super.initState();
     WidgetsBinding.instance.addPostFrameCallback((Duration time) {
       game.onPostFrame(time);
     });
-    super.initState();
   }
 
-  void connect(BuildContext context) async {
-    var nav = Navigator.of(context);
+  // void connect(BuildContext context) async {
+  //   var nav = Navigator.of(context);
+  //   var appState = context.watch<AppState>();
 
-    try {
-      await game.connect((String msg) async {
-        await showConnectError(context, msg);
-        nav.pop(true);
-      });
-    } catch (e) {
-      await showConnectError(context, e.toString());
-      nav.pop(true);
-    }
-  }
+  //   try {
+  //     await game.connect(appState, (String msg) async {
+  //       await showConnectError(context, msg);
+  //       nav.pop(true);
+  //     });
+  //   } catch (e) {
+  //     await showConnectError(context, e.toString());
+  //     nav.pop(true);
+  //   }
+  // }
 
   void showErrorMessage(String msg) {
     var snackBar = SnackBar(
@@ -139,25 +152,16 @@ class DisplayState extends State<Display> {
     var appState = context.watch<AppState>();
     renderSettings = appState.renderSettings;
     var nav = Navigator.of(context);
-
-    connectGame() {
-      connect(context);
-    }
-
-    ;
     double devicePixelRatio =
         renderSettings.hidpi ? MediaQuery.of(context).devicePixelRatio : 1.0;
-    game =
-        Game.create(appState.currentServer!, renderSettings, devicePixelRatio);
+    game = Game.create(appState, devicePixelRatio);
     game.eventDisconnected.addListener(() async {
       if (await showDisconneded(context) == true) {
-        connectGame();
+        // connectGame();
       } else {
         nav.pop();
       }
     });
-    connectGame();
-    // renderer.init();
     var focusNode = FocusNode();
     var inputController = TextEditingController();
     return Container(

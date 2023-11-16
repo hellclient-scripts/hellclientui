@@ -3,6 +3,26 @@ import 'package:hellclientui/states/appstate.dart';
 import 'package:provider/provider.dart';
 import '../../models/server.dart';
 
+Future<bool?> showConnectError(BuildContext context, String message) async {
+  return showDialog<bool>(
+    context: context,
+    builder: (context) {
+      return AlertDialog(
+        title: const Text("连接失败"),
+        content: Text(message),
+        actions: <Widget>[
+          TextButton(
+            child: const Text("离开"),
+            onPressed: () {
+              Navigator.of(context).pop(true);
+            },
+          ),
+        ],
+      );
+    },
+  );
+}
+
 Future<bool?> showDeleteConfirmDialog(BuildContext context) {
   return showDialog<bool>(
     context: context,
@@ -42,10 +62,17 @@ class ServerList extends StatelessWidget {
               message: "连接服务器",
               child: IconButton(
                 icon: Icon(Icons.cast_connected_outlined),
-                onPressed: () {
+                onPressed: () async {
                   appState.currentServer = server;
+                  try {
+                    await appState.connecting.connect(server);
+                    if (context.mounted) {
+                      Navigator.pushNamed(context, "/game");
+                    }
+                  } catch (e) {
+                    showConnectError(context, e.toString());
+                  }
                   // appState.connect(server);
-                  Navigator.pushNamed(context, "/game");
                 },
               )),
           title: Text(server.name.isNotEmpty ? server.name : "<未命名>"),

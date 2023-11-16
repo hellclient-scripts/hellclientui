@@ -1,9 +1,13 @@
 import 'package:hellclientui/models/server.dart';
 import 'package:flutter/material.dart';
 import '../models/rendersettings.dart';
+import '../states/appstate.dart';
+
 import 'package:web_socket_channel/io.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 import 'dart:convert';
+import 'dart:async';
+
 import 'renderer.dart';
 import '../models/message.dart';
 
@@ -18,16 +22,24 @@ class Game {
   IOWebSocketChannel? channel;
   late Server server;
   late RenderPainter output;
+  StreamSubscription? subscription;
+
   final eventDisconnected = GameEvent();
-  static Game create(
-      Server server, RenderSettings settings, double devicepixelratio) {
+  static Game create(AppState appState, double devicepixelratio) {
     var game = Game();
-    game.server = server;
+    final settings = appState.renderSettings;
+    game.server = appState.currentServer!;
     game.renderSettings = settings;
     game.output = RenderPainter.create(Renderer(
         renderSettings: settings,
         maxLines: settings.maxLines,
         devicePixelRatio: devicepixelratio));
+    game.subscription =
+        appState.connecting.messageStream.stream.listen((event) async {
+      var msg = event as String;
+      await game.onMessage(msg);
+    });
+
     return game;
   }
 
@@ -68,42 +80,13 @@ class Game {
     }
   }
 
-  Future<void> connect(Function(String) errorhandler) async {
-    final hosturi = Uri.parse(server.host);
-    final String scheme;
-    final String auth;
-    if (hosturi.scheme == "https") {
-      scheme = 'wss';
-    } else {
-      scheme = 'ws';
-    }
-    if (server.username.isNotEmpty) {
-      auth = server.username + ":" + server.password;
-    } else {
-      auth = "";
-    }
-    final serveruri = Uri(
-        scheme: scheme,
-        host: hosturi.host,
-        port: hosturi.port,
-        // userInfo: auth,
-        path: "/ws");
-    final Map<String, dynamic> headers = {};
-    if (auth.isNotEmpty) {
-      headers['Authorization'] = 'Basic ' + base64.encode(utf8.encode(auth));
-    }
-    channel = IOWebSocketChannel.connect(serveruri, headers: headers);
-    await channel!.ready;
-    channel!.stream.listen((event) async {
+  Future<void> connect(AppState appState, Function(String) errorhandler) async {
+    // appState.connecting.connect(errorhandler, server);
+    subscription =
+        appState.connecting.messageStream.stream.listen((event) async {
       var msg = event as String;
       await onMessage(msg);
-    }, onError: (error) {
-      if (error is WebSocketChannelException) {
-        errorhandler((error).message!);
-      }
-    }, onDone: () {
-      eventDisconnected.raise();
-    }, cancelOnError: true);
+    });
   }
 
   void onPostFrame(Duration time) {
@@ -113,6 +96,12 @@ class Game {
   void handleSend(String cmd) {
     if (channel != null) {
       channel!.sink.add("send " + json.encode(cmd));
+    }
+  }
+
+  Future<void> dispose() async {
+    if (subscription != null) {
+      await subscription!.cancel();
     }
   }
 

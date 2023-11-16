@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'states/appstate.dart';
 import 'package:provider/provider.dart';
@@ -11,6 +9,7 @@ import 'views/pages/game.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  // await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
   var state = await AppState.init();
   runApp(MyApp(state: state));
 }
