@@ -7,11 +7,18 @@ import 'dart:convert';
 import 'renderer.dart';
 import '../models/message.dart';
 
+class GameEvent extends ChangeNotifier {
+  raise() {
+    notifyListeners();
+  }
+}
+
 class Game {
   late RenderSettings renderSettings;
   IOWebSocketChannel? channel;
   late Server server;
   late RenderPainter output;
+  final eventDisconnected = GameEvent();
   static Game create(
       Server server, RenderSettings settings, double devicepixelratio) {
     var game = Game();
@@ -86,14 +93,17 @@ class Game {
       headers['Authorization'] = 'Basic ' + base64.encode(utf8.encode(auth));
     }
     channel = IOWebSocketChannel.connect(serveruri, headers: headers);
+    await channel!.ready;
     channel!.stream.listen((event) async {
       var msg = event as String;
       await onMessage(msg);
     }, onError: (error) {
       if (error is WebSocketChannelException) {
-        errorhandler((error as WebSocketChannelException).message!);
+        errorhandler((error).message!);
       }
-    }, onDone: () {});
+    }, onDone: () {
+      eventDisconnected.raise();
+    }, cancelOnError: true);
   }
 
   void onPostFrame(Duration time) {

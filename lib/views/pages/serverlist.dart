@@ -48,15 +48,13 @@ class ServerList extends StatelessWidget {
                   Navigator.pushNamed(context, "/game");
                 },
               )),
-          title: Text(server.name + " 服务器地址 " + server.host),
+          title: Text(server.name.isNotEmpty ? server.name : "<未命名>"),
           subtitle: Text(
-            "用户名 :" +
-                (server.username.isEmpty ? '无' : server.username) +
-                " 密码 :" +
-                (server.password.isEmpty ? '无' : '******'),
+            server.host,
+            softWrap: false,
+            overflow: TextOverflow.ellipsis,
             textAlign: TextAlign.left,
           ),
-          isThreeLine: true,
           trailing: PopupMenuButton(
             itemBuilder: (context) => [
               const PopupMenuItem(

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hellclientui/states/appstate.dart';
 import 'package:provider/provider.dart';
-import 'sidebarnav.dart';
+import 'nav.dart';
 import 'serverlist.dart';
 
 class HomePage extends StatelessWidget {
@@ -17,20 +17,13 @@ class HomePage extends StatelessWidget {
       default:
         child = Text("empty");
     }
-    sidebarNav nav = sidebarNav(
-      onSelect: (int index) {
-        appState.currentPage = index;
-        appState.notifyListeners();
-      },
-      selected: appState.currentPage,
-    );
     return Scaffold(
       body: Row(
         children: <Widget>[
-          nav,
           Expanded(child: child),
         ],
       ),
+      bottomNavigationBar: Nav.build(context),
     );
   }
 }

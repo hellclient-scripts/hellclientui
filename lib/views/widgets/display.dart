@@ -8,6 +8,52 @@ import '../../workers/renderer.dart';
 import '../../workers/game.dart';
 import 'package:web_socket_channel/io.dart';
 
+Future<bool?> showConnectError(BuildContext context, String message) async {
+  return showDialog<bool>(
+    context: context,
+    builder: (context) {
+      return AlertDialog(
+        title: const Text("连接失败"),
+        content: Text(message),
+        actions: <Widget>[
+          TextButton(
+            child: const Text("离开"),
+            onPressed: () {
+              Navigator.of(context).pop(true);
+            },
+          ),
+        ],
+      );
+    },
+  );
+}
+
+Future<bool?> showDisconneded(BuildContext context) async {
+  return showDialog<bool>(
+    context: context,
+    builder: (context) {
+      return AlertDialog(
+        title: const Text("连接断开"),
+        content: const Text('你与程序被断开了，可能是通过别的页面打开/程序发生错误/程序死机，需要重连才能继续操作。'),
+        actions: <Widget>[
+          TextButton(
+            child: const Text("退出"),
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+          ),
+          TextButton(
+            child: const Text("重新连接"),
+            onPressed: () {
+              Navigator.of(context).pop(true);
+            },
+          ),
+        ],
+      );
+    },
+  );
+}
+
 class Display extends StatefulWidget {
   const Display({super.key});
 
@@ -30,13 +76,17 @@ class DisplayState extends State<Display> {
     super.initState();
   }
 
-  void connect() async {
+  void connect(BuildContext context) async {
+    var nav = Navigator.of(context);
+
     try {
-      await game.connect((String msg) {
-        showErrorMessage(msg);
+      await game.connect((String msg) async {
+        await showConnectError(context, msg);
+        nav.pop(true);
       });
     } catch (e) {
-      showErrorMessage(e.toString());
+      await showConnectError(context, e.toString());
+      nav.pop(true);
     }
   }
 
@@ -85,17 +135,31 @@ class DisplayState extends State<Display> {
   }
 
   @override
-  Widget build(BuildContext context) {
+  build(BuildContext context) {
     var appState = context.watch<AppState>();
     renderSettings = appState.renderSettings;
+    var nav = Navigator.of(context);
+
+    connectGame() {
+      connect(context);
+    }
+
+    ;
     double devicePixelRatio =
         renderSettings.hidpi ? MediaQuery.of(context).devicePixelRatio : 1.0;
     game =
         Game.create(appState.currentServer!, renderSettings, devicePixelRatio);
+    game.eventDisconnected.addListener(() async {
+      if (await showDisconneded(context) == true) {
+        connectGame();
+      } else {
+        nav.pop();
+      }
+    });
+    connectGame();
     // renderer.init();
     var focusNode = FocusNode();
     var inputController = TextEditingController();
-    connect();
     return Container(
         decoration: BoxDecoration(color: appState.renderSettings.background),
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
@@ -107,32 +171,40 @@ class DisplayState extends State<Display> {
             height: 30,
             child: material.Row(
               children: [
-                SizedBox(
+                const SizedBox(
                   width: 80,
                   child: Text("test"),
                 ),
                 Expanded(
-                    child: TextField(
-                  controller: inputController,
-                  focusNode: focusNode,
-                  autofocus: true,
-                  style: TextStyle(
-                      color: Colors.white,
-                      fontSize: renderSettings.fontSize,
-                      height:
-                          renderSettings.lineheight / renderSettings.fontSize),
-                  decoration: (InputDecoration(
-                    hintText: "输入指令",
-                    border: OutlineInputBorder(),
-                  )),
-                  onSubmitted: (value) {
-                    game.handleSend(value);
-                    focusNode.requestFocus();
-                    inputController.selection = TextSelection(
-                        baseOffset: 0,
-                        extentOffset: inputController.value.text.length);
-                  },
-                )),
+                    child: SingleChildScrollView(
+                        scrollDirection: Axis.vertical,
+                        child: TextField(
+                          controller: inputController,
+                          textInputAction: TextInputAction.next,
+                          focusNode: focusNode,
+                          maxLines: 1,
+                          autofocus: true,
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: renderSettings.fontSize,
+                          ),
+                          decoration: (const InputDecoration(
+                              isDense: true, // Added this
+                              contentPadding: EdgeInsets.all(8), // Added this
+                              hintText: "输入指令",
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.zero,
+                                gapPadding: 0,
+                              ))),
+                          onSubmitted: (value) {
+                            game.handleSend(value);
+                            focusNode.requestFocus();
+                            inputController.selection = TextSelection(
+                                baseOffset: 0,
+                                extentOffset:
+                                    inputController.value.text.length);
+                          },
+                        ))),
                 SizedBox(
                   width: 80,
                   child: Text("test2"),

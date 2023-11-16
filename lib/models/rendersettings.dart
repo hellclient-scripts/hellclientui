@@ -175,5 +175,5 @@ class RenderSettings {
   var bccolor = const Color.fromARGB(255, 127, 127, 127);
   double letterSpacing = -1;
   var fontFamily = "monospace";
-  bool hidpi = false;
+  bool hidpi = true;
 }
