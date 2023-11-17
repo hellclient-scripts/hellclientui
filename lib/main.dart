@@ -10,8 +10,8 @@ import 'views/pages/game.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   // await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
-  var state = await AppState.init();
-  runApp(MyApp(state: state));
+  currentAppState = await AppState.init();
+  runApp(MyApp(state: currentAppState));
 }
 
 class MyApp extends StatelessWidget {
@@ -20,10 +20,13 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
+    final navigatorKey = GlobalKey<NavigatorState>();
+
     return ChangeNotifierProvider(
       create: (context) => state,
       child: MaterialApp(
           title: 'Hellclient',
+          navigatorKey: navigatorKey,
           theme: ThemeData(
             // This is the theme of your application.
             //

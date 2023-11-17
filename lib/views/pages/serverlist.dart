@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:hellclientui/states/appstate.dart';
 import 'package:provider/provider.dart';
 import '../../models/server.dart';
+import '../../workers/game.dart';
 
 Future<bool?> showConnectError(BuildContext context, String message) async {
   return showDialog<bool>(
@@ -53,6 +54,10 @@ class ServerList extends StatelessWidget {
   final List<Server> servers;
   Widget buildList(BuildContext context) {
     var appState = context.watch<AppState>();
+    appState.devicePixelRatio = appState.renderSettings.hidpi
+        ? MediaQuery.of(context).devicePixelRatio
+        : 1.0;
+
     final List<Widget> list = [];
     for (final server in appState.config.servers) {
       list.add(Card(
@@ -66,6 +71,8 @@ class ServerList extends StatelessWidget {
                   appState.currentServer = server;
                   try {
                     await appState.connecting.connect(server);
+                    currentGame = Game.create();
+
                     if (context.mounted) {
                       Navigator.pushNamed(context, "/game");
                     }

@@ -12,6 +12,13 @@ class Connecting {
   final eventDisconnected = StreamController.broadcast();
   final messageStream = StreamController.broadcast();
   final errorStream = StreamController.broadcast();
+  Future<void> close() async {
+    if (channel == null) {
+      return;
+    }
+    await channel!.sink.close();
+    channel = null;
+  }
 
   Future<void> connect(Server server) async {
     if (channel != null) {
@@ -42,14 +49,19 @@ class Connecting {
     }
     final wschannel = IOWebSocketChannel.connect(serveruri, headers: headers);
     await wschannel.ready;
-    wschannel.stream.listen((event) async {
+    channel = wschannel;
+  }
+
+  Future<void> listen() async {
+    late StreamSubscription streamsub;
+    streamsub = channel!.stream.listen((event) async {
       messageStream.add(event);
     }, onError: (error) {
       errorStream.add(error);
     }, onDone: () {
       eventDisconnected.add(null);
+      streamsub.cancel();
       channel = null;
     }, cancelOnError: true);
-    channel = wschannel;
   }
 }

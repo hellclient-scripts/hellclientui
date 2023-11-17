@@ -10,36 +10,34 @@ import 'dart:async';
 
 import 'renderer.dart';
 import '../models/message.dart';
+import '../models/connecting.dart';
 
-class GameEvent extends ChangeNotifier {
-  raise() {
-    notifyListeners();
-  }
-}
+Game? currentGame;
 
 class Game {
   late RenderSettings renderSettings;
-  IOWebSocketChannel? channel;
+  late Connecting connecting;
   late Server server;
   late RenderPainter output;
   StreamSubscription? subscription;
 
-  final eventDisconnected = GameEvent();
-  static Game create(AppState appState, double devicepixelratio) {
+  static Game create() {
     var game = Game();
+    final appState = currentAppState;
     final settings = appState.renderSettings;
     game.server = appState.currentServer!;
     game.renderSettings = settings;
     game.output = RenderPainter.create(Renderer(
         renderSettings: settings,
         maxLines: settings.maxLines,
-        devicePixelRatio: devicepixelratio));
+        devicePixelRatio: appState.devicePixelRatio));
+    appState.connecting.listen();
     game.subscription =
         appState.connecting.messageStream.stream.listen((event) async {
       var msg = event as String;
       await game.onMessage(msg);
     });
-
+    game.connecting = appState.connecting;
     return game;
   }
 
@@ -89,13 +87,17 @@ class Game {
     });
   }
 
+  Future<void> close() async {
+    await connecting.close();
+  }
+
   void onPostFrame(Duration time) {
     output.renderer.draw();
   }
 
   void handleSend(String cmd) {
-    if (channel != null) {
-      channel!.sink.add("send " + json.encode(cmd));
+    if (connecting.channel != null) {
+      connecting.channel!.sink.add("send " + json.encode(cmd));
     }
   }
 

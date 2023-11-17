@@ -62,29 +62,15 @@ class Display extends StatefulWidget {
 
 class DisplayState extends State<Display> {
   DisplayState();
-  late RenderSettings renderSettings;
   IOWebSocketChannel? channel;
   final repaint = Repaint();
-  late Game game;
   late void Function() disconnectedListener;
-
-  @override
-  void dispose() {
-    game.dispose();
-    super.dispose();
-  }
-
-  @override
-  void didUpdateWidget(old) {
-    super.didUpdateWidget(old);
-    game.dispose();
-  }
 
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((Duration time) {
-      game.onPostFrame(time);
+      currentGame!.onPostFrame(time);
     });
   }
 
@@ -110,9 +96,8 @@ class DisplayState extends State<Display> {
     ScaffoldMessenger.of(context).showSnackBar(snackBar);
   }
 
-  Widget buildOutput(BuildContext context, double devicePixelRatio, Game game) {
+  Widget buildOutput(BuildContext context) {
     var appState = context.watch<AppState>();
-    var renderSettings = appState.renderSettings;
 
     return Positioned(
         height: appState.renderSettings.height,
@@ -123,22 +108,25 @@ class DisplayState extends State<Display> {
           var viewwidth = constraints.maxWidth;
 
           Widget output = Transform.scale(
-              scale: 1 / devicePixelRatio,
+              scale: 1 / appState.devicePixelRatio,
               alignment: Alignment.bottomLeft,
               child: CustomPaint(
-                size: Size(appState.renderSettings.linewidth * devicePixelRatio,
-                    appState.renderSettings.height * devicePixelRatio),
-                painter: game.output,
+                size: Size(
+                    appState.renderSettings.linewidth *
+                        appState.devicePixelRatio,
+                    appState.renderSettings.height * appState.devicePixelRatio),
+                painter: currentGame?.output,
               ));
           if (viewwidth <
-              appState.renderSettings.minChars * renderSettings.fontSize) {
+              appState.renderSettings.minChars *
+                  appState.renderSettings.fontSize) {
             output = FittedBox(
                 fit: BoxFit.fitWidth,
                 alignment: Alignment.bottomLeft,
                 child: Container(
                   constraints: BoxConstraints(
                     maxWidth: appState.renderSettings.minChars *
-                        renderSettings.fontSize,
+                        appState.renderSettings.fontSize,
                   ),
                   child: output,
                 ));
@@ -150,28 +138,17 @@ class DisplayState extends State<Display> {
   @override
   build(BuildContext context) {
     var appState = context.watch<AppState>();
-    renderSettings = appState.renderSettings;
-    var nav = Navigator.of(context);
-    double devicePixelRatio =
-        renderSettings.hidpi ? MediaQuery.of(context).devicePixelRatio : 1.0;
-    game = Game.create(appState, devicePixelRatio);
-    game.eventDisconnected.addListener(() async {
-      if (await showDisconneded(context) == true) {
-        // connectGame();
-      } else {
-        nav.pop();
-      }
-    });
-    var focusNode = FocusNode();
     var inputController = TextEditingController();
+    var focusNode = FocusNode();
+
     return Container(
         decoration: BoxDecoration(color: appState.renderSettings.background),
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
           Expanded(
               child: Stack(children: [
-            buildOutput(context, devicePixelRatio, game),
+            buildOutput(context),
           ])),
-          Container(
+          SizedBox(
             height: 30,
             child: material.Row(
               children: [
@@ -190,7 +167,7 @@ class DisplayState extends State<Display> {
                           autofocus: true,
                           style: TextStyle(
                             color: Colors.white,
-                            fontSize: renderSettings.fontSize,
+                            fontSize: appState.renderSettings.fontSize,
                           ),
                           decoration: (const InputDecoration(
                               isDense: true, // Added this
@@ -201,7 +178,7 @@ class DisplayState extends State<Display> {
                                 gapPadding: 0,
                               ))),
                           onSubmitted: (value) {
-                            game.handleSend(value);
+                            currentGame?.handleSend(value);
                             focusNode.requestFocus();
                             inputController.selection = TextSelection(
                                 baseOffset: 0,

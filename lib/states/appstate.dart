@@ -10,11 +10,14 @@ import '../models/server.dart';
 import '../models/rendersettings.dart';
 import 'package:flutter/material.dart';
 
+late AppState currentAppState;
+
 class AppState extends ChangeNotifier {
   Config config = Config();
   String settingsPath = "";
   String colorConfigPath = "";
   final connecting = Connecting();
+  late double devicePixelRatio;
   RenderSettings renderSettings = RenderSettings();
   RenderConfig renderConfig = RenderConfig();
   int currentPage = 0;
