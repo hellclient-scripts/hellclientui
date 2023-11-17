@@ -13,8 +13,8 @@ class Nav {
             label: '控制台',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.settings),
-            label: '设置',
+            icon: Icon(Icons.notifications),
+            label: '通知',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.info),

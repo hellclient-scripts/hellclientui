@@ -3,6 +3,8 @@ import 'package:hellclientui/states/appstate.dart';
 import 'package:provider/provider.dart';
 import 'nav.dart';
 import 'serverlist.dart';
+import 'notification.dart' as noti;
+import '../../workers/notification.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
@@ -14,8 +16,13 @@ class HomePage extends StatelessWidget {
       case 0:
         child = ServerList(servers: appState.config.servers);
         break;
+      case 1:
+        child = noti.Notification();
+        break;
       default:
-        child = Text("empty");
+        child = Center(
+            child:
+                TextFormField(initialValue: currentNotification.tencentToken));
     }
     return Scaffold(
       body: Row(

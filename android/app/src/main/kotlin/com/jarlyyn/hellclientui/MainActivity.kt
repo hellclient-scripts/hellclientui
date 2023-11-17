@@ -1,4 +1,4 @@
-package com.example.hellclientui
+package com.jarlyyn.hellclientui
 
 import io.flutter.embedding.android.FlutterActivity
 

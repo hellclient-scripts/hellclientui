@@ -154,6 +154,19 @@ class ServerList extends StatelessWidget {
           // Here we take the value from the MyHomePage object that was created by
           // the App.build method, and use it to set our appbar title.
           title: const Text("服务器列表"),
+          actions: [
+            IconButton(
+              icon: const Icon(Icons.settings),
+              tooltip: '设置',
+              onPressed: () {
+                // showAboutDialog(
+                //     context: context,
+                //     applicationName: "Hellclient UI",
+                //     applicationVersion: "0.0.1");
+                // return;
+              },
+            ),
+          ],
         ),
         body: body);
   }

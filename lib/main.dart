@@ -6,11 +6,13 @@ import 'views/pages/homepage.dart';
 import 'views/pages/createpage.dart';
 import 'views/pages/updatepage.dart';
 import 'views/pages/game.dart';
+import 'workers/notification.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   // await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
   currentAppState = await AppState.init();
+  currentNotification.updateConfig(currentAppState.config.notificationConfig);
   runApp(MyApp(state: currentAppState));
 }
 

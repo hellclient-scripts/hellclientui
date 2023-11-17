@@ -14,13 +14,19 @@ import '../models/connecting.dart';
 
 Game? currentGame;
 
+class GameCommand {
+  GameCommand({required this.command, required this.data});
+  String command = "";
+  String data = "";
+}
+
 class Game {
   late RenderSettings renderSettings;
   late Connecting connecting;
   late Server server;
   late RenderPainter output;
   StreamSubscription? subscription;
-
+  final commandStream = StreamController.broadcast();
   static Game create() {
     var game = Game();
     final appState = currentAppState;
@@ -75,6 +81,9 @@ class Game {
       case "line":
         await onCmdLine(data);
         break;
+      case "allLines":
+        commandStream.add(GameCommand(command: command, data: data));
+        break;
     }
   }
 
@@ -98,6 +107,12 @@ class Game {
   void handleSend(String cmd) {
     if (connecting.channel != null) {
       connecting.channel!.sink.add("send " + json.encode(cmd));
+    }
+  }
+
+  void handleCmd(String cmd) {
+    if (connecting.channel != null) {
+      connecting.channel!.sink.add(cmd);
     }
   }
 

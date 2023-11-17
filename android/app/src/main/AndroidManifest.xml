@@ -31,4 +31,17 @@
             android:value="2" />
     </application>
         <uses-permission android:name="android.permission.INTERNET" />
+        <!-- 【必须】 移动推送 TPNS SDK VIP版本所需权限 -->
+<permission
+        android:name="com.jarlyyn.hellclientui.permission.XGPUSH_RECEIVE"
+        android:protectionLevel="signature" />
+<uses-permission android:name="com.jarlyyn.hellclientui.permission.XGPUSH_RECEIVE" />
+
+<uses-permission android:name="android.permission.INTERNET" />
+<uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+<uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
+<uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
+
+
 </manifest>

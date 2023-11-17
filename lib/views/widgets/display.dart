@@ -145,9 +145,13 @@ class DisplayState extends State<Display> {
         decoration: BoxDecoration(color: appState.renderSettings.background),
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
           Expanded(
-              child: Stack(children: [
-            buildOutput(context),
-          ])),
+              child: GestureDetector(
+                  onTap: () {
+                    currentGame!.handleCmd("allLines");
+                  },
+                  child: Stack(children: [
+                    buildOutput(context),
+                  ]))),
           SizedBox(
             height: 30,
             child: material.Row(

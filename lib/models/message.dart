@@ -1,5 +1,3 @@
-import 'dart:ffi';
-
 class Word {
   String text = "";
   String color = "";
