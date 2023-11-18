@@ -2,10 +2,39 @@ import 'package:flutter/material.dart';
 import 'package:flutter/material.dart' as material;
 import 'package:hellclientui/states/appstate.dart';
 import 'package:provider/provider.dart';
-import '../../models/rendersettings.dart';
 import '../../workers/renderer.dart';
 import '../../workers/game.dart';
 import 'package:web_socket_channel/io.dart';
+import '../../models/message.dart';
+import 'alllines.dart';
+import 'dart:convert';
+import 'dart:async';
+
+Future<bool?> showAllLines(BuildContext context, Lines lines) async {
+  if (!context.mounted) {
+    return false;
+  }
+  return showDialog<bool>(
+      context: context,
+      builder: (context) {
+        return Material(
+            type: MaterialType.transparency,
+            child: Flex(direction: Axis.horizontal, children: [
+              Expanded(
+                flex: 1,
+                child: Center(),
+              ),
+              Expanded(
+                  flex: 9,
+                  child: Container(
+                      height: double.infinity,
+                      decoration: BoxDecoration(color: Colors.white),
+                      child: AllLines(
+                        lines: lines,
+                      ))),
+            ]));
+      });
+}
 
 Future<bool?> showConnectError(BuildContext context, String message) async {
   return showDialog<bool>(
@@ -64,13 +93,31 @@ class DisplayState extends State<Display> {
   DisplayState();
   IOWebSocketChannel? channel;
   final repaint = Repaint();
-  late void Function() disconnectedListener;
+  late StreamSubscription subCommand;
+  void dispose() {
+    subCommand.cancel();
+    super.dispose();
+  }
 
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((Duration time) {
-      currentGame!.onPostFrame(time);
+      if (mounted) {
+        currentGame!.onPostFrame(time);
+      }
+    });
+
+    subCommand = currentGame!.commandStream.stream.listen((event) {
+      if (event is GameCommand) {
+        switch (event.command) {
+          case 'allLines':
+            final dynamic jsondata = json.decode(event.data);
+            final lines = Lines.fromJson(jsondata);
+            showAllLines(context, lines);
+            break;
+        }
+      }
     });
   }
 

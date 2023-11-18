@@ -173,7 +173,7 @@ class RenderSettings {
   var responseicon = "☎响应 ";
   var subnegicon = "☎非文本信息 ";
   var bccolor = const Color.fromARGB(255, 127, 127, 127);
-  double letterSpacing = -1;
+  double letterSpacing = 0;
   var fontFamily = "monospace";
   bool hidpi = true;
 }

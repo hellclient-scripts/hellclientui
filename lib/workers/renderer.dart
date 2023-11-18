@@ -84,19 +84,7 @@ class RenderingLine {
     return line;
   }
 
-  void drawicon(LineStyle style, Color background) {
-    var textstyle = TextStyle(
-      fontFamily: settings.fontFamily,
-      color: style.iconcolor,
-      backgroundColor: background,
-      fontSize: settings.fontSize,
-      fontWeight: FontWeight.normal,
-      decoration: TextDecoration.none,
-      fontStyle: FontStyle.normal,
-      letterSpacing: settings.letterSpacing * devicePixelRatio,
-      fontFeatures: [ui.FontFeature.tabularFigures()],
-    );
-
+  void drawicon(TextStyle textstyle, LineStyle style, Color background) {
     final span = TextSpan(text: style.icon, style: textstyle);
     final painter = TextPainter(
         text: span,
@@ -220,6 +208,22 @@ class Renderer {
         renderSettings, line, false, false, renderSettings.background);
   }
 
+  TextStyle getIconStyle(
+      double devicePixelRatio, Color iconcolor, Color background) {
+    var textstyle = TextStyle(
+      fontFamily: renderSettings.fontFamily,
+      color: iconcolor,
+      backgroundColor: background,
+      fontSize: renderSettings.fontSize,
+      fontWeight: FontWeight.normal,
+      decoration: TextDecoration.none,
+      fontStyle: FontStyle.normal,
+      letterSpacing: renderSettings.letterSpacing * devicePixelRatio,
+      fontFeatures: [ui.FontFeature.tabularFigures()],
+    );
+    return textstyle;
+  }
+
   Future<void> renderline(RenderSettings settings, Line line, bool withouticon,
       bool nocr, Color? bcolor) async {
     await lock.synchronized(() async {
@@ -230,7 +234,10 @@ class Renderer {
       var rendering = RenderingLine.create(line, settings, devicePixelRatio);
       var index = 0;
       if (!withouticon) {
-        rendering.drawicon(linestyle, bcolor!);
+        rendering.drawicon(
+            getIconStyle(devicePixelRatio, linestyle.color, bcolor!),
+            linestyle,
+            bcolor!);
       }
       for (final word in line.words) {
         final textStyle = getWordStyle(word, linestyle.color, bcolor!)
