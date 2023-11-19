@@ -174,6 +174,11 @@ class Renderer {
     canvas.drawRect(rect, paint);
   }
 
+  void reset() {
+    resetFrame();
+    rows = [];
+  }
+
   void draw() async {
     await lock.synchronized(() async {
       if (!updated) {

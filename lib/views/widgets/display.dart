@@ -7,10 +7,11 @@ import '../../workers/game.dart';
 import 'package:web_socket_channel/io.dart';
 import '../../models/message.dart';
 import 'alllines.dart';
+import 'gametop.dart';
 import 'dart:convert';
 import 'dart:async';
 
-Future<bool?> showAllLines(BuildContext context, Lines lines) async {
+Future<bool?> showAllLines(BuildContext context) async {
   if (!context.mounted) {
     return false;
   }
@@ -29,9 +30,7 @@ Future<bool?> showAllLines(BuildContext context, Lines lines) async {
                   child: Container(
                       height: double.infinity,
                       decoration: BoxDecoration(color: Colors.white),
-                      child: AllLines(
-                        lines: lines,
-                      ))),
+                      child: AllLines())),
             ]));
       });
 }
@@ -94,6 +93,7 @@ class DisplayState extends State<Display> {
   IOWebSocketChannel? channel;
   final repaint = Repaint();
   late StreamSubscription subCommand;
+  @override
   void dispose() {
     subCommand.cancel();
     super.dispose();
@@ -110,13 +110,7 @@ class DisplayState extends State<Display> {
 
     subCommand = currentGame!.commandStream.stream.listen((event) {
       if (event is GameCommand) {
-        switch (event.command) {
-          case 'allLines':
-            final dynamic jsondata = json.decode(event.data);
-            final lines = Lines.fromJson(jsondata);
-            showAllLines(context, lines);
-            break;
-        }
+        switch (event.command) {}
       }
     });
   }
@@ -136,7 +130,11 @@ class DisplayState extends State<Display> {
         bottom: 0,
         left: 0,
         right: 0,
-        child: LayoutBuilder(builder: (context, constraints) {
+        child: GestureDetector(onTap: () {
+          currentGame!.handleCmd("allLines", null);
+          showAllLines(context);
+        }, child:
+            AbsorbPointer(child: LayoutBuilder(builder: (context, constraints) {
           var viewwidth = constraints.maxWidth;
 
           Widget output = Transform.scale(
@@ -164,7 +162,7 @@ class DisplayState extends State<Display> {
                 ));
           }
           return output;
-        }));
+        }))));
   }
 
   @override
@@ -176,14 +174,11 @@ class DisplayState extends State<Display> {
     return Container(
         decoration: BoxDecoration(color: appState.renderSettings.background),
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+          GameTop(),
           Expanded(
-              child: GestureDetector(
-                  onTap: () {
-                    currentGame!.handleCmd("allLines");
-                  },
-                  child: Stack(children: [
-                    buildOutput(context),
-                  ]))),
+              child: Stack(children: [
+            buildOutput(context),
+          ])),
           SizedBox(
             height: 30,
             child: material.Row(

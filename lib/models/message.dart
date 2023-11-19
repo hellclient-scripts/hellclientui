@@ -1,3 +1,5 @@
+import 'package:flutter/foundation.dart';
+
 class Word {
   String text = "";
   String color = "";
@@ -49,4 +51,39 @@ class Lines {
   List<Line> lines = [];
   Lines.fromJson(dynamic json)
       : lines = List<dynamic>.from(json).map((e) => Line.fromJson(e)).toList();
+}
+
+class ClientInfo {
+  ClientInfo();
+  String id = "";
+  int readyAt = 0;
+  int position = 0;
+  String hostPort = "";
+  String scriptID = "";
+  bool running = false;
+  int priority = 0;
+  int lastActive = 0;
+  List<Line> summary = [];
+  ClientInfo.fromJson(Map<String, dynamic> json) {
+    id = json["ID"];
+    readyAt = json["ReadyAt"];
+    position = json["Position"];
+    hostPort = json["HostPort"];
+    running = json["Running"];
+    priority = json["Priority"];
+    lastActive = json["LastActive"];
+    if (json['Summary'] != null) {
+      final lines = Lines.fromJson(json['Summary']);
+      summary = lines.lines;
+    }
+  }
+}
+
+class ClientInfos {
+  ClientInfos();
+  List<ClientInfo> clientInfos = [];
+  ClientInfos.fromJson(dynamic json)
+      : clientInfos = List<dynamic>.from(json)
+            .map((e) => ClientInfo.fromJson(e))
+            .toList();
 }

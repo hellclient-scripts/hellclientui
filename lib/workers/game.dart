@@ -21,12 +21,16 @@ class GameCommand {
 }
 
 class Game {
+  String current = "";
+  ClientInfo? currentClient;
   late RenderSettings renderSettings;
   late Connecting connecting;
   late Server server;
   late RenderPainter output;
+  ClientInfos clientinfos = ClientInfos();
   StreamSubscription? subscription;
   final commandStream = StreamController.broadcast();
+  final clientsUpdateStream = StreamController.broadcast();
   static Game create() {
     var game = Game();
     final appState = currentAppState;
@@ -44,7 +48,13 @@ class Game {
       await game.onMessage(msg);
     });
     game.connecting = appState.connecting;
+    game.handleCmd("current", null);
     return game;
+  }
+
+  String decodeString(String data) {
+    final dynamic jsondata = json.decode(data);
+    return jsondata as String;
   }
 
   Future<void> onCmdLine(String data) async {
@@ -61,6 +71,55 @@ class Game {
       await output.renderer.drawLine(line);
     }
     output.renderer.draw();
+  }
+
+  Future<void> onCmdClients(String data) async {
+    final dynamic jsondata = json.decode(data);
+    final infos = ClientInfos.fromJson(jsondata);
+    clientinfos = infos;
+    for (var info in clientinfos.clientInfos) {
+      if (info.id == current) {
+        currentClient = info;
+        break;
+      }
+    }
+
+    clientsUpdateStream.add(null);
+  }
+
+  Future<void> onCmdCurrent(String data) async {
+    current = decodeString(data);
+    currentClient = null;
+    for (var info in clientinfos.clientInfos) {
+      if (info.id == current) {
+        currentClient = info;
+        break;
+      }
+    }
+    output.renderer.reset();
+    clientsUpdateStream.add(null);
+  }
+
+  Future<void> onCmdConnected(String data) async {
+    final id = decodeString(data);
+    for (var info in clientinfos.clientInfos) {
+      if (info.id == id) {
+        info.running = true;
+        break;
+      }
+    }
+    clientsUpdateStream.add(null);
+  }
+
+  Future<void> onCmdDisconnected(String data) async {
+    final id = decodeString(data);
+    for (var info in clientinfos.clientInfos) {
+      if (info.id == id) {
+        info.running = false;
+        break;
+      }
+    }
+    clientsUpdateStream.add(null);
   }
 
   Future<void> onMessage(String msg) async {
@@ -83,6 +142,18 @@ class Game {
         break;
       case "allLines":
         commandStream.add(GameCommand(command: command, data: data));
+        break;
+      case "clients":
+        await onCmdClients(data);
+        break;
+      case "current":
+        await onCmdCurrent(data);
+        break;
+      case "connected":
+        await onCmdConnected(data);
+        break;
+      case "disconnected":
+        await onCmdDisconnected(data);
         break;
     }
   }
@@ -110,9 +181,13 @@ class Game {
     }
   }
 
-  void handleCmd(String cmd) {
+  void handleCmd(String cmd, dynamic data) {
     if (connecting.channel != null) {
-      connecting.channel!.sink.add(cmd);
+      if (data == null) {
+        connecting.channel!.sink.add(cmd);
+      } else {
+        connecting.channel!.sink.add(cmd + " " + json.encode(data));
+      }
     }
   }
 
