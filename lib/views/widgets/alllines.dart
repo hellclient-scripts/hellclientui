@@ -1,32 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/material.dart' as material;
+
 import 'package:flutter/rendering.dart';
 import 'package:hellclientui/states/appstate.dart';
 import 'package:hellclientui/workers/game.dart';
 import 'package:hellclientui/workers/renderer.dart';
 import 'package:path/path.dart';
 import '../../models/message.dart';
-
-// class LineEnd extends Text with Selectable {
-//   LineEnd(super.data);
-//   @override
-//   SelectedContent? getSelectedContent() {
-//     return value.hasSelection
-//         ? const SelectedContent(plainText: 'Custom Text')
-//         : null;
-//   }
-
-//   @override
-//   dispose() {}
-//   @override
-//   addListener(VoidCallback listener) {}
-//   @override
-//   SelectionResult dispatchSelectionEvent(SelectionEvent event) {
-//     return SelectionResult.none;
-//   }
-
-//   @override
-//   Matrix4 getTransformTo(RenderObject? ancestor) {}
-// }
 
 class AllLines extends StatelessWidget {
   AllLines({super.key, required this.lines});
@@ -72,23 +52,33 @@ class AllLines extends StatelessWidget {
             child: Container(
                 decoration: BoxDecoration(
                     color: currentAppState.renderSettings.background),
-                child: SelectionArea(
-                    child: RawScrollbar(
-                        thumbColor: Colors.white,
-                        controller: _scrollController2,
-                        scrollbarOrientation: ScrollbarOrientation.bottom,
-                        child: RawScrollbar(
-                            thumbColor: Colors.white,
-                            thumbVisibility: true,
-                            controller: _scrollController,
-                            child: Expanded(
-                                child: SingleChildScrollView(
-                                    scrollDirection: Axis.horizontal,
-                                    controller: _scrollController2,
-                                    child: ListView(
-                                      controller: _scrollController,
-                                      children: list,
-                                    )))))))),
+                child: SelectionArea(child: LayoutBuilder(builder:
+                    (BuildContext context, BoxConstraints constraints) {
+                  return RawScrollbar(
+                      thumbColor: Colors.white,
+                      thumbVisibility: true,
+                      controller: _scrollController2,
+                      scrollbarOrientation: ScrollbarOrientation.bottom,
+                      child: RawScrollbar(
+                          thumbColor: Colors.white,
+                          thumbVisibility: true,
+                          controller: _scrollController,
+                          child: SizedBox(
+                              height: constraints.maxHeight,
+                              width: constraints.maxWidth,
+                              child: SingleChildScrollView(
+                                  controller: _scrollController,
+                                  reverse: true,
+                                  child: SingleChildScrollView(
+                                      scrollDirection: Axis.horizontal,
+                                      controller: _scrollController2,
+                                      child: SizedBox(
+                                          width:
+                                              renderer.renderSettings.linewidth,
+                                          child: material.Column(
+                                            children: list,
+                                          )))))));
+                }))))
       ],
     );
   }

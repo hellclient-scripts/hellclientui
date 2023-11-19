@@ -121,21 +121,6 @@ class DisplayState extends State<Display> {
     });
   }
 
-  // void connect(BuildContext context) async {
-  //   var nav = Navigator.of(context);
-  //   var appState = context.watch<AppState>();
-
-  //   try {
-  //     await game.connect(appState, (String msg) async {
-  //       await showConnectError(context, msg);
-  //       nav.pop(true);
-  //     });
-  //   } catch (e) {
-  //     await showConnectError(context, e.toString());
-  //     nav.pop(true);
-  //   }
-  // }
-
   void showErrorMessage(String msg) {
     var snackBar = SnackBar(
       content: Text(msg),
