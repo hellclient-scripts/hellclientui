@@ -50,23 +50,29 @@ class AllLinesState extends State<AllLines> {
       for (final line in lines!.lines) {
         List<InlineSpan> linedata = [];
         final linestyle = renderer.getLineStyle(line);
-
+        if (linestyle.icon.isNotEmpty) {
+          final iconstyle = renderer.getIconStyle(1, linestyle.iconcolor,
+              currentAppState.renderSettings.background);
+          linedata.add(WidgetSpan(
+              child: SelectionContainer.disabled(
+                  child: Text(linestyle.icon, style: iconstyle))));
+        }
         for (final word in line.words) {
           final style = renderer.getWordStyle(
               word, linestyle.color, currentAppState.renderSettings.background);
           linedata.add(TextSpan(
               text: word.text,
-              style: style.toTextStyle(currentAppState.renderSettings, 1)));
+              style: style.toTextStyle(currentAppState.renderSettings)));
         }
         List<Widget> children = [];
-        if (linestyle.icon.isNotEmpty) {
-          final iconstyle = renderer.getIconStyle(1, linestyle.iconcolor,
-              currentAppState.renderSettings.background);
-          children.add(SelectionContainer.disabled(
-              child: Text(linestyle.icon, style: iconstyle)));
-        }
-        linedata.add(TextSpan(text: '\r'));
-        children.add(Text.rich(TextSpan(children: linedata)));
+
+        linedata.add(const TextSpan(text: '\r'));
+        children.add(SizedBox(
+            width: renderer.renderSettings.width,
+            child: Text.rich(
+              TextSpan(children: linedata),
+              softWrap: true,
+            )));
 
         list.add(Flex(direction: Axis.horizontal, children: children));
       }

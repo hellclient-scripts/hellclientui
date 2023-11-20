@@ -71,33 +71,28 @@ class OverviewState extends State<Overview> {
     final renderer = currentGame!.output.renderer;
     for (final line in info.summary.sublist(0, 2)) {
       List<InlineSpan> linedata = [];
-      final linestyle = renderer.getLineStyle(line);
-
       for (final word in line.words) {
         final style = renderer.getWordStyle(
-            word, linestyle.color, currentAppState.renderSettings.background);
+            word,
+            currentAppState.renderSettings.color,
+            currentAppState.renderSettings.background);
         linedata.add(TextSpan(
             text: word.text,
-            style: style.toTextStyle(currentAppState.renderSettings, 1)));
+            style: style.toTextStyle(currentAppState.renderSettings)));
       }
       List<Widget> children = [];
-      if (linestyle.icon.isNotEmpty) {
-        final iconstyle = renderer.getIconStyle(
-            1, linestyle.iconcolor, currentAppState.renderSettings.background);
-        children.add(SelectionContainer.disabled(
-            child: Text(linestyle.icon, style: iconstyle)));
-      }
       linedata.add(TextSpan(text: '\r'));
       children.add(
           Text.rich(overflow: TextOverflow.clip, TextSpan(children: linedata)));
 
       list.add(SizedBox(
-          width: 372,
+          width: 364,
           child: Flex(direction: Axis.horizontal, children: children)));
     }
     return Container(
         color: currentAppState!.renderSettings.background,
         margin: EdgeInsets.fromLTRB(0, 2, 0, 2),
+        padding: EdgeInsets.fromLTRB(4, 0, 4, 0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: list,
@@ -186,7 +181,7 @@ class OverviewState extends State<Overview> {
             opacity: opacity,
             child: SizedBox(
                 width: 600,
-                height: large ? 134 : 89,
+                height: large ? 136 : 91,
                 child: GestureDetector(
                     onTap: onTap,
                     child: Align(
@@ -196,7 +191,7 @@ class OverviewState extends State<Overview> {
                         color: bgcolor,
                         child: SizedBox(
                           width: 440,
-                          height: 64,
+                          height: 66,
                           child: child,
                         ),
                       ),

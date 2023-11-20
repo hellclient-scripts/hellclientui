@@ -28,13 +28,32 @@ class GameTopState extends State<GameTop> {
   }
 
   Widget buildHeader(BuildContext context) {
-    return Row(children: [
-      IconButton(
-          onPressed: () {
+    return SizedBox(
+        height: 28,
+        child: Row(children: [
+          buildIconButton(context, Icon(Icons.home), () {
             currentGame?.handleCmd("change", "");
-          },
-          icon: Icon(Icons.home))
-    ]);
+          }, Colors.white, Colors.green),
+        ]));
+  }
+
+  Widget buildIconButton(BuildContext context, Widget icon,
+      void Function() onPressed, Color color, Color background) {
+    return IconButton(
+        style: ButtonStyle(
+          padding: MaterialStatePropertyAll<EdgeInsets>(EdgeInsets.all(0)),
+          // fixedSize: MaterialStatePropertyAll<Size>(Size(32, 32)),
+          shape: MaterialStatePropertyAll<OutlinedBorder>(
+              RoundedRectangleBorder(
+                  borderRadius: BorderRadius.all(Radius.circular(4)),
+                  side: BorderSide.none)),
+          backgroundColor: MaterialStatePropertyAll<Color>(background),
+          iconColor: MaterialStatePropertyAll<Color>(color),
+        ),
+        iconSize: 16,
+        splashRadius: 3,
+        onPressed: onPressed,
+        icon: icon);
   }
 
   Widget buildToolbar(BuildContext context) {
@@ -43,17 +62,13 @@ class GameTopState extends State<GameTop> {
       return Container();
     }
     final connectBtn = client.running
-        ? IconButton(
-            onPressed: () {
-              currentGame?.handleCmd("disconnect", currentGame?.current);
-            },
-            icon: Icon(Icons.stop))
-        : IconButton(
-            onPressed: () {
-              currentGame?.handleCmd("connect", currentGame?.current);
-            },
-            icon: Icon(Icons.play_arrow));
-    return Row(children: [connectBtn]);
+        ? buildIconButton(context, Icon(Icons.stop), () {
+            currentGame?.handleCmd("disconnect", currentGame?.current);
+          }, Colors.white, Color(0xffE6A23C))
+        : buildIconButton(context, Icon(Icons.play_arrow), () {
+            currentGame?.handleCmd("connect", currentGame?.current);
+          }, Colors.white, Color(0xff67C23A));
+    return SizedBox(height: 28, child: Row(children: [connectBtn]));
   }
 
   Widget buildGames(BuildContext context) {
@@ -91,11 +106,14 @@ class GameTopState extends State<GameTop> {
             scrollDirection: Axis.horizontal,
             child: buildHeader(context),
           ),
+          const Divider(height: 1, color: Color(0xffE4E7ED)),
           SingleChildScrollView(
               scrollDirection: Axis.horizontal, child: buildGames(context)),
+          const Divider(height: 1, color: Color(0xffE4E7ED)),
           SingleChildScrollView(
             scrollDirection: Axis.horizontal,
-            child: buildToolbar(context),
+            child: Padding(
+                padding: EdgeInsets.all(2), child: buildToolbar(context)),
           )
         ]));
   }

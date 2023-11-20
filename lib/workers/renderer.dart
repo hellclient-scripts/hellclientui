@@ -43,17 +43,17 @@ class WordStyle {
   bool underlined = false;
   bool blinking = false;
   double fontSize = 0;
-  TextStyle toTextStyle(RenderSettings settings, double devicePixelRatio) {
+  TextStyle toTextStyle(RenderSettings settings) {
     var style = TextStyle(
       fontFamily: settings.fontFamily,
       color: color,
       backgroundColor: background,
       fontSize: fontSize,
-      letterSpacing: settings.letterSpacing / devicePixelRatio,
+      height: settings.lineheight / fontSize,
       fontWeight: bold ? FontWeight.bold : FontWeight.normal,
       decoration: underlined ? TextDecoration.underline : TextDecoration.none,
       fontStyle: blinking ? FontStyle.italic : FontStyle.normal,
-      // fontFeatures: [ui.FontFeature.tabularFigures()],
+      fontFeatures: [ui.FontFeature.tabularFigures()],
     );
     return style;
   }
@@ -223,7 +223,6 @@ class Renderer {
       fontWeight: FontWeight.normal,
       decoration: TextDecoration.none,
       fontStyle: FontStyle.normal,
-      letterSpacing: renderSettings.letterSpacing * devicePixelRatio,
       fontFeatures: [ui.FontFeature.tabularFigures()],
     );
     return textstyle;
@@ -245,8 +244,8 @@ class Renderer {
             bcolor!);
       }
       for (final word in line.words) {
-        final textStyle = getWordStyle(word, linestyle.color, bcolor!)
-            .toTextStyle(settings, devicePixelRatio);
+        final textStyle =
+            getWordStyle(word, linestyle.color, bcolor!).toTextStyle(settings);
         for (final char in word.text.characters) {
           if (char == "\n" && nocr) {
             continue;
