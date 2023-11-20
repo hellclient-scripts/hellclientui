@@ -33,23 +33,30 @@ class GameTopState extends State<GameTop> {
         child: Row(children: [
           buildIconButton(context, Icon(Icons.home), () {
             currentGame?.handleCmd("change", "");
-          }, Colors.white, Colors.green),
+          }, "游戏一览", Colors.white, Colors.green),
         ]));
   }
 
-  Widget buildIconButton(BuildContext context, Widget icon,
-      void Function() onPressed, Color color, Color background) {
+  Widget buildIconButton(
+      BuildContext context,
+      Widget icon,
+      void Function() onPressed,
+      String? tooltip,
+      Color color,
+      Color background) {
     return IconButton(
         style: ButtonStyle(
-          padding: MaterialStatePropertyAll<EdgeInsets>(EdgeInsets.all(0)),
+          padding:
+              const MaterialStatePropertyAll<EdgeInsets>(EdgeInsets.all(0)),
           // fixedSize: MaterialStatePropertyAll<Size>(Size(32, 32)),
-          shape: MaterialStatePropertyAll<OutlinedBorder>(
+          shape: const MaterialStatePropertyAll<OutlinedBorder>(
               RoundedRectangleBorder(
                   borderRadius: BorderRadius.all(Radius.circular(4)),
                   side: BorderSide.none)),
           backgroundColor: MaterialStatePropertyAll<Color>(background),
           iconColor: MaterialStatePropertyAll<Color>(color),
         ),
+        tooltip: tooltip,
         iconSize: 16,
         splashRadius: 3,
         onPressed: onPressed,
@@ -62,12 +69,12 @@ class GameTopState extends State<GameTop> {
       return Container();
     }
     final connectBtn = client.running
-        ? buildIconButton(context, Icon(Icons.stop), () {
+        ? buildIconButton(context, const Icon(Icons.stop), () {
             currentGame?.handleCmd("disconnect", currentGame?.current);
-          }, Colors.white, Color(0xffE6A23C))
-        : buildIconButton(context, Icon(Icons.play_arrow), () {
+          }, "断线", Colors.white, Color(0xffE6A23C))
+        : buildIconButton(context, const Icon(Icons.play_arrow), () {
             currentGame?.handleCmd("connect", currentGame?.current);
-          }, Colors.white, Color(0xff67C23A));
+          }, "连接", Colors.white, const Color(0xff67C23A));
     return SizedBox(height: 28, child: Row(children: [connectBtn]));
   }
 
@@ -78,43 +85,81 @@ class GameTopState extends State<GameTop> {
     }
     List<Widget> games = [];
     for (var clientinfo in currentGame!.clientinfos.clientInfos) {
+      bool isCurrent = currentGame!.current == clientinfo.id;
       games.add(TextButton(
+          style: ButtonStyle(
+            backgroundColor: MaterialStatePropertyAll<Color>(
+                isCurrent ? const Color(0xffecf5ff) : Colors.white),
+          ),
           onPressed: () {
             currentGame!.handleCmd('change', clientinfo.id);
           },
           child: Row(children: [
-            Icon(clientinfo.running ? Icons.play_arrow_outlined : Icons.pause),
+            Icon(
+                color: isCurrent
+                    ? const Color(0xff409EFF)
+                    : const Color(0xff303133),
+                size: 14,
+                clientinfo.running ? Icons.play_arrow_outlined : Icons.pause),
             Text(
               clientinfo.id,
-              style: currentGame!.current == clientinfo.id
-                  ? TextStyle(decoration: TextDecoration.underline)
-                  : null,
-            ),
+              style: isCurrent
+                  ? const TextStyle(
+                      decoration: TextDecoration.underline,
+                      color: Color(0xff409EFF),
+                      fontWeight: FontWeight.bold,
+                    )
+                  : const TextStyle(
+                      color: Color(0xff303133),
+                    ),
+            )
           ])));
     }
-    return Row(crossAxisAlignment: CrossAxisAlignment.start, children: games);
+    return SizedBox(
+        height: 36,
+        child:
+            Row(crossAxisAlignment: CrossAxisAlignment.start, children: games));
   }
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-        decoration: BoxDecoration(color: Colors.white),
-        alignment: Alignment.centerLeft,
-        width: double.infinity,
-        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            child: buildHeader(context),
-          ),
-          const Divider(height: 1, color: Color(0xffE4E7ED)),
+    return LayoutBuilder(builder: (context, constraints) {
+      final large = constraints.maxWidth >= 1121;
+      double height = 29;
+      final List<Widget> children = [
+        SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
+          child: buildHeader(context),
+        ),
+        const Divider(height: 1, color: Color(0xffE4E7ED)),
+      ];
+      final client = currentGame?.currentClient;
+      if (client != null) {
+        children.add(
           SingleChildScrollView(
               scrollDirection: Axis.horizontal, child: buildGames(context)),
-          const Divider(height: 1, color: Color(0xffE4E7ED)),
-          SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            child: Padding(
-                padding: EdgeInsets.all(2), child: buildToolbar(context)),
-          )
-        ]));
+        );
+        children.add(const Divider(height: 1, color: Color(0xffE4E7ED)));
+        children.add(SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
+          child:
+              Padding(padding: EdgeInsets.all(2), child: buildToolbar(context)),
+        ));
+        height += 69;
+      }
+
+      Widget body = Container(
+          decoration: BoxDecoration(color: Colors.white),
+          alignment: Alignment.centerLeft,
+          child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: children));
+      if (constraints.maxWidth <= 640) {
+        body = FittedBox(
+            fit: BoxFit.fitWidth,
+            child: SizedBox(width: 640, height: height, child: body));
+      }
+      return body;
+    });
   }
 }
