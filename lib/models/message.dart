@@ -71,6 +71,7 @@ class ClientInfo {
     hostPort = json["HostPort"];
     running = json["Running"];
     priority = json["Priority"];
+    scriptID = json["ScriptID"];
     lastActive = json["LastActive"];
     if (json['Summary'] != null) {
       final lines = Lines.fromJson(json['Summary']);

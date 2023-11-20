@@ -145,9 +145,11 @@ class Game {
         break;
       case "clients":
         await onCmdClients(data);
+        commandStream.add(GameCommand(command: command, data: data));
         break;
       case "current":
         await onCmdCurrent(data);
+        commandStream.add(GameCommand(command: command, data: data));
         break;
       case "connected":
         await onCmdConnected(data);

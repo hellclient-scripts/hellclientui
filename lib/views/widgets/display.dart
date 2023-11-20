@@ -8,6 +8,8 @@ import 'package:web_socket_channel/io.dart';
 import '../../models/message.dart';
 import 'alllines.dart';
 import 'gametop.dart';
+import 'overview.dart';
+
 import 'dart:convert';
 import 'dart:async';
 
@@ -110,7 +112,11 @@ class DisplayState extends State<Display> {
 
     subCommand = currentGame!.commandStream.stream.listen((event) {
       if (event is GameCommand) {
-        switch (event.command) {}
+        switch (event.command) {
+          case "current":
+            setState(() {});
+            break;
+        }
       }
     });
   }
@@ -124,7 +130,6 @@ class DisplayState extends State<Display> {
 
   Widget buildOutput(BuildContext context) {
     var appState = context.watch<AppState>();
-
     return Positioned(
         height: appState.renderSettings.height,
         bottom: 0,
@@ -165,65 +170,80 @@ class DisplayState extends State<Display> {
         }))));
   }
 
-  @override
-  build(BuildContext context) {
-    var appState = context.watch<AppState>();
+  Widget buildBottom(BuildContext context) {
     var inputController = TextEditingController();
     var focusNode = FocusNode();
 
-    return Container(
-        decoration: BoxDecoration(color: appState.renderSettings.background),
-        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          GameTop(),
+    return SizedBox(
+      height: 30,
+      child: material.Row(
+        children: [
+          const SizedBox(
+            width: 80,
+            child: Text("test"),
+          ),
           Expanded(
-              child: Stack(children: [
-            buildOutput(context),
-          ])),
-          SizedBox(
-            height: 30,
-            child: material.Row(
-              children: [
-                const SizedBox(
-                  width: 80,
-                  child: Text("test"),
-                ),
-                Expanded(
-                    child: SingleChildScrollView(
-                        scrollDirection: Axis.vertical,
-                        child: TextField(
-                          controller: inputController,
-                          textInputAction: TextInputAction.next,
-                          focusNode: focusNode,
-                          maxLines: 1,
-                          autofocus: true,
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: appState.renderSettings.fontSize,
-                          ),
-                          decoration: (const InputDecoration(
-                              isDense: true, // Added this
-                              contentPadding: EdgeInsets.all(8), // Added this
-                              hintText: "输入指令",
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.zero,
-                                gapPadding: 0,
-                              ))),
-                          onSubmitted: (value) {
-                            currentGame?.handleSend(value);
-                            focusNode.requestFocus();
-                            inputController.selection = TextSelection(
-                                baseOffset: 0,
-                                extentOffset:
-                                    inputController.value.text.length);
-                          },
+              child: SingleChildScrollView(
+                  scrollDirection: Axis.vertical,
+                  child: TextField(
+                    controller: inputController,
+                    textInputAction: TextInputAction.next,
+                    focusNode: focusNode,
+                    maxLines: 1,
+                    autofocus: true,
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: currentAppState.renderSettings.fontSize,
+                    ),
+                    decoration: (const InputDecoration(
+                        isDense: true, // Added this
+                        contentPadding: EdgeInsets.all(8), // Added this
+                        hintText: "输入指令",
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.zero,
+                          gapPadding: 0,
                         ))),
-                SizedBox(
-                  width: 80,
-                  child: Text("test2"),
-                ),
-              ],
-            ),
-          )
-        ]));
+                    onSubmitted: (value) {
+                      currentGame?.handleSend(value);
+                      focusNode.requestFocus();
+                      inputController.selection = TextSelection(
+                          baseOffset: 0,
+                          extentOffset: inputController.value.text.length);
+                    },
+                  ))),
+          SizedBox(
+            width: 80,
+            child: Text("test2"),
+          ),
+        ],
+      ),
+    );
+  }
+
+  @override
+  build(BuildContext context) {
+    var appState = context.watch<AppState>();
+    final List<Widget> children = [
+      GameTop(),
+    ];
+    if (currentGame!.current.isNotEmpty) {
+      children.add(
+        Expanded(
+            child: Stack(children: [
+          buildOutput(context),
+        ])),
+      );
+      children.add(buildBottom(context));
+    } else {
+      if (currentGame?.current == "") {
+        children.add(Expanded(child: Overview()));
+      }
+    }
+    Widget body = Container(
+        decoration: BoxDecoration(color: appState.renderSettings.background),
+        child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start, children: children));
+
+    return body;
   }
 }

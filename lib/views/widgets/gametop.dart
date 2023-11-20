@@ -27,6 +27,16 @@ class GameTopState extends State<GameTop> {
     super.dispose();
   }
 
+  Widget buildHeader(BuildContext context) {
+    return Row(children: [
+      IconButton(
+          onPressed: () {
+            currentGame?.handleCmd("change", "");
+          },
+          icon: Icon(Icons.home))
+    ]);
+  }
+
   Widget buildToolbar(BuildContext context) {
     final client = currentGame?.currentClient;
     if (client == null) {
@@ -46,8 +56,11 @@ class GameTopState extends State<GameTop> {
     return Row(children: [connectBtn]);
   }
 
-  @override
-  Widget build(BuildContext context) {
+  Widget buildGames(BuildContext context) {
+    final client = currentGame?.currentClient;
+    if (client == null) {
+      return Container();
+    }
     List<Widget> games = [];
     for (var clientinfo in currentGame!.clientinfos.clientInfos) {
       games.add(TextButton(
@@ -64,17 +77,22 @@ class GameTopState extends State<GameTop> {
             ),
           ])));
     }
+    return Row(crossAxisAlignment: CrossAxisAlignment.start, children: games);
+  }
 
+  @override
+  Widget build(BuildContext context) {
     return Container(
         decoration: BoxDecoration(color: Colors.white),
         alignment: Alignment.centerLeft,
         width: double.infinity,
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
           SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: games)),
+            scrollDirection: Axis.horizontal,
+            child: buildHeader(context),
+          ),
+          SingleChildScrollView(
+              scrollDirection: Axis.horizontal, child: buildGames(context)),
           SingleChildScrollView(
             scrollDirection: Axis.horizontal,
             child: buildToolbar(context),
