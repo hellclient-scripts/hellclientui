@@ -146,13 +146,15 @@ class Row {
 }
 
 class Renderer {
-  Renderer({
-    required this.renderSettings,
-    required this.maxLines,
-    required this.devicePixelRatio,
-    required this.background,
-  });
+  Renderer(
+      {required this.renderSettings,
+      required this.maxLines,
+      required this.devicePixelRatio,
+      required this.background,
+      this.noSortLines});
+  bool? noSortLines;
   final Color background;
+
   late ui.Picture current;
   int maxLines;
   Repaint repaint = Repaint();
@@ -190,7 +192,9 @@ class Renderer {
         return;
       }
       resetFrame();
-      rows.sort(Row.compare);
+      if (noSortLines != true) {
+        rows.sort(Row.compare);
+      }
       if (rows.length > maxLines) {
         rows = rows.sublist(rows.length - maxLines);
       }

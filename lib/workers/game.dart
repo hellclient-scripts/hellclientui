@@ -49,10 +49,12 @@ class Game {
         devicePixelRatio: appState.devicePixelRatio,
         background: settings.background));
     game.hud = RenderPainter.create(Renderer(
-        renderSettings: settings,
-        maxLines: 0,
-        devicePixelRatio: appState.devicePixelRatio,
-        background: settings.hudbackground));
+      renderSettings: settings,
+      maxLines: 0,
+      devicePixelRatio: appState.devicePixelRatio,
+      background: settings.hudbackground,
+      noSortLines: true,
+    ));
 
     appState.connecting.listen();
     game.subscription =
@@ -217,6 +219,9 @@ class Game {
         break;
       case 'hudcontent':
         await onCmdHudContent(data);
+        break;
+      case 'hudupdate':
+        await onCmdHudUpdate(data);
         break;
     }
   }
