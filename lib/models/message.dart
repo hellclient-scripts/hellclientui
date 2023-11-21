@@ -1,5 +1,3 @@
-import 'package:flutter/foundation.dart';
-
 class Word {
   String text = "";
   String color = "";
@@ -87,4 +85,17 @@ class ClientInfos {
       : clientInfos = List<dynamic>.from(json)
             .map((e) => ClientInfo.fromJson(e))
             .toList();
+}
+
+class DiffLines {
+  DiffLines();
+  int start = 0;
+  List<Line> content = [];
+  DiffLines.fromJson(Map<String, dynamic> json) {
+    start = json['Start'];
+    if (json["Content"] != null) {
+      final lines = Lines.fromJson(json['Content']);
+      content = lines.lines;
+    }
+  }
 }

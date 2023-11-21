@@ -5,6 +5,8 @@ import '../../workers/game.dart';
 import '../../models/message.dart';
 
 class Overview extends StatefulWidget {
+  const Overview({super.key});
+  @override
   State<Overview> createState() => OverviewState();
 }
 
@@ -81,7 +83,7 @@ class OverviewState extends State<Overview> {
             style: style.toTextStyle(currentAppState.renderSettings)));
       }
       List<Widget> children = [];
-      linedata.add(TextSpan(text: '\r'));
+      linedata.add(const TextSpan(text: '\r'));
       children.add(
           Text.rich(overflow: TextOverflow.clip, TextSpan(children: linedata)));
 
@@ -90,9 +92,9 @@ class OverviewState extends State<Overview> {
           child: Flex(direction: Axis.horizontal, children: children)));
     }
     return Container(
-        color: currentAppState!.renderSettings.background,
-        margin: EdgeInsets.fromLTRB(0, 2, 0, 2),
-        padding: EdgeInsets.fromLTRB(4, 0, 4, 0),
+        color: currentAppState.renderSettings.background,
+        margin: const EdgeInsets.fromLTRB(0, 2, 0, 2),
+        padding: const EdgeInsets.fromLTRB(4, 0, 4, 0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: list,
@@ -226,10 +228,10 @@ class OverviewState extends State<Overview> {
       late Color bgcolor;
       switch (info.priority) {
         case 1:
-          bgcolor = Color(0xffffdba5);
+          bgcolor = const Color(0xffffdba5);
           break;
         case 2:
-          bgcolor = Color(0xfffbc4c4);
+          bgcolor = const Color(0xfffbc4c4);
         default:
           bgcolor = Colors.white;
       }
@@ -257,17 +259,17 @@ class OverviewState extends State<Overview> {
         () {},
         1,
         large));
-    final _scrollController = ScrollController();
+    final scrollController = ScrollController();
     return Expanded(
         child: RawScrollbar(
-            controller: _scrollController,
+            controller: scrollController,
             thumbColor: Colors.white,
             child: Padding(
-                padding: EdgeInsets.fromLTRB(5, 20, 5, 20),
+                padding: const EdgeInsets.fromLTRB(5, 20, 5, 20),
                 child: Align(
                     alignment: Alignment.topCenter,
                     child: SingleChildScrollView(
-                        controller: _scrollController,
+                        controller: scrollController,
                         child: Wrap(
                             crossAxisAlignment: WrapCrossAlignment.start,
                             direction: Axis.horizontal,
@@ -284,18 +286,10 @@ class OverviewState extends State<Overview> {
       }
       children.add(buildButtons(context, large));
       Widget body = Container(
-          padding: EdgeInsets.fromLTRB(0, 10, 0, 0),
+          padding: const EdgeInsets.fromLTRB(0, 10, 0, 0),
           child: Column(
             children: children,
           ));
-      if (constraints.maxWidth <= 640) {
-        body = FittedBox(
-            fit: BoxFit.fitWidth,
-            child: SizedBox(
-                width: 640,
-                height: constraints.maxHeight / constraints.maxWidth * 640,
-                child: body));
-      }
       return body;
     });
   }

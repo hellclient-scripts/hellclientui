@@ -4,7 +4,7 @@ import 'dart:io';
 class Notification extends StatelessWidget {
   const Notification({super.key});
   Widget buildTpush(BuildContext context) {
-    return Center();
+    return const Center();
   }
 
   @override
@@ -12,6 +12,8 @@ class Notification extends StatelessWidget {
     late Widget body;
     if (Platform.isAndroid) {
       body = buildTpush(context);
+    } else {
+      body = const Center();
     }
     return Scaffold(
         appBar: AppBar(

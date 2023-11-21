@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:hellclientui/states/appstate.dart';
+import '..//widgets/fullscreen.dart';
 import 'dart:async';
 import '../widgets/display.dart';
 import '../../workers/game.dart' as gameengine;
@@ -52,9 +53,12 @@ class GameState extends State<Game> {
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         // Here we take the value from the MyHomePage object that was created by
         // the App.build method, and use it to set our appbar title.
-        title: Text("服务器 " + (server.name.isEmpty ? server.host : server.name)),
+        title: Text(server.name.isEmpty ? server.host : server.name),
       ),
-      body: Display(),
+      body: const Fullscreen(
+        minWidth: 640,
+        child: Display(),
+      ),
     );
   }
 }

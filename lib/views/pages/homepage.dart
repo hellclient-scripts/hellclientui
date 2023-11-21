@@ -17,7 +17,7 @@ class HomePage extends StatelessWidget {
         child = ServerList(servers: appState.config.servers);
         break;
       case 1:
-        child = noti.Notification();
+        child = const noti.Notification();
         break;
       default:
         child = Center(

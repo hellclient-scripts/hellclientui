@@ -1,10 +1,7 @@
 import 'package:hellclientui/models/server.dart';
-import 'package:flutter/material.dart';
 import '../models/rendersettings.dart';
 import '../states/appstate.dart';
 
-import 'package:web_socket_channel/io.dart';
-import 'package:web_socket_channel/web_socket_channel.dart';
 import 'dart:convert';
 import 'dart:async';
 
@@ -27,10 +24,14 @@ class Game {
   late Connecting connecting;
   late Server server;
   late RenderPainter output;
+  late RenderPainter prompt;
+  late RenderPainter hud;
+  List<Line> hudContent = [];
   ClientInfos clientinfos = ClientInfos();
   StreamSubscription? subscription;
   final commandStream = StreamController.broadcast();
   final clientsUpdateStream = StreamController.broadcast();
+  final hudUpdateStream = StreamController.broadcast();
   static Game create() {
     var game = Game();
     final appState = currentAppState;
@@ -40,7 +41,19 @@ class Game {
     game.output = RenderPainter.create(Renderer(
         renderSettings: settings,
         maxLines: settings.maxLines,
-        devicePixelRatio: appState.devicePixelRatio));
+        devicePixelRatio: appState.devicePixelRatio,
+        background: settings.background));
+    game.prompt = RenderPainter.create(Renderer(
+        renderSettings: settings,
+        maxLines: 1,
+        devicePixelRatio: appState.devicePixelRatio,
+        background: settings.background));
+    game.hud = RenderPainter.create(Renderer(
+        renderSettings: settings,
+        maxLines: 0,
+        devicePixelRatio: appState.devicePixelRatio,
+        background: settings.hudbackground));
+
     appState.connecting.listen();
     game.subscription =
         appState.connecting.messageStream.stream.listen((event) async {
@@ -62,6 +75,48 @@ class Game {
     final line = Line.fromJson(jsondata);
     await output.renderer.drawLine(line);
     output.renderer.draw();
+  }
+
+  Future<void> onCmdPrompt(String data) async {
+    final Map<String, dynamic> jsondata = json.decode(data);
+    final line = Line.fromJson(jsondata);
+    prompt.renderer.reset();
+    await prompt.renderer.renderline(
+        renderSettings, line, true, true, renderSettings.background);
+    prompt.renderer.draw();
+  }
+
+  void drawHud() async {
+    hud.renderer.maxLines = hudContent.length;
+    hud.renderer.reset();
+    for (final line in hudContent) {
+      await hud.renderer.renderline(
+          renderSettings, line, true, true, renderSettings.hudbackground);
+    }
+    hud.renderer.draw();
+    hudUpdateStream.add(null);
+  }
+
+  Future<void> onCmdHudContent(String data) async {
+    final dynamic jsondata = json.decode(data);
+    final lines = Lines.fromJson(jsondata);
+    hudContent = lines.lines;
+    drawHud();
+  }
+
+  Future<void> onCmdHudUpdate(String data) async {
+    final dynamic jsondata = json.decode(data);
+    final diffllines = DiffLines.fromJson(jsondata);
+    var start = diffllines.start;
+    for (final line in diffllines.content) {
+      if (hudContent.length > start) {
+        hudContent[start] = line;
+      } else {
+        hudContent.add(line);
+      }
+      start++;
+    }
+    drawHud();
   }
 
   Future<void> onCmdLines(String data) async {
@@ -157,6 +212,12 @@ class Game {
       case "disconnected":
         await onCmdDisconnected(data);
         break;
+      case 'prompt':
+        await onCmdPrompt(data);
+        break;
+      case 'hudcontent':
+        await onCmdHudContent(data);
+        break;
     }
   }
 
@@ -179,7 +240,7 @@ class Game {
 
   void handleSend(String cmd) {
     if (connecting.channel != null) {
-      connecting.channel!.sink.add("send " + json.encode(cmd));
+      connecting.channel!.sink.add('send ${json.encode(cmd)}');
     }
   }
 
@@ -188,7 +249,7 @@ class Game {
       if (data == null) {
         connecting.channel!.sink.add(cmd);
       } else {
-        connecting.channel!.sink.add(cmd + " " + json.encode(data));
+        connecting.channel!.sink.add('$cmd ${json.encode(data)}');
       }
     }
   }

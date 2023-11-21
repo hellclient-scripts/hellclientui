@@ -56,10 +56,10 @@ class MyApp extends StatelessWidget {
           locale: const Locale("zh", "CN"),
           initialRoute: "/",
           routes: {
-            "/": (context) => HomePage(),
+            "/": (context) => const HomePage(),
             "/create": (context) => CreatePage(),
             "/update": (context) => UpdatePage(),
-            "/game": (context) => Game(),
+            "/game": (context) => const Game(),
           }),
     );
   }

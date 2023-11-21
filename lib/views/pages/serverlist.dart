@@ -66,7 +66,7 @@ class ServerList extends StatelessWidget {
           leading: Tooltip(
               message: "连接服务器",
               child: IconButton(
-                icon: Icon(Icons.cast_connected_outlined),
+                icon: const Icon(Icons.cast_connected_outlined),
                 onPressed: () async {
                   appState.currentServer = server;
                   try {

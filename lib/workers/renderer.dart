@@ -20,6 +20,7 @@ class RenderPainter extends CustomPainter {
     canvas.drawPicture(renderer.current);
   }
 
+  @override
   bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
 }
 
@@ -53,7 +54,7 @@ class WordStyle {
       fontWeight: bold ? FontWeight.bold : FontWeight.normal,
       decoration: underlined ? TextDecoration.underline : TextDecoration.none,
       fontStyle: blinking ? FontStyle.italic : FontStyle.normal,
-      fontFeatures: [ui.FontFeature.tabularFigures()],
+      fontFeatures: const [ui.FontFeature.tabularFigures()],
     );
     return style;
   }
@@ -67,15 +68,15 @@ class RenderingLine {
   late RenderSettings settings;
   late Canvas canvas;
   late ui.PictureRecorder recorder;
-  static RenderingLine create(
-      Line raw, RenderSettings settings, double devicePixelRatio) {
+  static RenderingLine create(Line raw, RenderSettings settings,
+      double devicePixelRatio, Color background) {
     var line = RenderingLine();
     line.id = raw.id;
     line.devicePixelRatio = devicePixelRatio;
     line.recorder = ui.PictureRecorder();
     line.canvas = Canvas(line.recorder);
     var paint = Paint();
-    paint.color = settings.background;
+    paint.color = background;
     line.canvas.drawRect(
         Rect.fromLTWH(0, 0, settings.width * devicePixelRatio,
             settings.lineheight * devicePixelRatio),
@@ -145,10 +146,13 @@ class Row {
 }
 
 class Renderer {
-  Renderer(
-      {required this.renderSettings,
-      required this.maxLines,
-      required this.devicePixelRatio});
+  Renderer({
+    required this.renderSettings,
+    required this.maxLines,
+    required this.devicePixelRatio,
+    required this.background,
+  });
+  final Color background;
   late ui.Picture current;
   int maxLines;
   Repaint repaint = Repaint();
@@ -169,6 +173,7 @@ class Renderer {
   late Rect rect =
       Rect.fromLTWH(0, 0, renderSettings.width, renderSettings.lineheight);
   void resetFrame() {
+    paint.color = background;
     pictureRecorder = ui.PictureRecorder();
     canvas = Canvas(pictureRecorder);
     canvas.drawRect(rect, paint);
@@ -195,7 +200,7 @@ class Renderer {
             row.image,
             Offset(
                 0,
-                devicePixelRatio * renderSettings.height -
+                devicePixelRatio * renderSettings.lineheight * maxLines -
                     (maxLines - index) *
                         devicePixelRatio *
                         renderSettings.lineheight),
@@ -223,7 +228,7 @@ class Renderer {
       fontWeight: FontWeight.normal,
       decoration: TextDecoration.none,
       fontStyle: FontStyle.normal,
-      fontFeatures: [ui.FontFeature.tabularFigures()],
+      fontFeatures: const [ui.FontFeature.tabularFigures()],
     );
     return textstyle;
   }
@@ -231,11 +236,10 @@ class Renderer {
   Future<void> renderline(RenderSettings settings, Line line, bool withouticon,
       bool nocr, Color? bcolor) async {
     await lock.synchronized(() async {
-      if (bcolor == null) {
-        bcolor = renderSettings.background;
-      }
+      bcolor ??= background;
       var linestyle = getLineStyle(line);
-      var rendering = RenderingLine.create(line, settings, devicePixelRatio);
+      var rendering =
+          RenderingLine.create(line, settings, devicePixelRatio, background);
       var index = 0;
       if (!withouticon) {
         rendering.drawicon(
@@ -244,8 +248,9 @@ class Renderer {
             bcolor!);
       }
       for (final word in line.words) {
-        final textStyle =
-            getWordStyle(word, linestyle.color, bcolor!).toTextStyle(settings);
+        final textStyle = getWordStyle(word,
+                withouticon ? renderSettings.color : linestyle.color, bcolor!)
+            .toTextStyle(settings);
         for (final char in word.text.characters) {
           if (char == "\n" && nocr) {
             continue;
@@ -253,17 +258,17 @@ class Renderer {
           if (char == "\n" || rendering.addText(char, textStyle)) {
             index++;
             rows.add(await rendering.toRow());
-            updated = true;
-            rendering = RenderingLine.create(line, settings, devicePixelRatio);
+            rendering = RenderingLine.create(
+                line, settings, devicePixelRatio, background);
             rendering.index = index;
           }
         }
       }
       if (rendering.position > 0) {
         rows.add(await rendering.toRow());
-        updated = true;
       }
     });
+    updated = true;
   }
 
   LineStyle getLineStyle(Line line) {

@@ -1,16 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/material.dart' as material;
 
-import 'package:flutter/rendering.dart';
 import 'package:hellclientui/states/appstate.dart';
 import 'package:hellclientui/workers/game.dart';
-import 'package:hellclientui/workers/renderer.dart';
-import 'package:path/path.dart';
 import '../../models/message.dart';
 import 'dart:async';
 import 'dart:convert';
 
 class AllLines extends StatefulWidget {
+  const AllLines({super.key});
   @override
   State<AllLines> createState() => AllLinesState();
 }
@@ -78,14 +76,14 @@ class AllLinesState extends State<AllLines> {
       }
     }
 
-    final ScrollController _scrollController = ScrollController();
-    final ScrollController _scrollController2 = ScrollController();
+    final ScrollController scrollController = ScrollController();
+    final ScrollController scrollController2 = ScrollController();
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Container(
+        const SizedBox(
           height: 72,
-          child: (Text('历史输出')),
+          child: Text('历史输出'),
         ),
         Expanded(
             child: Container(
@@ -96,21 +94,21 @@ class AllLinesState extends State<AllLines> {
                   return RawScrollbar(
                       thumbColor: Colors.white,
                       thumbVisibility: true,
-                      controller: _scrollController2,
+                      controller: scrollController2,
                       scrollbarOrientation: ScrollbarOrientation.bottom,
                       child: RawScrollbar(
                           thumbColor: Colors.white,
                           thumbVisibility: true,
-                          controller: _scrollController,
+                          controller: scrollController,
                           child: SizedBox(
                               height: constraints.maxHeight,
                               width: constraints.maxWidth,
                               child: SingleChildScrollView(
-                                  controller: _scrollController,
+                                  controller: scrollController,
                                   reverse: true,
                                   child: SingleChildScrollView(
                                       scrollDirection: Axis.horizontal,
-                                      controller: _scrollController2,
+                                      controller: scrollController2,
                                       child: SizedBox(
                                           width:
                                               renderer.renderSettings.linewidth,

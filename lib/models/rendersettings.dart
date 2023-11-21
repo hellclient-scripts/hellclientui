@@ -139,6 +139,7 @@ class RenderSettings {
   late double linewidth = 80 * fontSize;
   int minChars = 40;
   var background = Colors.black;
+  var hudbackground = const Color(0xff333333);
   var color = const Color(0xffffffff);
   var black = const Color.fromARGB(255, 0, 0, 0);
   var red = const Color.fromARGB(255, 191, 0, 0);

@@ -2,9 +2,7 @@ import 'dart:convert';
 import 'dart:async';
 
 import 'server.dart';
-import 'package:web_socket_channel/web_socket_channel.dart';
 import 'package:web_socket_channel/io.dart';
-import 'package:flutter/material.dart';
 
 class Connecting {
   Connecting();
@@ -33,7 +31,7 @@ class Connecting {
       scheme = 'ws';
     }
     if (server.username.isNotEmpty) {
-      auth = server.username + ":" + server.password;
+      auth = '${server.username}:${server.password}';
     } else {
       auth = "";
     }
@@ -45,7 +43,7 @@ class Connecting {
         path: "/ws");
     final Map<String, dynamic> headers = {};
     if (auth.isNotEmpty) {
-      headers['Authorization'] = 'Basic ' + base64.encode(utf8.encode(auth));
+      headers['Authorization'] = 'Basic ${base64.encode(utf8.encode(auth))}';
     }
     final wschannel = IOWebSocketChannel.connect(serveruri, headers: headers);
     await wschannel.ready;

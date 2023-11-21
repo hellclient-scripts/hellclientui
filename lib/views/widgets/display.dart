@@ -5,12 +5,10 @@ import 'package:provider/provider.dart';
 import '../../workers/renderer.dart';
 import '../../workers/game.dart';
 import 'package:web_socket_channel/io.dart';
-import '../../models/message.dart';
 import 'alllines.dart';
 import 'gametop.dart';
 import 'overview.dart';
-
-import 'dart:convert';
+import 'hud.dart';
 import 'dart:async';
 
 Future<bool?> showAllLines(BuildContext context) async {
@@ -23,7 +21,7 @@ Future<bool?> showAllLines(BuildContext context) async {
         return Material(
             type: MaterialType.transparency,
             child: Flex(direction: Axis.horizontal, children: [
-              Expanded(
+              const Expanded(
                 flex: 1,
                 child: Center(),
               ),
@@ -31,8 +29,8 @@ Future<bool?> showAllLines(BuildContext context) async {
                   flex: 9,
                   child: Container(
                       height: double.infinity,
-                      decoration: BoxDecoration(color: Colors.white),
-                      child: AllLines())),
+                      decoration: const BoxDecoration(color: Colors.white),
+                      child: const AllLines())),
             ]));
       });
 }
@@ -144,7 +142,7 @@ class DisplayState extends State<Display> {
 
           Widget output = Transform.scale(
               scale: 1 / appState.devicePixelRatio,
-              alignment: Alignment.bottomLeft,
+              alignment: Alignment.topLeft,
               child: CustomPaint(
                 size: Size(
                     appState.renderSettings.linewidth *
@@ -168,6 +166,37 @@ class DisplayState extends State<Display> {
           }
           return output;
         }))));
+  }
+
+  Widget buildPrompt(BuildContext context) {
+    var appState = context.watch<AppState>();
+    return LayoutBuilder(builder: (context, constraints) {
+      var viewwidth = constraints.maxWidth;
+      Widget output = Transform.scale(
+          scale: 1 / appState.devicePixelRatio,
+          alignment: Alignment.topLeft,
+          child: CustomPaint(
+            size: Size(
+                appState.renderSettings.linewidth * appState.devicePixelRatio,
+                appState.renderSettings.lineheight * appState.devicePixelRatio),
+            painter: currentGame!.prompt,
+          ));
+      if (viewwidth <
+          appState.renderSettings.minChars * appState.renderSettings.fontSize) {
+        output = FittedBox(
+            fit: BoxFit.fitWidth,
+            alignment: Alignment.bottomLeft,
+            child: Container(
+              constraints: BoxConstraints(
+                maxWidth: appState.renderSettings.minChars *
+                    appState.renderSettings.fontSize,
+              ),
+              child: output,
+            ));
+      }
+      return SizedBox(
+          height: appState.renderSettings.lineheight, child: output);
+    });
   }
 
   Widget buildBottom(BuildContext context) {
@@ -210,7 +239,7 @@ class DisplayState extends State<Display> {
                           extentOffset: inputController.value.text.length);
                     },
                   ))),
-          SizedBox(
+          const SizedBox(
             width: 80,
             child: Text("test2"),
           ),
@@ -223,19 +252,21 @@ class DisplayState extends State<Display> {
   build(BuildContext context) {
     var appState = context.watch<AppState>();
     final List<Widget> children = [
-      GameTop(),
+      const GameTop(),
     ];
     if (currentGame!.current.isNotEmpty) {
       children.add(
         Expanded(
             child: Stack(children: [
           buildOutput(context),
+          const Hud(),
         ])),
       );
+      children.add(buildPrompt(context));
       children.add(buildBottom(context));
     } else {
       if (currentGame?.current == "") {
-        children.add(Expanded(child: Overview()));
+        children.add(const Expanded(child: Overview()));
       }
     }
     Widget body = Container(
