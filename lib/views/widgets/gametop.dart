@@ -1,6 +1,33 @@
 import 'package:flutter/material.dart';
 import 'package:hellclientui/workers/game.dart';
 import 'dart:async';
+import 'appui.dart';
+
+Future<bool?> showCloseGame(BuildContext context) async {
+  return showDialog<bool>(
+    context: context,
+    builder: (context) {
+      return AlertDialog(
+        title: const Text("关闭游戏"),
+        content: Text("是否要关闭本游戏?"),
+        actions: <Widget>[
+          TextButton(
+            child: const Text("取消"),
+            onPressed: () {
+              Navigator.of(context).pop(null);
+            },
+          ),
+          TextButton(
+            child: const Text("关闭"),
+            onPressed: () {
+              Navigator.of(context).pop(true);
+            },
+          ),
+        ],
+      );
+    },
+  );
+}
 
 class GameTop extends StatefulWidget {
   const GameTop({super.key});
@@ -29,36 +56,13 @@ class GameTopState extends State<GameTop> {
     return SizedBox(
         height: 28,
         child: Row(children: [
-          buildIconButton(context, const Icon(Icons.home), () {
+          AppUI.buildIconButton(context, const Icon(Icons.home), () {
             currentGame?.handleCmd("change", "");
-          }, "游戏一览", Colors.white, Colors.green),
+          }, "游戏一览", Colors.white, Colors.green, radiusLeft: true),
+          AppUI.buildIconButton(context, const Icon(Icons.folder_open), () {
+            currentGame?.openGames();
+          }, "打开游戏", Colors.white, const Color(0xff409EFF)),
         ]));
-  }
-
-  Widget buildIconButton(
-      BuildContext context,
-      Widget icon,
-      void Function() onPressed,
-      String? tooltip,
-      Color color,
-      Color background) {
-    return IconButton(
-        style: ButtonStyle(
-          padding:
-              const MaterialStatePropertyAll<EdgeInsets>(EdgeInsets.all(0)),
-          // fixedSize: MaterialStatePropertyAll<Size>(Size(32, 32)),
-          shape: const MaterialStatePropertyAll<OutlinedBorder>(
-              RoundedRectangleBorder(
-                  borderRadius: BorderRadius.all(Radius.circular(4)),
-                  side: BorderSide.none)),
-          backgroundColor: MaterialStatePropertyAll<Color>(background),
-          iconColor: MaterialStatePropertyAll<Color>(color),
-        ),
-        tooltip: tooltip,
-        iconSize: 16,
-        splashRadius: 3,
-        onPressed: onPressed,
-        icon: icon);
   }
 
   Widget buildToolbar(BuildContext context) {
@@ -66,14 +70,22 @@ class GameTopState extends State<GameTop> {
     if (client == null) {
       return Container();
     }
+    final List<Widget> children = [];
     final connectBtn = client.running
-        ? buildIconButton(context, const Icon(Icons.stop), () {
+        ? AppUI.buildIconButton(context, const Icon(Icons.stop), () {
             currentGame?.handleCmd("disconnect", currentGame?.current);
-          }, "断线", Colors.white, const Color(0xffE6A23C))
-        : buildIconButton(context, const Icon(Icons.play_arrow), () {
+          }, "断线", Colors.white, const Color(0xffE6A23C), radiusLeft: true)
+        : AppUI.buildIconButton(context, const Icon(Icons.play_arrow), () {
             currentGame?.handleCmd("connect", currentGame?.current);
-          }, "连接", Colors.white, const Color(0xff67C23A));
-    return SizedBox(height: 28, child: Row(children: [connectBtn]));
+          }, "连接", Colors.white, const Color(0xff67C23A), radiusLeft: true);
+    children.add(connectBtn);
+    children
+        .add(AppUI.buildIconButton(context, const Icon(Icons.close), () async {
+      if (await showCloseGame(context) == true) {
+        currentGame!.handleCmd('close', currentGame!.current);
+      }
+    }, '关闭游戏', Colors.white, const Color(0xffF56C6C)));
+    return SizedBox(height: 28, child: Row(children: children));
   }
 
   Widget buildGames(BuildContext context) {

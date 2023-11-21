@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:hellclientui/models/server.dart';
 import '../models/rendersettings.dart';
 import '../states/appstate.dart';
@@ -80,12 +81,17 @@ class Game {
   }
 
   Future<void> onCmdPrompt(String data) async {
-    final Map<String, dynamic> jsondata = json.decode(data);
-    final line = Line.fromJson(jsondata);
-    prompt.renderer.reset();
-    await prompt.renderer.renderline(
-        renderSettings, line, true, true, renderSettings.background);
-    prompt.renderer.draw();
+    final Map<String, dynamic>? jsondata = json.decode(data);
+    if (jsondata != null) {
+      final line = Line.fromJson(jsondata);
+      prompt.renderer.reset();
+      await prompt.renderer.renderline(
+          renderSettings, line, true, true, renderSettings.background);
+      prompt.renderer.draw();
+    } else {
+      prompt.renderer.reset();
+      prompt.renderer.draw();
+    }
   }
 
   void drawHud() async {
@@ -223,6 +229,9 @@ class Game {
       case 'hudupdate':
         await onCmdHudUpdate(data);
         break;
+      case 'notopened':
+        commandStream.add(GameCommand(command: command, data: data));
+        break;
     }
   }
 
@@ -263,6 +272,79 @@ class Game {
     if (subscription != null) {
       await subscription!.cancel();
     }
+  }
+
+  void clientQuick() {
+    final clients = [...clientinfos.clientInfos];
+    if (clients.isNotEmpty) {
+      clients.sort((a, b) {
+        if (a.priority != b.priority) {
+          return a.priority.compareTo(b.priority);
+        }
+        return a.lastActive.compareTo(b.lastActive);
+      });
+      handleCmd('change', clients[0].id);
+    }
+  }
+
+  void openGames() {
+    handleCmd('notopened', null);
+  }
+
+  KeyEventResult onKey(RawKeyEvent key) {
+    switch (key.logicalKey.keyLabel) {
+      case 'Escape':
+        if (!key.isControlPressed) {
+          break;
+        }
+        handleCmd("change", "");
+        break;
+      case "Pause":
+        handleCmd("change", "");
+        break;
+      case "1":
+      case "2":
+      case "3":
+      case "4":
+      case "5":
+      case "6":
+      case "7":
+      case "8":
+      case "9":
+        if (current == "") {
+          final index = int.parse(key.logicalKey.keyLabel) - 1;
+          if (index >= 0 && index < clientinfos.clientInfos.length) {
+            handleCmd('change', clientinfos.clientInfos[index].id);
+          }
+        }
+        break;
+      case "`":
+        if (current == "" || key.isControlPressed) {
+          clientQuick();
+        }
+        break;
+      case "Scroll Lock":
+        clientQuick();
+        break;
+      case "Numpad 0":
+      case "Numpad 1":
+      case "Numpad 2":
+      case "Numpad 3":
+      case "Numpad 4":
+      case "Numpad 5":
+      case "Numpad 6":
+      case "Numpad 7":
+      case "Numpad 8":
+      case "Numpad 9":
+      case "Numpad Divide":
+      case "Numpad Multiply":
+      case "Numpad Subtract":
+      case "Numpad Add":
+      case "Numpad Decimal":
+        handleCmd('keyup', key.logicalKey.keyLabel.replaceFirst(" ", ""));
+        return KeyEventResult.handled;
+    }
+    return KeyEventResult.ignored;
   }
 
   void start() {}

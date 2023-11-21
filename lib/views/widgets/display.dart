@@ -202,6 +202,7 @@ class DisplayState extends State<Display> {
   Widget buildBottom(BuildContext context) {
     var inputController = TextEditingController();
     var focusNode = FocusNode();
+    focusNode.requestFocus();
     return SizedBox(
       height: 30,
       child: material.Row(

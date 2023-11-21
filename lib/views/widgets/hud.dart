@@ -41,43 +41,59 @@ class HudState extends State<Hud> {
         top: 0,
         left: 0,
         right: 0,
-        child: GestureDetector(
-            onTap: () {},
-            child: AbsorbPointer(
-                child: Container(
-                    padding: const EdgeInsets.fromLTRB(0, 0, 0, 2),
-                    color: const Color(0xff666666),
-                    child: Container(
-                        color: appState.renderSettings.hudbackground,
-                        child: LayoutBuilder(builder: (context, constraints) {
-                          var viewwidth = constraints.maxWidth;
+        child: Container(
+            padding: const EdgeInsets.fromLTRB(0, 0, 0, 2),
+            color: const Color(0xff666666),
+            child: Container(
+                color: appState.renderSettings.hudbackground,
+                child: LayoutBuilder(builder: (context, constraints) {
+                  var viewwidth = constraints.maxWidth;
 
-                          Widget output = Transform.scale(
-                              scale: 1 / appState.devicePixelRatio,
-                              alignment: Alignment.topLeft,
+                  Widget output = Transform.scale(
+                      scale: 1 / appState.devicePixelRatio,
+                      alignment: Alignment.topLeft,
+                      child: GestureDetector(
+                          onTapUp: (details) {
+                            var xpostion = (details.localPosition.dx) /
+                                (appState.renderSettings.linewidth *
+                                    appState.devicePixelRatio);
+                            var ypostion = (details.localPosition.dy) /
+                                (currentGame!.hudContent.length *
+                                    appState.renderSettings.lineheight *
+                                    appState.devicePixelRatio);
+                            if (0 < xpostion &&
+                                xpostion < 1 &&
+                                0 < ypostion &&
+                                ypostion < 1) {
+                              currentGame!.handleCmd(
+                                  'hudclick', {'X': xpostion, 'Y': ypostion});
+                            }
+                          },
+                          child: AbsorbPointer(
                               child: CustomPaint(
-                                size: Size(
-                                    appState.renderSettings.linewidth *
-                                        appState.devicePixelRatio,
-                                    appState.renderSettings.height *
-                                        appState.devicePixelRatio),
-                                painter: currentGame!.hud,
-                              ));
-                          if (viewwidth <
-                              appState.renderSettings.minChars *
-                                  appState.renderSettings.fontSize) {
-                            output = FittedBox(
-                                fit: BoxFit.fitWidth,
-                                alignment: Alignment.bottomLeft,
-                                child: Container(
-                                  constraints: BoxConstraints(
-                                    maxWidth: appState.renderSettings.minChars *
-                                        appState.renderSettings.fontSize,
-                                  ),
-                                  child: output,
-                                ));
-                          }
-                          return output;
-                        }))))));
+                            size: Size(
+                                appState.renderSettings.linewidth *
+                                    appState.devicePixelRatio,
+                                currentGame!.hudContent.length *
+                                    appState.renderSettings.lineheight *
+                                    appState.devicePixelRatio),
+                            painter: currentGame!.hud,
+                          ))));
+                  if (viewwidth <
+                      appState.renderSettings.minChars *
+                          appState.renderSettings.fontSize) {
+                    output = FittedBox(
+                        fit: BoxFit.fitWidth,
+                        alignment: Alignment.bottomLeft,
+                        child: Container(
+                          constraints: BoxConstraints(
+                            maxWidth: appState.renderSettings.minChars *
+                                appState.renderSettings.fontSize,
+                          ),
+                          child: output,
+                        ));
+                  }
+                  return output;
+                }))));
   }
 }

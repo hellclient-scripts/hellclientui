@@ -217,10 +217,9 @@ class OverviewState extends State<Overview> {
           Container(
               margin: const EdgeInsets.fromLTRB(0, 5, 0, 0),
               child: const Text('快速开始', style: labelStyle)),
-        ]),
-        () {},
-        1,
-        large));
+        ]), () {
+      currentGame!.clientQuick();
+    }, 1, large));
     List<ClientInfo> infos = currentGame!.clientinfos.clientInfos;
     int index = 0;
     for (final info in infos) {
@@ -255,10 +254,9 @@ class OverviewState extends State<Overview> {
           Container(
               margin: const EdgeInsets.fromLTRB(0, 5, 0, 0),
               child: const Text('打开游戏', style: labelStyle)),
-        ]),
-        () {},
-        1,
-        large));
+        ]), () {
+      currentGame!.openGames();
+    }, 1, large));
     final scrollController = ScrollController();
     return Expanded(
         child: RawScrollbar(

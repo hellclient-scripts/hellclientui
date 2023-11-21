@@ -99,3 +99,21 @@ class DiffLines {
     }
   }
 }
+
+class NotOpenedGame {
+  NotOpenedGame();
+  String id = "";
+  String lastUpdated = "";
+  NotOpenedGame.fromJson(dynamic json)
+      : id = json["ID"],
+        lastUpdated = json["LastUpdated"];
+}
+
+class NotOpened {
+  NotOpened();
+  List<NotOpenedGame> games = [];
+  NotOpened.fromJson(dynamic json)
+      : games = List<dynamic>.from(json)
+            .map((e) => NotOpenedGame.fromJson(e))
+            .toList();
+}

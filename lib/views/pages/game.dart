@@ -3,8 +3,23 @@ import 'package:provider/provider.dart';
 import 'package:hellclientui/states/appstate.dart';
 import '..//widgets/fullscreen.dart';
 import 'dart:async';
+import 'dart:convert';
 import '../widgets/display.dart';
+import '../widgets/notopened.dart';
 import '../../workers/game.dart' as gameengine;
+import '../../models/message.dart' as message;
+
+Future<String?> showNotOpened(
+    BuildContext context, message.NotOpened games) async {
+  return showDialog<String>(
+    context: context,
+    builder: (context) {
+      return Dialog.fullscreen(
+        child: NotOpened(games: games.games),
+      );
+    },
+  );
+}
 
 class Game extends StatefulWidget {
   const Game({super.key});
@@ -13,22 +28,21 @@ class Game extends StatefulWidget {
 }
 
 class GameState extends State<Game> {
+  late StreamSubscription disconnectSub;
+  late StreamSubscription subCommand;
   @override
   void dispose() {
     disconnectSub.cancel();
+    subCommand.cancel();
     gameengine.currentGame?.dispose();
     gameengine.currentGame?.close();
 
     super.dispose();
   }
 
-  late StreamSubscription disconnectSub;
   @override
-  Widget build(BuildContext context) {
-    var appState = context.watch<AppState>();
-    var server = appState.currentServer!;
-
-    var nav = Navigator.of(context);
+  void initState() {
+    var appState = currentAppState;
     disconnectSub =
         appState.connecting.eventDisconnected.stream.listen((data) async {
       if (await showDisconneded(context) == true) {
@@ -44,21 +58,54 @@ class GameState extends State<Game> {
           }
         }
       } else {
-        nav.pop();
+        if (context.mounted) {
+          var nav = Navigator.of(context);
+          nav.pop();
+        }
       }
     });
+    subCommand =
+        gameengine.currentGame!.commandStream.stream.listen((event) async {
+      if (event is gameengine.GameCommand) {
+        switch (event.command) {
+          case 'notopened':
+            final dynamic jsondata = json.decode(event.data);
+            final notOpened = message.NotOpened.fromJson(jsondata);
+            final id = await showNotOpened(context, notOpened);
+            if (id != null) {
+              gameengine.currentGame!.handleCmd('open', id);
+            }
+            break;
+        }
+      }
+    });
+    super.initState();
+  }
 
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        // Here we take the value from the MyHomePage object that was created by
-        // the App.build method, and use it to set our appbar title.
-        title: Text(server.name.isEmpty ? server.host : server.name),
-      ),
-      body: const Fullscreen(
-        minWidth: 640,
-        child: Display(),
-      ),
+  @override
+  Widget build(BuildContext context) {
+    var appState = context.watch<AppState>();
+    var server = appState.currentServer!;
+    var focusNode = FocusNode(
+      onKey: (node, event) {
+        return gameengine.currentGame!.onKey(event);
+      },
     );
+
+    return RawKeyboardListener(
+        focusNode: focusNode,
+        autofocus: true,
+        child: Scaffold(
+          appBar: AppBar(
+            backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+            // Here we take the value from the MyHomePage object that was created by
+            // the App.build method, and use it to set our appbar title.
+            title: Text(server.name.isEmpty ? server.host : server.name),
+          ),
+          body: const Fullscreen(
+            minWidth: 640,
+            child: Display(),
+          ),
+        ));
   }
 }
