@@ -8,6 +8,7 @@ import '../widgets/display.dart';
 import '../widgets/notopened.dart';
 import '../../workers/game.dart' as gameengine;
 import '../../models/message.dart' as message;
+import 'package:toastification/toastification.dart';
 
 Future<String?> showNotOpened(
     BuildContext context, message.NotOpened games) async {
@@ -30,28 +31,39 @@ class Game extends StatefulWidget {
 class GameState extends State<Game> {
   late StreamSubscription disconnectSub;
   late StreamSubscription subCommand;
+  late gameengine.Game game;
+  var _refreshKey = UniqueKey();
+  Future<void> reconnect() async {
+    await cancel();
+    game.dispose();
+    await currentAppState.connecting.connect(currentAppState.currentServer!);
+    gameengine.currentGame = gameengine.Game.create(currentAppState.connecting);
+    await listen();
+    setState(() {
+      _refreshKey = UniqueKey();
+    });
+  }
+
   @override
   void dispose() {
-    disconnectSub.cancel();
-    subCommand.cancel();
-    gameengine.currentGame?.dispose();
-    gameengine.currentGame?.close();
+    cancel();
+    game.dispose();
+    game.close();
 
     super.dispose();
   }
 
-  @override
-  void initState() {
-    var appState = currentAppState;
-    disconnectSub =
-        appState.connecting.eventDisconnected.stream.listen((data) async {
+  Future<void> cancel() async {
+    await disconnectSub.cancel();
+    await subCommand.cancel();
+  }
+
+  Future<void> listen() async {
+    game = gameengine.currentGame!;
+    disconnectSub = game.disconnectStream.stream.listen((data) async {
       if (await showDisconneded(context) == true) {
         try {
-          disconnectSub.cancel();
-          await gameengine.currentGame?.dispose();
-          await appState.connecting.connect(appState.currentServer!);
-          gameengine.currentGame = gameengine.Game.create();
-          setState(() {});
+          await (reconnect());
         } catch (e) {
           if (context.mounted) {
             showConnectError(context, e.toString());
@@ -64,8 +76,7 @@ class GameState extends State<Game> {
         }
       }
     });
-    subCommand =
-        gameengine.currentGame!.commandStream.stream.listen((event) async {
+    subCommand = game.commandStream.stream.listen((event) async {
       if (event is gameengine.GameCommand) {
         switch (event.command) {
           case 'notopened':
@@ -73,12 +84,17 @@ class GameState extends State<Game> {
             final notOpened = message.NotOpened.fromJson(jsondata);
             final id = await showNotOpened(context, notOpened);
             if (id != null) {
-              gameengine.currentGame!.handleCmd('open', id);
+              game.handleCmd('open', id);
             }
             break;
         }
       }
     });
+  }
+
+  @override
+  void initState() {
+    listen();
     super.initState();
   }
 
@@ -88,11 +104,12 @@ class GameState extends State<Game> {
     var server = appState.currentServer!;
     var focusNode = FocusNode(
       onKey: (node, event) {
-        return gameengine.currentGame!.onKey(event);
+        return game.onKey(event);
       },
     );
 
     return RawKeyboardListener(
+        key: _refreshKey,
         focusNode: focusNode,
         autofocus: true,
         child: Scaffold(

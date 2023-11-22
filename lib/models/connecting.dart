@@ -48,9 +48,10 @@ class Connecting {
     final wschannel = IOWebSocketChannel.connect(serveruri, headers: headers);
     await wschannel.ready;
     channel = wschannel;
+    _listen();
   }
 
-  Future<void> listen() async {
+  void _listen() {
     late StreamSubscription streamsub;
     streamsub = channel!.stream.listen((event) async {
       messageStream.add(event);

@@ -9,6 +9,7 @@ import 'dart:async';
 import 'renderer.dart';
 import '../models/message.dart';
 import '../models/connecting.dart';
+import 'package:synchronized/synchronized.dart';
 
 Game? currentGame;
 
@@ -27,13 +28,17 @@ class Game {
   late RenderPainter output;
   late RenderPainter prompt;
   late RenderPainter hud;
+  var hudLock = Lock();
   List<Line> hudContent = [];
   ClientInfos clientinfos = ClientInfos();
-  StreamSubscription? subscription;
+  late StreamSubscription subscription;
+  late StreamSubscription disconnectSub;
   final commandStream = StreamController.broadcast();
   final clientsUpdateStream = StreamController.broadcast();
   final hudUpdateStream = StreamController.broadcast();
-  static Game create() {
+  final disconnectStream = StreamController.broadcast();
+  static Game create(Connecting connecting) {
+    connecting = connecting;
     var game = Game();
     final appState = currentAppState;
     final settings = appState.renderSettings;
@@ -56,14 +61,15 @@ class Game {
       background: settings.hudbackground,
       noSortLines: true,
     ));
-
-    appState.connecting.listen();
-    game.subscription =
-        appState.connecting.messageStream.stream.listen((event) async {
+    game.subscription = connecting.messageStream.stream.listen((event) async {
       var msg = event as String;
       await game.onMessage(msg);
     });
-    game.connecting = appState.connecting;
+    game.disconnectSub =
+        connecting.eventDisconnected.stream.listen((event) async {
+      game.disconnectStream.add(event);
+    });
+    game.connecting = connecting;
     game.handleCmd("current", null);
     return game;
   }
@@ -106,25 +112,33 @@ class Game {
   }
 
   Future<void> onCmdHudContent(String data) async {
-    final dynamic jsondata = json.decode(data);
-    final lines = Lines.fromJson(jsondata);
-    hudContent = lines.lines;
-    drawHud();
+    hudLock.synchronized(() async {
+      final dynamic jsondata = json.decode(data);
+      if (jsondata != null) {
+        final lines = Lines.fromJson(jsondata);
+        hudContent = lines.lines;
+        drawHud();
+      }
+    });
   }
 
   Future<void> onCmdHudUpdate(String data) async {
-    final dynamic jsondata = json.decode(data);
-    final diffllines = DiffLines.fromJson(jsondata);
-    var start = diffllines.start;
-    for (final line in diffllines.content) {
-      if (hudContent.length > start) {
-        hudContent[start] = line;
-      } else {
-        hudContent.add(line);
+    hudLock.synchronized(() async {
+      final dynamic jsondata = json.decode(data);
+      if (jsondata != null) {
+        final diffllines = DiffLines.fromJson(jsondata);
+        var start = diffllines.start;
+        for (final line in diffllines.content) {
+          if (hudContent.length > start) {
+            hudContent[start] = line;
+          } else {
+            hudContent.add(line);
+          }
+          start++;
+        }
+        drawHud();
       }
-      start++;
-    }
-    drawHud();
+    });
   }
 
   Future<void> onCmdLines(String data) async {
@@ -230,15 +244,15 @@ class Game {
         await onCmdHudUpdate(data);
         break;
       case 'notopened':
+      case 'scriptMessage':
         commandStream.add(GameCommand(command: command, data: data));
         break;
     }
   }
 
   Future<void> connect(AppState appState, Function(String) errorhandler) async {
-    // appState.connecting.connect(errorhandler, server);
-    subscription =
-        appState.connecting.messageStream.stream.listen((event) async {
+    // connecting.connect(errorhandler, server);
+    subscription = connecting.messageStream.stream.listen((event) async {
       var msg = event as String;
       await onMessage(msg);
     });
@@ -263,15 +277,23 @@ class Game {
       if (data == null) {
         connecting.channel!.sink.add(cmd);
       } else {
-        connecting.channel!.sink.add('$cmd ${json.encode(data)}');
+        final wsdata = '$cmd ${json.encode(data)}';
+        debugPrint(wsdata);
+        connecting.channel!.sink.add(wsdata);
       }
     }
   }
 
+  void handleUserInputCallback(UserInput input, int code, dynamic data) {
+    handleCmd('callback', [
+      currentGame!.current,
+      jsonEncode(input.callback(code, data).toJson())
+    ]);
+  }
+
   Future<void> dispose() async {
-    if (subscription != null) {
-      await subscription!.cancel();
-    }
+    subscription.cancel();
+    disconnectSub.cancel();
   }
 
   void clientQuick() {

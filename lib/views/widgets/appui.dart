@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'fullscreen.dart';
 
 const BorderRadiusGeometry _radiusBoth = BorderRadius.all(Radius.circular(4));
 const BorderRadiusGeometry _radiusNone = BorderRadius.zero;
@@ -110,16 +111,14 @@ class TableHead extends StatelessWidget {
 
 class FullScreenDialog extends StatelessWidget {
   const FullScreenDialog(
-      {super.key,
-      required this.title,
-      required,
-      this.summary,
-      required this.child});
+      {super.key, required this.title, this.summary = "", required this.child});
   final String title;
-  final String? summary;
+  final String summary;
   final Widget child;
   @override
   Widget build(BuildContext context) {
+    final _scrollController = ScrollController();
+
     final List<Widget> children = [
       Padding(
           padding: const EdgeInsets.fromLTRB(0, 0, 0, 10),
@@ -134,16 +133,77 @@ class FullScreenDialog extends StatelessWidget {
             ],
           )),
     ];
-    if (summary != null) {
+    if (summary.isNotEmpty) {
       children.add(Padding(
           padding: const EdgeInsets.fromLTRB(10, 10, 10, 20),
           child: Summary(summary!)));
     }
-    children.add(Expanded(child: SingleChildScrollView(child: child)));
-    return Padding(
-        padding: const EdgeInsets.all(20),
-        child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start, children: children));
+    children.add(Expanded(
+        child: Scrollbar(
+            controller: _scrollController,
+            child: SingleChildScrollView(
+                controller: _scrollController, child: child))));
+    return Fullscreen(
+        minWidth: 640,
+        child: Padding(
+            padding: const EdgeInsets.all(20),
+            child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: children)));
+  }
+}
+
+class DialogOverray extends StatelessWidget {
+  const DialogOverray(
+      {super.key,
+      required this.child,
+      this.maxPercent = 0.8,
+      this.direction = AxisDirection.down});
+  final double maxPercent;
+  final AxisDirection direction;
+  final Widget child;
+  @override
+  Widget build(BuildContext context) {
+    return LayoutBuilder(builder: (context, constraints) {
+      AlignmentGeometry alignment;
+      double maxHeight;
+      double maxWidth;
+      switch (direction) {
+        case AxisDirection.up:
+          maxHeight = constraints.maxHeight * maxPercent;
+          maxWidth = constraints.minWidth;
+          alignment = Alignment.topCenter;
+          break;
+        case AxisDirection.left:
+          maxHeight = constraints.maxHeight;
+          maxWidth = constraints.maxWidth * maxPercent;
+          alignment = Alignment.centerLeft;
+          break;
+        case AxisDirection.right:
+          maxHeight = constraints.maxHeight;
+          maxWidth = constraints.maxWidth * maxPercent;
+          alignment = Alignment.centerRight;
+          break;
+        default:
+          maxHeight = constraints.maxHeight * maxPercent;
+          maxWidth = constraints.minWidth;
+          alignment = Alignment.bottomCenter;
+      }
+      return Material(
+          type: MaterialType.transparency,
+          child: Align(
+              alignment: alignment,
+              child: Container(
+                color: Colors.white,
+                constraints: BoxConstraints(
+                  maxHeight: maxHeight,
+                  maxWidth: maxWidth,
+                ),
+                width: maxWidth,
+                height: maxHeight,
+                child: child,
+              )));
+    });
   }
 }
 

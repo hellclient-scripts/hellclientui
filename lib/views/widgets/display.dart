@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/material.dart' as material;
+import 'package:hellclientui/models/message.dart';
 import 'package:hellclientui/states/appstate.dart';
 import 'package:provider/provider.dart';
 import '../../workers/renderer.dart';
@@ -9,7 +10,9 @@ import 'alllines.dart';
 import 'gametop.dart';
 import 'overview.dart';
 import 'hud.dart';
+import 'userinput.dart';
 import 'dart:async';
+import 'dart:convert';
 
 Future<bool?> showAllLines(BuildContext context) async {
   if (!context.mounted) {
@@ -114,6 +117,15 @@ class DisplayState extends State<Display> {
           case "current":
             setState(() {});
             break;
+          case "scriptMessage":
+            final input = UserInput.fromJson(jsonDecode(event.data));
+            switch (input.name) {
+              case "userinput.popup":
+                UserInputHelper.popup(context, input);
+                break;
+              case "userinput.list":
+                UserInputHelper.list(context, input);
+            }
         }
       }
     });
@@ -211,6 +223,28 @@ class DisplayState extends State<Display> {
             width: 80,
             child: Text("test"),
           ),
+          MouseRegion(
+              cursor: SystemMouseCursors.click,
+              child: GestureDetector(
+                  onTap: () {
+                    currentGame!.handleCmd("assist", currentGame!.current);
+                  },
+                  child: SizedBox(
+                    width: 54,
+                    height: 30,
+                    child: Container(
+                      decoration: BoxDecoration(
+                          border:
+                              Border.all(color: Color(0xffDCDFE6), width: 1)),
+                      child: Icon(
+                        Icons.person_2_outlined,
+                        color: Color(
+                          0xff909399,
+                        ),
+                        size: 16,
+                      ),
+                    ),
+                  ))),
           Expanded(
               child: SingleChildScrollView(
                   scrollDirection: Axis.vertical,

@@ -6,6 +6,8 @@ import 'package:hellclientui/workers/game.dart';
 import '../../models/message.dart';
 import 'dart:async';
 import 'dart:convert';
+import 'package:flutter/services.dart';
+import 'package:toastification/toastification.dart';
 
 class AllLines extends StatefulWidget {
   const AllLines({super.key});
@@ -47,6 +49,7 @@ class AllLinesState extends State<AllLines> {
     if (lines != null) {
       for (final line in lines!.lines) {
         List<InlineSpan> linedata = [];
+        var plain = "";
         final linestyle = renderer.getLineStyle(line);
         if (linestyle.icon.isNotEmpty) {
           final iconstyle = renderer.getIconStyle(1, linestyle.iconcolor,
@@ -56,6 +59,7 @@ class AllLinesState extends State<AllLines> {
                   child: Text(linestyle.icon, style: iconstyle))));
         }
         for (final word in line.words) {
+          plain += word.text;
           final style = renderer.getWordStyle(
               word, linestyle.color, currentAppState.renderSettings.background);
           linedata.add(TextSpan(
@@ -67,10 +71,30 @@ class AllLinesState extends State<AllLines> {
         linedata.add(const TextSpan(text: '\r'));
         children.add(SizedBox(
             width: renderer.renderSettings.width,
-            child: Text.rich(
-              TextSpan(children: linedata),
-              softWrap: true,
-            )));
+            child: GestureDetector(
+                onDoubleTap: () async {
+                  String summary = plain.trimLeft();
+
+                  if (summary.length > 8) {
+                    summary = '${summary.substring(0, 8)}...';
+                  }
+
+                  await Clipboard.setData(ClipboardData(text: plain));
+                  if (context.mounted) {
+                    toastification.show(
+                        context: context,
+                        autoCloseDuration: const Duration(seconds: 3),
+                        title: '双击复制成功',
+                        type: ToastificationType.success,
+                        style: ToastificationStyle.flat,
+                        showProgressBar: false,
+                        description: '文字“$summary”已经复制到剪贴板。');
+                  }
+                },
+                child: Text.rich(
+                  TextSpan(children: linedata),
+                  softWrap: true,
+                ))));
 
         list.add(Flex(direction: Axis.horizontal, children: children));
       }

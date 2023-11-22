@@ -141,7 +141,7 @@ class RenderSettings {
   var background = Colors.black;
   var hudbackground = const Color(0xff333333);
   var color = const Color(0xffffffff);
-  var black = const Color.fromARGB(255, 0, 0, 0);
+  var black = const Color.fromARGB(255, 64, 64, 64);
   var red = const Color.fromARGB(255, 191, 0, 0);
   var green = const Color.fromARGB(255, 0, 201, 0);
   var yellow = const Color.fromARGB(255, 255, 191, 0);

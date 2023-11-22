@@ -71,7 +71,7 @@ class ServerList extends StatelessWidget {
                   appState.currentServer = server;
                   try {
                     await appState.connecting.connect(server);
-                    currentGame = Game.create();
+                    currentGame = Game.create(currentAppState.connecting);
 
                     if (context.mounted) {
                       Navigator.pushNamed(context, "/game");

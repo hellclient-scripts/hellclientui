@@ -9,7 +9,7 @@ Future<bool?> showCloseGame(BuildContext context) async {
     builder: (context) {
       return AlertDialog(
         title: const Text("关闭游戏"),
-        content: Text("是否要关闭本游戏?"),
+        content: const Text("是否要关闭本游戏?"),
         actions: <Widget>[
           TextButton(
             child: const Text("取消"),

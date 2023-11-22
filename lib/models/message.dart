@@ -1,3 +1,5 @@
+import 'dart:ffi';
+
 class Word {
   String text = "";
   String color = "";
@@ -116,4 +118,94 @@ class NotOpened {
       : games = List<dynamic>.from(json)
             .map((e) => NotOpenedGame.fromJson(e))
             .toList();
+}
+
+class UserInput {
+  UserInput();
+  String name = "";
+  String script = "";
+  String id = "";
+  dynamic data;
+  UserInput.fromJson(Map<String, dynamic> json)
+      : id = json["ID"],
+        script = json["Script"],
+        name = json["Name"],
+        data = json["Data"];
+  Callback callback(int code, dynamic data) {
+    final cb = Callback();
+    cb.id = id;
+    cb.name = name;
+    cb.script = script;
+    cb.code = code;
+    cb.data = data;
+    return cb;
+  }
+}
+
+class UserInputTitleIntro {
+  UserInputTitleIntro();
+  String title = "";
+  String intro = "";
+  UserInputTitleIntro.fromJson(dynamic json)
+      : title = json["Title"],
+        intro = json["Intro"];
+}
+
+class UserInputTitleIntroType {
+  UserInputTitleIntroType();
+  String title = "";
+  String intro = "";
+  String type = "";
+  UserInputTitleIntroType.fromJson(dynamic json)
+      : title = json["Title"],
+        intro = json["Intro"],
+        type = json["Type"];
+}
+
+class Callback {
+  String name = "";
+  String script = "";
+  String id = "";
+  int code = 0;
+  dynamic data;
+  Map<String, dynamic> toJson() => {
+        "Name": name,
+        "Script": script,
+        "ID": id,
+        "Code": code,
+        "data": data,
+      };
+}
+
+class UserInputItem {
+  UserInputItem(this.key, this.value);
+  String key;
+  String value;
+  UserInputItem.fromJson(Map<String, dynamic> json)
+      : key = json["Key"],
+        value = json["Value"];
+}
+
+class UserInputList {
+  UserInputList();
+  String title = "";
+  String intro = "";
+  List<UserInputItem> items = [];
+  bool mutli = false;
+  List<String> values = [];
+  bool withFilter = false;
+  UserInputList.fromJson(Map<String, dynamic> json) {
+    title = json["Title"];
+    intro = json["Intro"];
+    mutli = json["Mutli"];
+    withFilter = json["WithFilter"];
+    final valuelist = json["Values"] as List<dynamic>;
+    for (final value in valuelist) {
+      values.add(value);
+    }
+    final itemlist = json["Items"] as List<dynamic>;
+    for (final item in itemlist) {
+      items.add(UserInputItem.fromJson(item));
+    }
+  }
 }
