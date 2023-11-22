@@ -115,12 +115,11 @@ class H1 extends StatelessWidget {
   final String data;
   @override
   Widget build(BuildContext context) {
-    return Text(
+    return SelectableText(
       data,
       textAlign: TextAlign.start,
       style: textStyleH1,
       maxLines: 1,
-      overflow: TextOverflow.ellipsis,
     );
   }
 }
@@ -136,7 +135,7 @@ class Summary extends StatelessWidget {
   final String data;
   @override
   Widget build(BuildContext context) {
-    return Text(
+    return SelectableText(
       textAlign: TextAlign.start,
       data,
       style: textStyleSummary,
@@ -167,6 +166,55 @@ class TableHead extends StatelessWidget {
   }
 }
 
+class NonFullScreenDialog extends StatelessWidget {
+  const NonFullScreenDialog(
+      {super.key,
+      required this.title,
+      this.summary = "",
+      required this.child,
+      this.width = 440});
+  final String title;
+  final String summary;
+  final Widget child;
+  final double width;
+  @override
+  Widget build(BuildContext context) {
+    final List<Widget> children = [
+      Padding(
+          padding: const EdgeInsets.fromLTRB(0, 0, 0, 10),
+          child: Row(
+            children: [
+              Expanded(child: H1(title)),
+              IconButton(
+                  onPressed: () {
+                    Navigator.of(context).pop(null);
+                  },
+                  icon: const Icon(Icons.close)),
+            ],
+          )),
+    ];
+    if (summary.isNotEmpty) {
+      children.add(Padding(
+          padding: const EdgeInsets.fromLTRB(10, 10, 10, 20),
+          child: Summary(summary)));
+    }
+    children.add(child);
+    return Material(
+        type: MaterialType.transparency,
+        child: Align(
+            alignment: Alignment.center,
+            child: Container(
+                width: width,
+                color: Colors.white,
+                child: Padding(
+                    padding: const EdgeInsets.all(20),
+                    child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: children)))));
+  }
+}
+
 class FullScreenDialog extends StatelessWidget {
   const FullScreenDialog(
       {super.key, required this.title, this.summary = "", required this.child});
@@ -175,7 +223,7 @@ class FullScreenDialog extends StatelessWidget {
   final Widget child;
   @override
   Widget build(BuildContext context) {
-    final _scrollController = ScrollController();
+    final scrollController = ScrollController();
 
     final List<Widget> children = [
       Padding(
@@ -194,13 +242,13 @@ class FullScreenDialog extends StatelessWidget {
     if (summary.isNotEmpty) {
       children.add(Padding(
           padding: const EdgeInsets.fromLTRB(10, 10, 10, 20),
-          child: Summary(summary!)));
+          child: Summary(summary)));
     }
     children.add(Expanded(
         child: Scrollbar(
-            controller: _scrollController,
+            controller: scrollController,
             child: SingleChildScrollView(
-                controller: _scrollController, child: child))));
+                controller: scrollController, child: child))));
     return Fullscreen(
         minWidth: 640,
         child: Padding(
@@ -283,4 +331,49 @@ TableRow createTableRow(List<Widget> children) {
           border:
               Border(bottom: BorderSide(width: 1, color: Color(0xffEBEEF5)))),
       children: children);
+}
+
+class ConfirmOrCancelWidget extends StatelessWidget {
+  const ConfirmOrCancelWidget(
+      {super.key,
+      this.labelSubmit = '确定',
+      this.labelCancel = '取消',
+      required this.onConfirm,
+      required this.onCancal});
+  final String labelSubmit;
+  final String? labelCancel;
+  final void Function() onConfirm;
+  final void Function() onCancal;
+  @override
+  Widget build(BuildContext context) {
+    List<Widget> children = [
+      const Expanded(
+        child: Center(),
+      ),
+    ];
+    if (labelCancel != null) {
+      children.add(
+        Container(
+          width: 100,
+          margin: const EdgeInsets.fromLTRB(5, 0, 5, 0),
+          child: AppUI.buildTextButton(context, labelCancel!, onCancal, null,
+              const Color(0xff333333), const Color(0xffdddddd)),
+        ),
+      );
+    }
+    children.add(
+      Container(
+        width: 100,
+        margin: const EdgeInsets.fromLTRB(5, 0, 5, 0),
+        child: AppUI.buildTextButton(context, labelSubmit, onConfirm, null,
+            Colors.white, const Color(0xff409EFF)),
+      ),
+    );
+    return SizedBox(
+        height: 50,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: children,
+        ));
+  }
 }

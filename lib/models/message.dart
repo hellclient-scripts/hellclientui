@@ -1,5 +1,3 @@
-import 'dart:ffi';
-
 class Word {
   String text = "";
   String color = "";
@@ -162,6 +160,17 @@ class UserInputTitleIntroType {
         type = json["Type"];
 }
 
+class UserInputTitleIntroValue {
+  UserInputTitleIntroValue();
+  String title = "";
+  String intro = "";
+  String value = "";
+  UserInputTitleIntroValue.fromJson(dynamic json)
+      : title = json["Title"],
+        intro = json["Intro"],
+        value = json["Value"];
+}
+
 class Callback {
   String name = "";
   String script = "";
@@ -203,6 +212,31 @@ class UserInputList {
     for (final value in valuelist) {
       values.add(value);
     }
+    final itemlist = json["Items"] as List<dynamic>;
+    for (final item in itemlist) {
+      items.add(UserInputItem.fromJson(item));
+    }
+  }
+}
+
+class VisualPrompt {
+  VisualPrompt();
+  String title = "";
+  String intro = "";
+  String source = "";
+  String mediaType = "";
+  String value = "";
+  List<UserInputItem> items = [];
+  bool portrait = false;
+  String refreshCallback = "";
+  VisualPrompt.fromJson(Map<String, dynamic> json) {
+    title = json["Title"];
+    intro = json["Intro"];
+    source = json["Source"];
+    mediaType = json["MediaType"];
+    value = json["Value"];
+    portrait = json["Portrait"];
+    refreshCallback = json["RefreshCallback"];
     final itemlist = json["Items"] as List<dynamic>;
     for (final item in itemlist) {
       items.add(UserInputItem.fromJson(item));

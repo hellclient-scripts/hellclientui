@@ -125,6 +125,16 @@ class DisplayState extends State<Display> {
                 break;
               case "userinput.list":
                 UserInputHelper.list(context, input);
+                break;
+              case "userinput.prompt":
+                UserInputHelper.prompt(context, input);
+                break;
+              case "userinput.alert":
+                UserInputHelper.alert(context, input);
+                break;
+              case "userinput.confirm":
+                UserInputHelper.confirm(context, input);
+                break;
             }
         }
       }
@@ -234,9 +244,9 @@ class DisplayState extends State<Display> {
                     height: 30,
                     child: Container(
                       decoration: BoxDecoration(
-                          border:
-                              Border.all(color: Color(0xffDCDFE6), width: 1)),
-                      child: Icon(
+                          border: Border.all(
+                              color: const Color(0xffDCDFE6), width: 1)),
+                      child: const Icon(
                         Icons.person_2_outlined,
                         color: Color(
                           0xff909399,
