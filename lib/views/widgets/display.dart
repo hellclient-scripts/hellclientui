@@ -164,7 +164,7 @@ class DisplayState extends State<Display> {
 
           Widget output = Transform.scale(
               scale: 1 / appState.devicePixelRatio,
-              alignment: Alignment.bottomLeft,
+              alignment: Alignment.topLeft,
               child: CustomPaint(
                 size: Size(
                     appState.renderSettings.linewidth *
