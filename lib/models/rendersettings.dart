@@ -173,7 +173,9 @@ class RenderSettings {
   var requesticon = "☎请求 ";
   var responseicon = "☎响应 ";
   var subnegicon = "☎非文本信息 ";
+  var triggersicon = "⚙";
   var bccolor = const Color.fromARGB(255, 127, 127, 127);
+  var triggersColor = const Color.fromARGB(255, 0, 255, 255);
   var fontFamily = "monospace";
   bool hidpi = true;
 }

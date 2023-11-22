@@ -9,6 +9,63 @@ const BorderRadiusGeometry _radiusRight =
     BorderRadius.horizontal(right: Radius.circular(4));
 
 class AppUI {
+  static Widget buildTextButton(
+    BuildContext context,
+    String label,
+    void Function() onPressed,
+    String? tooltip,
+    Color color,
+    Color background, {
+    IconData? icon,
+    bool? radiusLeft,
+    bool? radiusRight,
+  }) {
+    final BorderRadiusGeometry radius;
+    if (radiusRight == true) {
+      radius = (radiusLeft == true) ? _radiusBoth : _radiusRight;
+    } else {
+      radius = (radiusLeft == true) ? _radiusLeft : _radiusNone;
+    }
+    var text = TextSpan(
+        text: label,
+        style: TextStyle(
+          fontSize: 12,
+          height: 1.3,
+          color: color,
+        ));
+    Widget button;
+    if (icon != null) {
+      button = Text.rich(TextSpan(children: [
+        WidgetSpan(child: Icon(size: 16, color: color, icon)),
+        text,
+      ]));
+    } else {
+      button = Text.rich(text);
+    }
+    Widget result = Container(
+        margin: const EdgeInsets.fromLTRB(0, 0, 1, 0),
+        child: TextButton(
+            style: ButtonStyle(
+              padding:
+                  const MaterialStatePropertyAll<EdgeInsets>(EdgeInsets.all(0)),
+              // fixedSize: MaterialStatePropertyAll<Size>(Size(32, 32)),
+              shape: MaterialStatePropertyAll<OutlinedBorder>(
+                  RoundedRectangleBorder(
+                      borderRadius: radius, side: BorderSide.none)),
+              backgroundColor: MaterialStatePropertyAll<Color>(background),
+              iconColor: MaterialStatePropertyAll<Color>(color),
+            ),
+            onPressed: onPressed,
+            child: button));
+    if (tooltip != null) {
+      result = Tooltip(
+        message: tooltip,
+        child: result,
+      );
+    }
+    return result;
+  }
+
   static Widget buildIconButton(
     BuildContext context,
     Widget icon,
@@ -80,6 +137,7 @@ class Summary extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Text(
+      textAlign: TextAlign.start,
       data,
       style: textStyleSummary,
     );

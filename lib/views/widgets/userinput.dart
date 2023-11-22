@@ -47,13 +47,13 @@ class UserInputHelper {
         final List<TableRow> children = [];
         for (final row in data.items) {
           children.add(createTableRow([
-            TCell(TextButton(
-              child: Text("选择"),
-              onPressed: () {
+            TCell(
+              AppUI.buildTextButton(context, "选择", () {
                 currentGame!.handleUserInputCallback(input, 0, row.key);
                 Navigator.pop(context, true);
-              },
-            )),
+              }, null, Colors.white, const Color(0xff67C23A),
+                  radiusLeft: true, radiusRight: true),
+            ),
             TCell(Text(row.value))
           ]));
         }

@@ -58,7 +58,7 @@ class GameTopState extends State<GameTop> {
         child: Row(children: [
           AppUI.buildIconButton(context, const Icon(Icons.home), () {
             currentGame?.handleCmd("change", "");
-          }, "游戏一览", Colors.white, Colors.green, radiusLeft: true),
+          }, "游戏一览", Colors.white, const Color(0xff67C23A), radiusLeft: true),
           AppUI.buildIconButton(context, const Icon(Icons.folder_open), () {
             currentGame?.openGames();
           }, "打开游戏", Colors.white, const Color(0xff409EFF)),

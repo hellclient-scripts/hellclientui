@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/material.dart' as material;
+import 'package:intl/intl.dart';
 
 import 'package:hellclientui/states/appstate.dart';
 import 'package:hellclientui/workers/game.dart';
@@ -8,12 +9,15 @@ import 'dart:async';
 import 'dart:convert';
 import 'package:flutter/services.dart';
 import 'package:toastification/toastification.dart';
+import 'appui.dart';
 
 class AllLines extends StatefulWidget {
   const AllLines({super.key});
   @override
   State<AllLines> createState() => AllLinesState();
 }
+
+final _dateFormat = DateFormat("yyyy-MM-dd HH:mm:ss");
 
 class AllLinesState extends State<AllLines> {
   Lines? lines;
@@ -66,35 +70,54 @@ class AllLinesState extends State<AllLines> {
               text: word.text,
               style: style.toTextStyle(currentAppState.renderSettings)));
         }
+        if (line.triggers.isNotEmpty) {
+          linedata.add(WidgetSpan(
+              child: SelectionContainer.disabled(
+                  child: Text(renderer.renderSettings.triggersicon,
+                      style: renderer.getIconStyle(
+                          1,
+                          renderer.renderSettings.triggersColor,
+                          renderer.background)))));
+        }
         List<Widget> children = [];
 
         linedata.add(const TextSpan(text: '\r'));
-        children.add(SizedBox(
-            width: renderer.renderSettings.width,
-            child: GestureDetector(
-                onDoubleTap: () async {
-                  String summary = plain.trimLeft();
+        String tooltip = _dateFormat
+            .format(DateTime.fromMillisecondsSinceEpoch(line.time * 1000));
+        if (line.triggers.isNotEmpty) {
+          tooltip += '\nTriggers:\n';
+          for (final trigger in line.triggers) {
+            tooltip += '$trigger\n';
+          }
+        }
+        children.add(Tooltip(
+            message: tooltip,
+            child: SizedBox(
+                width: renderer.renderSettings.width,
+                child: GestureDetector(
+                    onDoubleTap: () async {
+                      String summary = plain.trimLeft();
 
-                  if (summary.length > 8) {
-                    summary = '${summary.substring(0, 8)}...';
-                  }
+                      if (summary.length > 8) {
+                        summary = '${summary.substring(0, 8)}...';
+                      }
 
-                  await Clipboard.setData(ClipboardData(text: plain));
-                  if (context.mounted) {
-                    toastification.show(
-                        context: context,
-                        autoCloseDuration: const Duration(seconds: 3),
-                        title: '双击复制成功',
-                        type: ToastificationType.success,
-                        style: ToastificationStyle.flat,
-                        showProgressBar: false,
-                        description: '文字“$summary”已经复制到剪贴板。');
-                  }
-                },
-                child: Text.rich(
-                  TextSpan(children: linedata),
-                  softWrap: true,
-                ))));
+                      await Clipboard.setData(ClipboardData(text: plain));
+                      if (context.mounted) {
+                        toastification.show(
+                            context: context,
+                            autoCloseDuration: const Duration(seconds: 3),
+                            title: '双击复制成功',
+                            type: ToastificationType.success,
+                            style: ToastificationStyle.flat,
+                            showProgressBar: false,
+                            description: '文字“$summary”已经复制到剪贴板。');
+                      }
+                    },
+                    child: Text.rich(
+                      TextSpan(children: linedata),
+                      softWrap: true,
+                    )))));
 
         list.add(Flex(direction: Axis.horizontal, children: children));
       }
@@ -105,9 +128,12 @@ class AllLinesState extends State<AllLines> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const SizedBox(
-          height: 72,
-          child: Text('历史输出'),
+        const Padding(
+          padding: EdgeInsets.all(20),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [H1('历史输出'), Summary('双击复制一行文字')],
+          ),
         ),
         Expanded(
             child: Container(
