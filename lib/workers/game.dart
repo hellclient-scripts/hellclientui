@@ -300,9 +300,6 @@ class Game {
     final clients = [...clientinfos.clientInfos];
     if (clients.isNotEmpty) {
       clients.sort((a, b) {
-        if (a.priority != b.priority) {
-          return a.priority.compareTo(b.priority);
-        }
         return a.lastActive.compareTo(b.lastActive);
       });
       handleCmd('change', clients[0].id);

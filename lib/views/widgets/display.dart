@@ -14,30 +14,6 @@ import 'userinput.dart';
 import 'dart:async';
 import 'dart:convert';
 
-Future<bool?> showAllLines(BuildContext context) async {
-  if (!context.mounted) {
-    return false;
-  }
-  return showDialog<bool>(
-      context: context,
-      builder: (context) {
-        return Material(
-            type: MaterialType.transparency,
-            child: Flex(direction: Axis.horizontal, children: [
-              const Expanded(
-                flex: 1,
-                child: Center(),
-              ),
-              Expanded(
-                  flex: 9,
-                  child: Container(
-                      height: double.infinity,
-                      decoration: const BoxDecoration(color: Colors.white),
-                      child: const AllLines())),
-            ]));
-      });
-}
-
 Future<bool?> showConnectError(BuildContext context, String message) async {
   return showDialog<bool>(
     context: context,
@@ -158,9 +134,17 @@ class DisplayState extends State<Display> {
         bottom: 0,
         left: 0,
         right: 0,
-        child: GestureDetector(onTap: () {
+        child: GestureDetector(onVerticalDragEnd: (details) {
+          if (details.velocity.pixelsPerSecond.dy < -40) {
+            currentGame!.handleCmd("change", "");
+          } else if (details.velocity.pixelsPerSecond.dy > 40) {
+            currentGame!.clientQuick();
+          }
+        }, onTap: () {
           currentGame!.handleCmd("allLines", null);
           showAllLines(context);
+        }, onDoubleTap: () {
+          currentGame!.handleCmd("assist", currentGame!.current);
         }, child:
             AbsorbPointer(child: LayoutBuilder(builder: (context, constraints) {
           var viewwidth = constraints.maxWidth;

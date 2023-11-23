@@ -47,7 +47,7 @@ class UserInputHelper {
     showDialog<bool?>(
       context: context,
       builder: (context) {
-        return DialogOverray(
+        return DialogOverlay(
             child: FullScreenDialog(
           title: data.title,
           summary: data.intro,
@@ -348,7 +348,7 @@ class UserInputVisualPromptWidgetState
       );
       children.add(table);
     }
-    return DialogOverray(
+    return DialogOverlay(
         child: FullScreenDialog(
             title: widget.visualPrompt.title,
             summary: widget.visualPrompt.intro,

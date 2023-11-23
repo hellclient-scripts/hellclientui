@@ -11,6 +11,30 @@ import 'package:flutter/services.dart';
 import 'package:toastification/toastification.dart';
 import 'appui.dart';
 
+Future<bool?> showAllLines(BuildContext context) async {
+  if (!context.mounted) {
+    return false;
+  }
+  return showDialog<bool>(
+      context: context,
+      builder: (context) {
+        return Material(
+            type: MaterialType.transparency,
+            child: Flex(direction: Axis.horizontal, children: [
+              const Expanded(
+                flex: 1,
+                child: Center(),
+              ),
+              Expanded(
+                  flex: 9,
+                  child: Container(
+                      height: double.infinity,
+                      decoration: const BoxDecoration(color: Colors.white),
+                      child: const AllLines())),
+            ]));
+      });
+}
+
 class AllLines extends StatefulWidget {
   const AllLines({super.key});
   @override

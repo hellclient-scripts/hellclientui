@@ -8,6 +8,7 @@ import '../widgets/display.dart';
 import '../widgets/notopened.dart';
 import '../../workers/game.dart' as gameengine;
 import '../../models/message.dart' as message;
+import '../widgets/appui.dart';
 
 Future<String?> showNotOpened(
     BuildContext context, message.NotOpened games) async {
@@ -113,6 +114,25 @@ class GameState extends State<Game> {
         autofocus: true,
         child: Scaffold(
           appBar: AppBar(
+            actions: [
+              IconButton(
+                onPressed: () {
+                  AppUI.showMsgBox(
+                      context,
+                      "快捷键帮助",
+                      "在游戏主界面可以使用如下快捷键",
+                      const Column(children: [
+                        Text("单击:显示历史输出"),
+                        Text("双击:调用助手按纽"),
+                        Text("上划:进入游戏一览"),
+                        Text("下划:快速进入游戏"),
+                      ]));
+                },
+                tooltip: '快捷键帮助',
+                icon: const Icon(Icons.help_outline),
+              )
+            ], // This trailing comma makes auto-formatting nicer for build methods.
+
             backgroundColor: Theme.of(context).colorScheme.inversePrimary,
             // Here we take the value from the MyHomePage object that was created by
             // the App.build method, and use it to set our appbar title.

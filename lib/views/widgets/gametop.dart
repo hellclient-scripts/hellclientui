@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:hellclientui/workers/game.dart';
 import 'dart:async';
 import 'appui.dart';
+import 'alllines.dart';
 
 Future<bool?> showCloseGame(BuildContext context) async {
   return showDialog<bool>(
@@ -85,6 +86,44 @@ class GameTopState extends State<GameTop> {
         currentGame!.handleCmd('close', currentGame!.current);
       }
     }, '关闭游戏', Colors.white, const Color(0xffF56C6C)));
+    children.add(AppUI.buildIconButton(
+        context, const Icon(Icons.document_scanner), () async {
+      currentGame!.handleCmd("allLines", null);
+      showAllLines(context);
+    }, '历史输出', const Color(0xff606266), Colors.white,
+        borderColor: const Color(0xffDCDFE6)));
+
+    children.add(const SizedBox(
+      width: 5,
+    ));
+    children.add(AppUI.buildIconButton(
+      context,
+      const Icon(Icons.save_outlined),
+      () async {
+        final result =
+            await AppUI.showConfirmBox(context, '提示', '原游戏将被覆盖，是否要保存游戏?', null);
+        if (result == true) {
+          currentGame!.handleCmd("save", currentGame!.current);
+        }
+      },
+      '保存',
+      Colors.white,
+      const Color(0xff409EFF),
+    ));
+
+    children.add(const SizedBox(
+      width: 5,
+    ));
+    children.add(AppUI.buildIconButton(
+        context, const Icon(Icons.replay_outlined), () async {
+      final result = await AppUI.showConfirmBox(
+          context, '提示', '脚本所有的修改将丢失，进行中的程序也将停止，是否要重新加载脚本?', null);
+      if (result == true) {
+        currentGame!.handleCmd("reloadScript", currentGame!.current);
+      }
+    }, '重新加载', const Color(0xff606266), Colors.white,
+        borderColor: const Color(0xffDCDFE6)));
+
     return SizedBox(height: 28, child: Row(children: children));
   }
 

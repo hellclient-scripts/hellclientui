@@ -9,6 +9,59 @@ const BorderRadiusGeometry _radiusRight =
     BorderRadius.horizontal(right: Radius.circular(4));
 
 class AppUI {
+  static showMsgBox(
+      BuildContext context, String title, String summary, Widget? child) {
+    showDialog(
+        context: context,
+        builder: (context) {
+          return NonFullScreenDialog(
+            title: title,
+            summary: summary,
+            child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Padding(padding: const EdgeInsets.all(10), child: child),
+                  ConfirmOrCancelWidget(
+                    onConfirm: () {
+                      Navigator.pop(context, true);
+                    },
+                    onCancal: () {},
+                    labelCancel: null,
+                    autofocus: true,
+                  )
+                ]),
+          );
+        });
+  }
+
+  static Future<bool?> showConfirmBox(
+      BuildContext context, String title, String summary, Widget? child) {
+    return showDialog<bool>(
+        context: context,
+        builder: (context) {
+          return NonFullScreenDialog(
+            title: title,
+            summary: summary,
+            child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Padding(padding: const EdgeInsets.all(10), child: child),
+                  ConfirmOrCancelWidget(
+                    onConfirm: () {
+                      Navigator.pop(context, true);
+                    },
+                    onCancal: () {
+                      Navigator.pop(context, null);
+                    },
+                    autofocus: true,
+                  )
+                ]),
+          );
+        });
+  }
+
   static Widget buildTextButton(
     BuildContext context,
     String label,
@@ -19,6 +72,7 @@ class AppUI {
     IconData? icon,
     bool? radiusLeft,
     bool? radiusRight,
+    bool autofocus = false,
   }) {
     final BorderRadiusGeometry radius;
     if (radiusRight == true) {
@@ -55,6 +109,7 @@ class AppUI {
               backgroundColor: MaterialStatePropertyAll<Color>(background),
               iconColor: MaterialStatePropertyAll<Color>(color),
             ),
+            autofocus: autofocus,
             onPressed: onPressed,
             child: button));
     if (tooltip != null) {
@@ -75,6 +130,7 @@ class AppUI {
     Color background, {
     bool? radiusLeft,
     bool? radiusRight,
+    Color? borderColor,
   }) {
     final BorderRadiusGeometry radius;
     if (radiusRight == true) {
@@ -91,7 +147,12 @@ class AppUI {
               // fixedSize: MaterialStatePropertyAll<Size>(Size(32, 32)),
               shape: MaterialStatePropertyAll<OutlinedBorder>(
                   RoundedRectangleBorder(
-                      borderRadius: radius, side: BorderSide.none)),
+                      borderRadius: radius,
+                      side: borderColor == null
+                          ? BorderSide.none
+                          : BorderSide(
+                              color: borderColor!,
+                            ))),
               backgroundColor: MaterialStatePropertyAll<Color>(background),
               iconColor: MaterialStatePropertyAll<Color>(color),
             ),
@@ -259,8 +320,8 @@ class FullScreenDialog extends StatelessWidget {
   }
 }
 
-class DialogOverray extends StatelessWidget {
-  const DialogOverray(
+class DialogOverlay extends StatelessWidget {
+  const DialogOverlay(
       {super.key,
       required this.child,
       this.maxPercent = 0.8,
@@ -338,10 +399,12 @@ class ConfirmOrCancelWidget extends StatelessWidget {
       {super.key,
       this.labelSubmit = '确定',
       this.labelCancel = '取消',
+      this.autofocus = false,
       required this.onConfirm,
       required this.onCancal});
   final String labelSubmit;
   final String? labelCancel;
+  final bool autofocus;
   final void Function() onConfirm;
   final void Function() onCancal;
   @override
@@ -352,21 +415,19 @@ class ConfirmOrCancelWidget extends StatelessWidget {
       ),
     ];
     if (labelCancel != null) {
-      children.add(
-        Container(
+      children.add(Container(
           width: 100,
           margin: const EdgeInsets.fromLTRB(5, 0, 5, 0),
           child: AppUI.buildTextButton(context, labelCancel!, onCancal, null,
-              const Color(0xff333333), const Color(0xffdddddd)),
-        ),
-      );
+              const Color(0xff333333), const Color(0xffdddddd))));
     }
     children.add(
       Container(
         width: 100,
         margin: const EdgeInsets.fromLTRB(5, 0, 5, 0),
         child: AppUI.buildTextButton(context, labelSubmit, onConfirm, null,
-            Colors.white, const Color(0xff409EFF)),
+            Colors.white, const Color(0xff409EFF),
+            autofocus: autofocus),
       ),
     );
     return SizedBox(

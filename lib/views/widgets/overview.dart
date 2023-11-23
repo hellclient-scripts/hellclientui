@@ -292,7 +292,11 @@ class OverviewState extends State<Overview> {
 
   @override
   Widget build(BuildContext context) {
-    return LayoutBuilder(builder: (context, constraints) {
+    return GestureDetector(onVerticalDragEnd: (details) {
+      if (details.velocity.pixelsPerSecond.dy > 40) {
+        currentGame!.clientQuick();
+      }
+    }, child: LayoutBuilder(builder: (context, constraints) {
       final List<Widget> children = [];
       final large = constraints.maxWidth >= 1121;
       if (large) {
@@ -305,6 +309,6 @@ class OverviewState extends State<Overview> {
             children: children,
           ));
       return body;
-    });
+    }));
   }
 }

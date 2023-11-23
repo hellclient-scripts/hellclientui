@@ -18,6 +18,7 @@ class Word {
 }
 
 class Line {
+  Line();
   List<Word> words = [];
   String id = "";
   int time = 0;
@@ -47,8 +48,13 @@ class Line {
 
 class Lines {
   List<Line> lines = [];
-  Lines.fromJson(dynamic json)
-      : lines = List<dynamic>.from(json).map((e) => Line.fromJson(e)).toList();
+  Lines.fromJson(dynamic json) {
+    if (json != null) {
+      lines = List<dynamic>.from(json)
+          .map((e) => e == null ? Line() : Line.fromJson(e))
+          .toList();
+    }
+  }
 }
 
 class ClientInfo {
