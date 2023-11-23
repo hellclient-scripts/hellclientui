@@ -1,3 +1,5 @@
+import 'dart:ui' as ui;
+
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
@@ -6,6 +8,7 @@ import 'package:toastification/toastification.dart';
 import '../../models/message.dart';
 import '../../workers/game.dart';
 import 'appui.dart';
+import 'package:carousel_slider/carousel_slider.dart';
 
 class UserInputHelper {
   static popup(BuildContext context, UserInput input) {
@@ -18,12 +21,11 @@ class UserInputHelper {
       case 'error':
         type = ToastificationType.error;
         break;
-      case 'info':
-        type = ToastificationType.info;
-        break;
       case 'warning':
         type = ToastificationType.warning;
         break;
+      default:
+        type = ToastificationType.info;
     }
     toastification.show(
         context: context,
@@ -69,12 +71,17 @@ class UserInputHelper {
           title: data.title,
           summary: data.intro,
           child: Column(mainAxisSize: MainAxisSize.min, children: [
-            TextFormField(
+            TextField(
+              onSubmitted: (value) {
+                currentGame!.handleUserInputCallback(input, 0, value);
+                Navigator.pop(context, true);
+              },
               decoration: const InputDecoration(
                 filled: true,
                 fillColor: Color(0xffeeeeee),
               ),
               controller: controller,
+              autofocus: true,
             ),
             ConfirmOrCancelWidget(
               onConfirm: () {
@@ -140,6 +147,18 @@ class UserInputHelper {
       currentGame!.handleUserInputCallback(input, -1, '');
     }
   }
+
+  static visualPrompt(BuildContext context, UserInput input) async {
+    final data = VisualPrompt.fromJson(input.data);
+    final result = await showDialog<bool?>(
+        context: context,
+        builder: (context) {
+          return UserInputVisualPromptWidget(input: input, visualPrompt: data);
+        });
+    if (result != true) {
+      currentGame!.handleUserInputCallback(input, -1, '');
+    }
+  }
 }
 
 const textStyleUserInputFilter = TextStyle(
@@ -177,7 +196,7 @@ class UserInputListWidgetState extends State<UserInputListWidget> {
     if (widget.list.withFilter) {
       children.add(createTableRow([
         const TCell(Center()),
-        TCell(TextFormField(
+        TCell(TextField(
           decoration: const InputDecoration(
               hintText: '请输入需要过滤的关键字', hintStyle: textStyleUserInputFilter),
           controller: textController,
@@ -264,8 +283,6 @@ class UserInputVisualPromptWidget extends StatefulWidget {
 
 class UserInputVisualPromptWidgetState
     extends State<UserInputVisualPromptWidget> {
-  TextEditingValue value = const TextEditingValue();
-
   @override
   void initState() {
     // TODO: implement initState
@@ -274,7 +291,152 @@ class UserInputVisualPromptWidgetState
 
   @override
   Widget build(BuildContext context) {
-    // TODO: implement build
-    throw UnimplementedError();
+    TextEditingController controller = TextEditingController.fromValue(
+        TextEditingValue(text: widget.visualPrompt.value));
+    final List<Widget> children = [];
+    late Widget visual;
+    switch (widget.visualPrompt.mediaType) {
+      case "base64slide":
+        visual = UserInputVisualPromptBase64SlideWidget(
+          rawdata: widget.visualPrompt.source,
+        );
+      default:
+        visual = const Text("不支持的媒体类型");
+    }
+    children.add(visual);
+
+    if (widget.visualPrompt.items.isEmpty) {
+      children.add(TextField(
+        onSubmitted: (value) {
+          currentGame!.handleUserInputCallback(widget.input, 0, value);
+          Navigator.pop(context, true);
+        },
+        decoration: const InputDecoration(
+          filled: true,
+          fillColor: Color(0xffeeeeee),
+        ),
+        controller: controller,
+        autofocus: true,
+      ));
+      children.add(ConfirmOrCancelWidget(
+        onConfirm: () {
+          currentGame!
+              .handleUserInputCallback(widget.input, 0, controller.text);
+          Navigator.pop(context, true);
+        },
+        onCancal: () {
+          Navigator.pop(context, null);
+        },
+      ));
+    } else {
+      final List<TableRow> listchildren = [];
+      for (final row in widget.visualPrompt.items) {
+        listchildren.add(createTableRow([
+          TCell(
+            AppUI.buildTextButton(context, "选择", () {
+              currentGame!.handleUserInputCallback(widget.input, 0, row.key);
+              Navigator.pop(context, true);
+            }, null, Colors.white, const Color(0xff67C23A),
+                radiusLeft: true, radiusRight: true),
+          ),
+          TCell(Text(row.value))
+        ]));
+      }
+      final table = Table(
+        columnWidths: const {0: FixedColumnWidth(100)},
+        children: listchildren,
+      );
+      children.add(table);
+    }
+    return DialogOverray(
+        child: FullScreenDialog(
+            title: widget.visualPrompt.title,
+            summary: widget.visualPrompt.intro,
+            child: Column(children: children)));
+  }
+}
+
+class UserInputVisualPromptBase64SlideWidget extends StatefulWidget {
+  const UserInputVisualPromptBase64SlideWidget(
+      {super.key, required this.rawdata, this.height = 250});
+  final String rawdata;
+  final double height;
+  @override
+  State<UserInputVisualPromptBase64SlideWidget> createState() =>
+      UserInputVisualPromptBase64SlideWidgetState();
+}
+
+class UserInputVisualPromptBase64SlideWidgetState
+    extends State<UserInputVisualPromptBase64SlideWidget> {
+  double maxWidth = 0;
+  double maxHeight = 0;
+  final List<Widget> children = [];
+  void loadImages() async {
+    final picturesdata = widget.rawdata.split('|');
+    for (final picturedata in picturesdata) {
+      final raw = picturedata.split(',');
+      if (raw.length > 1) {
+        final rawbytes = base64Decode(raw[1].trimLeft());
+        final id = await ui.ImageDescriptor.encoded(
+            await ui.ImmutableBuffer.fromUint8List(rawbytes));
+        if (maxWidth < id.width) {
+          maxWidth = id.width * 1.0;
+        }
+        if (maxHeight < id.height) {
+          maxHeight = id.height * 1.0;
+        }
+        children.add(LayoutBuilder(builder: (context, constraints) {
+          return SizedBox(
+              width: constraints.maxWidth,
+              height: constraints.maxHeight,
+              child: FittedBox(child: Image.memory(rawbytes)));
+        }));
+      }
+    }
+    setState(() {});
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    loadImages();
+  }
+
+  CarouselController carouselController = CarouselController();
+
+  @override
+  Widget build(BuildContext context) {
+    if (maxHeight == 0) {
+      return const Center();
+    }
+    return Column(
+      children: [
+        CarouselSlider(
+          carouselController: carouselController,
+          options: CarouselOptions(
+              height: widget.height > maxHeight ? widget.height : maxHeight,
+              aspectRatio: maxWidth / maxHeight),
+          items: children,
+        ),
+        Padding(
+          padding: const EdgeInsets.all(20),
+          child: Row(children: [
+            IconButton(
+              onPressed: () {
+                carouselController.previousPage();
+              },
+              icon: const Icon(Icons.arrow_left),
+            ),
+            const Expanded(child: Center()),
+            IconButton(
+              onPressed: () {
+                carouselController.nextPage();
+              },
+              icon: const Icon(Icons.arrow_right),
+            ),
+          ]),
+        )
+      ],
+    );
   }
 }

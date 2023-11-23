@@ -135,6 +135,9 @@ class DisplayState extends State<Display> {
               case "userinput.confirm":
                 UserInputHelper.confirm(context, input);
                 break;
+              case "userinput.visualprompt":
+                UserInputHelper.visualPrompt(context, input);
+                break;
             }
         }
       }

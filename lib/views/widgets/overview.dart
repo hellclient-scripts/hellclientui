@@ -3,6 +3,7 @@ import 'package:flutter_boring_avatars/flutter_boring_avatars.dart';
 import 'package:hellclientui/states/appstate.dart';
 import '../../workers/game.dart';
 import '../../models/message.dart';
+import 'dart:async';
 
 class Overview extends StatefulWidget {
   const Overview({super.key});
@@ -55,6 +56,21 @@ const tagStyle = TextStyle(
 );
 
 class OverviewState extends State<Overview> {
+  late StreamSubscription subClients;
+  @override
+  void initState() {
+    super.initState();
+    subClients = currentGame!.clientsUpdateStream.stream.listen((event) {
+      setState(() {});
+    });
+  }
+
+  @override
+  void dispose() {
+    subClients.cancel();
+    super.dispose();
+  }
+
   Widget buildTooltip(BuildContext context) {
     return Container(
         decoration: const BoxDecoration(

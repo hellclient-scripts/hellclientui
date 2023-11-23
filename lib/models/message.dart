@@ -212,9 +212,11 @@ class UserInputList {
     for (final value in valuelist) {
       values.add(value);
     }
-    final itemlist = json["Items"] as List<dynamic>;
-    for (final item in itemlist) {
-      items.add(UserInputItem.fromJson(item));
+    if (json["Items"] != null) {
+      final itemlist = json["Items"] as List<dynamic>;
+      for (final item in itemlist) {
+        items.add(UserInputItem.fromJson(item));
+      }
     }
   }
 }
@@ -237,9 +239,11 @@ class VisualPrompt {
     value = json["Value"];
     portrait = json["Portrait"];
     refreshCallback = json["RefreshCallback"];
-    final itemlist = json["Items"] as List<dynamic>;
-    for (final item in itemlist) {
-      items.add(UserInputItem.fromJson(item));
+    if (json["Items"] != null) {
+      final itemlist = json["Items"] as List<dynamic>;
+      for (final item in itemlist) {
+        items.add(UserInputItem.fromJson(item));
+      }
     }
   }
 }
