@@ -194,9 +194,9 @@ class Renderer {
       resetFrame();
       if (noSortLines != true) {
         rows.sort(Row.compare);
-      }
-      if (rows.length > maxLines) {
-        rows = rows.sublist(rows.length - maxLines);
+        if (rows.length > maxLines) {
+          rows = rows.sublist(rows.length - maxLines);
+        }
       }
       int index = 0;
       for (final row in rows) {

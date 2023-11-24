@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'fullscreen.dart';
+import '../../models/message.dart';
 
 const BorderRadiusGeometry _radiusBoth = BorderRadius.all(Radius.circular(4));
 const BorderRadiusGeometry _radiusNone = BorderRadius.zero;
@@ -436,5 +437,40 @@ class ConfirmOrCancelWidget extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.end,
           children: children,
         ));
+  }
+}
+
+const textStyleError = TextStyle(
+  fontSize: 14,
+  height: 20 / 14,
+  color: Color(0xffF56C6C),
+);
+
+class CreateFailMessage extends StatelessWidget {
+  const CreateFailMessage({super.key, this.fail});
+  final CreateFail? fail;
+  @override
+  Widget build(BuildContext context) {
+    if (fail == null) {
+      return const Center();
+    }
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: fail!.errors
+          .map((e) => Container(
+              width: double.infinity,
+              padding: const EdgeInsets.all(4),
+              color: const Color(0xfffef0f0),
+              child: Text.rich(TextSpan(children: [
+                const WidgetSpan(
+                    child: Icon(
+                  Icons.error,
+                  color: Color(0xffF56C6C),
+                  size: 20,
+                )),
+                TextSpan(text: e.msg, style: textStyleError),
+              ]))))
+          .toList(),
+    );
   }
 }

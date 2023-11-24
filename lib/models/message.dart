@@ -253,3 +253,39 @@ class VisualPrompt {
     }
   }
 }
+
+class FieldError {
+  FieldError();
+  String field = "";
+  String label = "";
+  String msg = "";
+  FieldError.fromJson(Map<String, dynamic> json) {
+    field = json["Field"];
+    label = json["Label"];
+    msg = json["Msg"];
+  }
+}
+
+class CreateFail {
+  CreateFail();
+  List<FieldError> errors = [];
+  CreateFail.fromJson(dynamic json) {
+    errors =
+        List<dynamic>.from(json).map((e) => FieldError.fromJson(e)).toList();
+  }
+}
+
+class UpdatePasswordForm {
+  UpdatePasswordForm(
+      {required this.username,
+      required this.password,
+      required this.repeatPassword});
+  String username = "";
+  String password = "";
+  String repeatPassword = "";
+  Map<String, dynamic> toJson() => {
+        "Username": username,
+        "Password": password,
+        "RepeatPassword": repeatPassword
+      };
+}

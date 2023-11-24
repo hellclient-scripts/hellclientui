@@ -49,36 +49,36 @@ class HudState extends State<Hud> {
                 child: LayoutBuilder(builder: (context, constraints) {
                   var viewwidth = constraints.maxWidth;
 
-                  Widget output = Transform.scale(
-                      scale: 1 / appState.devicePixelRatio,
-                      alignment: Alignment.topLeft,
-                      child: GestureDetector(
-                          onTapUp: (details) {
-                            var xpostion = (details.localPosition.dx) /
-                                (appState.renderSettings.linewidth *
-                                    appState.devicePixelRatio);
-                            var ypostion = (details.localPosition.dy) /
-                                (currentGame!.hudContent.length *
-                                    appState.renderSettings.lineheight *
-                                    appState.devicePixelRatio);
-                            if (0 < xpostion &&
-                                xpostion < 1 &&
-                                0 < ypostion &&
-                                ypostion < 1) {
-                              currentGame!.handleCmd(
-                                  'hudclick', {'X': xpostion, 'Y': ypostion});
-                            }
-                          },
-                          child: AbsorbPointer(
+                  Widget output = GestureDetector(
+                      onTapUp: (details) {
+                        var xpostion = (details.localPosition.dx) /
+                            (appState.renderSettings.linewidth *
+                                appState.devicePixelRatio);
+                        var ypostion = (details.localPosition.dy) /
+                            (currentGame!.hudContent.length *
+                                appState.renderSettings.lineheight *
+                                appState.devicePixelRatio);
+                        if (0 < xpostion &&
+                            xpostion < 1 &&
+                            0 < ypostion &&
+                            ypostion < 1) {
+                          currentGame!.handleCmd(
+                              'hudclick', {'X': xpostion, 'Y': ypostion});
+                        }
+                      },
+                      child: AbsorbPointer(
+                          child: Transform.scale(
+                              scale: 1 / appState.devicePixelRatio,
+                              alignment: Alignment.topLeft,
                               child: CustomPaint(
-                            size: Size(
-                                appState.renderSettings.linewidth *
-                                    appState.devicePixelRatio,
-                                currentGame!.hudContent.length *
-                                    appState.renderSettings.lineheight *
-                                    appState.devicePixelRatio),
-                            painter: currentGame!.hud,
-                          ))));
+                                size: Size(
+                                    appState.renderSettings.linewidth *
+                                        appState.devicePixelRatio,
+                                    currentGame!.hudContent.length *
+                                        appState.renderSettings.lineheight *
+                                        appState.devicePixelRatio),
+                                painter: currentGame!.hud,
+                              ))));
                   if (viewwidth <
                       appState.renderSettings.minChars *
                           appState.renderSettings.fontSize) {

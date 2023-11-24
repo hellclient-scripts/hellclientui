@@ -3,6 +3,16 @@ import 'package:hellclientui/workers/game.dart';
 import 'dart:async';
 import 'appui.dart';
 import 'alllines.dart';
+import '../../forms/passwordform.dart';
+
+Future<bool?> showUpdatePassowrd(BuildContext context) async {
+  return showDialog<bool>(
+    context: context,
+    builder: (context) {
+      return const NonFullScreenDialog(title: '修改客户端密码', child: PasswordForm());
+    },
+  );
+}
 
 Future<bool?> showCloseGame(BuildContext context) async {
   return showDialog<bool>(
@@ -54,16 +64,55 @@ class GameTopState extends State<GameTop> {
   }
 
   Widget buildHeader(BuildContext context) {
-    return SizedBox(
-        height: 28,
-        child: Row(children: [
-          AppUI.buildIconButton(context, const Icon(Icons.home), () {
-            currentGame?.handleCmd("change", "");
-          }, "游戏一览", Colors.white, const Color(0xff67C23A), radiusLeft: true),
-          AppUI.buildIconButton(context, const Icon(Icons.folder_open), () {
-            currentGame?.openGames();
-          }, "打开游戏", Colors.white, const Color(0xff409EFF)),
-        ]));
+    final statusText =
+        currentGame!.status.isEmpty ? '' : '    [${currentGame!.status}]';
+    final List<Widget> children = [
+      AppUI.buildIconButton(context, const Icon(Icons.home), () {
+        currentGame!.handleCmd("change", "");
+      }, "游戏一览", Colors.white, const Color(0xff67C23A), radiusLeft: true),
+      AppUI.buildIconButton(context, const Icon(Icons.folder_open), () {
+        currentGame!.openGames();
+      }, "打开游戏", Colors.white, const Color(0xff409EFF)),
+      AppUI.buildIconButton(context, const Icon(Icons.lock_outline), () {
+        showUpdatePassowrd(context);
+      }, "修改密码", const Color(0xff606266), Colors.white,
+          borderColor: const Color(0xffDCDFE6)),
+      AppUI.buildIconButton(context, const Icon(Icons.info), () {
+        currentGame!.handleCmd("about", "");
+      }, "关于", const Color(0xff606266), Colors.white,
+          borderColor: const Color(0xffDCDFE6)),
+      Expanded(
+          child: Padding(
+              padding: const EdgeInsets.fromLTRB(30, 0, 30, 0),
+              child: currentGame!.current.isEmpty
+                  ? const Center()
+                  : GestureDetector(
+                      onTap: () {
+                        AppUI.showMsgBox(
+                            context,
+                            '游戏 ${currentGame!.current} 状态',
+                            currentGame!.status,
+                            null);
+                      },
+                      child: Text.rich(
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          TextSpan(children: [
+                            TextSpan(
+                                text: '当前游戏:${currentGame!.current}$statusText')
+                          ]))))),
+    ];
+    if (currentGame!.switchStatus != 0) {
+      children.add(Tooltip(
+          message: currentGame!.switchStatus == 2
+              ? "已连接到Hellclient网络"
+              : "未连接到Hellclient网络",
+          child: Icon(Icons.connect_without_contact,
+              color: currentGame!.switchStatus == 2
+                  ? const Color(0xff67C23A)
+                  : const Color(0xffE6A23C))));
+    }
+    return SizedBox(height: 28, child: Row(children: children));
   }
 
   Widget buildToolbar(BuildContext context) {
@@ -172,10 +221,7 @@ class GameTopState extends State<GameTop> {
     return LayoutBuilder(builder: (context, constraints) {
       // final large = constraints.maxWidth >= 1121;
       final List<Widget> children = [
-        SingleChildScrollView(
-          scrollDirection: Axis.horizontal,
-          child: buildHeader(context),
-        ),
+        buildHeader(context),
         const Divider(height: 1, color: Color(0xffE4E7ED)),
       ];
       final client = currentGame?.currentClient;

@@ -87,6 +87,24 @@ class GameState extends State<Game> {
               game.handleCmd('open', id);
             }
             break;
+          case 'version':
+            AppUI.showMsgBox(
+                context,
+                "关于",
+                '',
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const SelectableText('Hellclient'),
+                    const SelectableText(
+                        'https://github.com/jarlyyn/hellclient'),
+                    const SizedBox(
+                      height: 10,
+                    ),
+                    SelectableText(
+                        '服务器版本: ${jsonDecode(event.data) as String}'),
+                  ],
+                ));
         }
       }
     });

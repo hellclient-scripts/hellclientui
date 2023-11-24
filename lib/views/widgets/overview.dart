@@ -239,7 +239,6 @@ class OverviewState extends State<Overview> {
     List<ClientInfo> infos = currentGame!.clientinfos.clientInfos;
     int index = 0;
     for (final info in infos) {
-      index++;
       late Color bgcolor;
       switch (info.priority) {
         case 1:
@@ -250,10 +249,43 @@ class OverviewState extends State<Overview> {
         default:
           bgcolor = Colors.white;
       }
-      buttons.add(
-          buildButton(context, bgcolor, buildGame(context, info, index), () {
+      final button = buildButton(
+          context, bgcolor, buildGame(context, info, index + 1), () {
         currentGame!.handleCmd("change", info.id);
-      }, info.running ? 1 : 0.7, large));
+      }, info.running ? 1 : 0.7, large);
+      final buttonIndex = index;
+      buttons.add(DragTarget<int>(
+        builder: (context, candidateData, rejectedData) {
+          return Draggable<int>(
+            data: buttonIndex,
+            dragAnchorStrategy: (draggable, context, position) {
+              return const Offset(32, 32);
+            },
+            feedback: SizedBox(
+                width: 64,
+                height: 64,
+                child: AnimatedBoringAvatars(
+                  duration: Duration.zero,
+                  name: info.id,
+                  type: BoringAvatarsType.beam,
+                  colors: avatarColors,
+                )),
+            child: button,
+          );
+        },
+        onAccept: (data) {
+          if (data >= 0 && data < currentGame!.clientinfos.clientInfos.length) {
+            final info = currentGame!.clientinfos.clientInfos[data];
+            currentGame!.clientinfos.clientInfos[data] =
+                currentGame!.clientinfos.clientInfos[buttonIndex];
+            currentGame!.clientinfos.clientInfos[buttonIndex] = info;
+            final List<String> idlist =
+                currentGame!.clientinfos.clientInfos.map((e) => e.id).toList();
+            currentGame!.handleCmd('sortclients', idlist);
+          }
+        },
+      ));
+      index++;
     }
     buttons.add(buildButton(
         context,

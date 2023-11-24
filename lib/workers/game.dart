@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hellclientui/models/server.dart';
+import 'package:hellclientui/views/widgets/appui.dart';
 import '../models/rendersettings.dart';
 import '../states/appstate.dart';
 
@@ -13,14 +14,21 @@ import 'package:synchronized/synchronized.dart';
 
 Game? currentGame;
 
+class GameFormFail {
+  const GameFormFail({required this.formID, required this.data});
+  final String formID;
+  final dynamic data;
+}
+
 class GameCommand {
-  GameCommand({required this.command, required this.data});
-  String command = "";
-  String data = "";
+  const GameCommand({required this.command, this.data = ""});
+  final String command;
+  final String data;
 }
 
 class Game {
   String current = "";
+  String status = "";
   ClientInfo? currentClient;
   late RenderSettings renderSettings;
   late Connecting connecting;
@@ -28,6 +36,7 @@ class Game {
   late RenderPainter output;
   late RenderPainter prompt;
   late RenderPainter hud;
+  int switchStatus = 0;
   var hudLock = Lock();
   List<Line> hudContent = [];
   ClientInfos clientinfos = ClientInfos();
@@ -37,6 +46,8 @@ class Game {
   final clientsUpdateStream = StreamController.broadcast();
   final hudUpdateStream = StreamController.broadcast();
   final disconnectStream = StreamController.broadcast();
+  final createFailStream = StreamController.broadcast();
+  final hideUIStream = StreamController.broadcast();
   static Game create(Connecting connecting) {
     connecting = connecting;
     var game = Game();
@@ -77,6 +88,11 @@ class Game {
   String decodeString(String data) {
     final dynamic jsondata = json.decode(data);
     return jsondata as String;
+  }
+
+  Future<void> onCmdSwitchStatus(String data) async {
+    switchStatus = int.parse(decodeString(data));
+    clientsUpdateStream.add(null);
   }
 
   Future<void> onCmdLine(String data) async {
@@ -164,6 +180,19 @@ class Game {
     clientsUpdateStream.add(null);
   }
 
+  Future<void> onCmdClientinfo(String data) async {
+    final dynamic jsondata = json.decode(data);
+    final clientinfo = ClientInfo.fromJson(jsondata);
+    for (int i = 0; i < clientinfos.clientInfos.length; i++) {
+      if (clientinfos.clientInfos[i].id == clientinfo.id) {
+        clientinfos.clientInfos[i] = clientinfo;
+        break;
+      }
+    }
+    output.renderer.reset();
+    clientsUpdateStream.add(null);
+  }
+
   Future<void> onCmdCurrent(String data) async {
     current = decodeString(data);
     currentClient = null;
@@ -246,6 +275,22 @@ class Game {
       case 'notopened':
       case 'scriptMessage':
         commandStream.add(GameCommand(command: command, data: data));
+        break;
+      case 'clientinfo':
+        onCmdClientinfo(data);
+        break;
+      case 'switchStatus':
+        onCmdSwitchStatus(data);
+        break;
+      case 'createFail':
+        createFailStream.add(data);
+        break;
+      case 'version':
+        commandStream.add(GameCommand(command: command, data: data));
+        break;
+      case 'status':
+        status = decodeString(data);
+        clientsUpdateStream.add(null);
         break;
     }
   }
