@@ -94,6 +94,7 @@ class DisplayState extends State<Display> {
             setState(() {});
             break;
           case "scriptMessage":
+            currentGame!.hideUI('scriptMessage');
             final input = UserInput.fromJson(jsonDecode(event.data));
             switch (input.name) {
               case "userinput.popup":

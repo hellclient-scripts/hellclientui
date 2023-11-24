@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:hellclientui/workers/game.dart';
 import 'fullscreen.dart';
 import '../../models/message.dart';
+import 'dart:async';
 
 const BorderRadiusGeometry _radiusBoth = BorderRadius.all(Radius.circular(4));
 const BorderRadiusGeometry _radiusNone = BorderRadius.zero;
@@ -228,7 +230,7 @@ class TableHead extends StatelessWidget {
   }
 }
 
-class NonFullScreenDialog extends StatelessWidget {
+class NonFullScreenDialog extends StatefulWidget {
   const NonFullScreenDialog(
       {super.key,
       required this.title,
@@ -240,13 +242,35 @@ class NonFullScreenDialog extends StatelessWidget {
   final Widget child;
   final double width;
   @override
+  State<StatefulWidget> createState() => NonFullScreenDialogState();
+}
+
+class NonFullScreenDialogState extends State<NonFullScreenDialog> {
+  NonFullScreenDialogState();
+  late StreamSubscription subClose;
+  @override
+  void initState() {
+    super.initState();
+    subClose = currentGame!.hideUIStream.stream.listen((event) {
+      Navigator.pop(context);
+      subClose.cancel();
+    });
+  }
+
+  @override
+  void dispose() {
+    subClose.cancel();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     final List<Widget> children = [
       Padding(
           padding: const EdgeInsets.fromLTRB(0, 0, 0, 10),
           child: Row(
             children: [
-              Expanded(child: H1(title)),
+              Expanded(child: H1(widget.title)),
               IconButton(
                   onPressed: () {
                     Navigator.of(context).pop(null);
@@ -255,18 +279,18 @@ class NonFullScreenDialog extends StatelessWidget {
             ],
           )),
     ];
-    if (summary.isNotEmpty) {
+    if (widget.summary.isNotEmpty) {
       children.add(Padding(
           padding: const EdgeInsets.fromLTRB(10, 10, 10, 20),
-          child: Summary(summary)));
+          child: Summary(widget.summary)));
     }
-    children.add(child);
+    children.add(widget.child);
     return Material(
         type: MaterialType.transparency,
         child: Align(
             alignment: Alignment.center,
             child: Container(
-                width: width,
+                width: widget.width,
                 color: Colors.white,
                 child: Padding(
                     padding: const EdgeInsets.all(20),
@@ -321,7 +345,7 @@ class FullScreenDialog extends StatelessWidget {
   }
 }
 
-class DialogOverlay extends StatelessWidget {
+class DialogOverlay extends StatefulWidget {
   const DialogOverlay(
       {super.key,
       required this.child,
@@ -331,29 +355,51 @@ class DialogOverlay extends StatelessWidget {
   final AxisDirection direction;
   final Widget child;
   @override
+  State<StatefulWidget> createState() => DialogOverlayState();
+}
+
+class DialogOverlayState extends State<DialogOverlay> {
+  DialogOverlayState();
+  late StreamSubscription subClose;
+  @override
+  void initState() {
+    super.initState();
+    subClose = currentGame!.hideUIStream.stream.listen((event) {
+      Navigator.pop(context);
+      subClose.cancel();
+    });
+  }
+
+  @override
+  void dispose() {
+    subClose.cancel();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return LayoutBuilder(builder: (context, constraints) {
       AlignmentGeometry alignment;
       double maxHeight;
       double maxWidth;
-      switch (direction) {
+      switch (widget.direction) {
         case AxisDirection.up:
-          maxHeight = constraints.maxHeight * maxPercent;
+          maxHeight = constraints.maxHeight * widget.maxPercent;
           maxWidth = constraints.minWidth;
           alignment = Alignment.topCenter;
           break;
         case AxisDirection.left:
           maxHeight = constraints.maxHeight;
-          maxWidth = constraints.maxWidth * maxPercent;
+          maxWidth = constraints.maxWidth * widget.maxPercent;
           alignment = Alignment.centerLeft;
           break;
         case AxisDirection.right:
           maxHeight = constraints.maxHeight;
-          maxWidth = constraints.maxWidth * maxPercent;
+          maxWidth = constraints.maxWidth * widget.maxPercent;
           alignment = Alignment.centerRight;
           break;
         default:
-          maxHeight = constraints.maxHeight * maxPercent;
+          maxHeight = constraints.maxHeight * widget.maxPercent;
           maxWidth = constraints.minWidth;
           alignment = Alignment.bottomCenter;
       }
@@ -369,7 +415,7 @@ class DialogOverlay extends StatelessWidget {
                 ),
                 width: maxWidth,
                 height: maxHeight,
-                child: child,
+                child: widget.child,
               )));
     });
   }

@@ -85,6 +85,10 @@ class Game {
     return game;
   }
 
+  void hideUI(String type) {
+    hideUIStream.add(type);
+  }
+
   String decodeString(String data) {
     final dynamic jsondata = json.decode(data);
     return jsondata as String;
