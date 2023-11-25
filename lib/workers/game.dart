@@ -29,6 +29,7 @@ class GameCommand {
 class Game {
   String current = "";
   String status = "";
+  int historypos = -1;
   ClientInfo? currentClient;
   late RenderSettings renderSettings;
   late Connecting connecting;
@@ -47,7 +48,6 @@ class Game {
   final hudUpdateStream = StreamController.broadcast();
   final disconnectStream = StreamController.broadcast();
   final createFailStream = StreamController.broadcast();
-  final hideUIStream = StreamController.broadcast();
   static Game create(Connecting connecting) {
     connecting = connecting;
     var game = Game();
@@ -83,10 +83,6 @@ class Game {
     game.connecting = connecting;
     game.handleCmd("current", null);
     return game;
-  }
-
-  void hideUI(String type) {
-    hideUIStream.add(type);
   }
 
   String decodeString(String data) {
@@ -206,6 +202,7 @@ class Game {
         break;
       }
     }
+    historypos = -1;
     output.renderer.reset();
     clientsUpdateStream.add(null);
   }
@@ -296,11 +293,13 @@ class Game {
         status = decodeString(data);
         clientsUpdateStream.add(null);
         break;
+      case 'foundhistory':
+        commandStream.add(GameCommand(command: command, data: data));
+        break;
     }
   }
 
   Future<void> connect(AppState appState, Function(String) errorhandler) async {
-    // connecting.connect(errorhandler, server);
     subscription = connecting.messageStream.stream.listen((event) async {
       var msg = event as String;
       await onMessage(msg);
@@ -318,6 +317,7 @@ class Game {
   void handleSend(String cmd) {
     if (connecting.channel != null) {
       connecting.channel!.sink.add('send ${json.encode(cmd)}');
+      historypos = 0;
     }
   }
 

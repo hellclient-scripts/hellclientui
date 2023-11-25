@@ -3,12 +3,21 @@ import 'dart:ui' as ui;
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+
 import 'package:toastification/toastification.dart';
 
 import '../../models/message.dart';
 import '../../workers/game.dart';
 import 'appui.dart';
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:markdown/markdown.dart' as md;
+import 'package:flutter_markdown/flutter_markdown.dart';
+
+const textStyleUserInputNote = TextStyle(
+  color: Colors.white,
+  fontSize: 14,
+  height: 20 / 14,
+);
 
 class UserInputHelper {
   static popup(BuildContext context, UserInput input) {
@@ -155,6 +164,65 @@ class UserInputHelper {
         builder: (context) {
           return UserInputVisualPromptWidget(input: input, visualPrompt: data);
         });
+    if (result != true) {
+      currentGame!.handleUserInputCallback(input, -1, '');
+    }
+  }
+
+  static note(BuildContext context, UserInput input) async {
+    final data = UserInputTitleBodyType.fromJson(input.data);
+    final controller = ScrollController();
+    late Widget body;
+    switch (data.type) {
+      case "md":
+        body = Container(
+            width: double.infinity,
+            color: Colors.white,
+            child: RawScrollbar(
+                thumbColor: const Color(0xff333333),
+                thumbVisibility: true,
+                controller: controller,
+                child: Markdown(
+                    controller: controller,
+                    selectable: true,
+                    onTapLink: (text, href, title) {
+                      currentGame!
+                          .handleUserInputCallback(input, 0, href ?? "");
+                    },
+                    data: data.body)));
+        break;
+      default:
+        body = Container(
+            width: double.infinity,
+            color: Colors.black,
+            child: RawScrollbar(
+                thumbColor: Colors.white,
+                thumbVisibility: true,
+                controller: controller,
+                child: SelectableText.rich(
+                  TextSpan(text: data.body),
+                  style: textStyleUserInputNote,
+                )));
+    }
+    final content = Container(
+        width: double.infinity,
+        color: Colors.black,
+        child: RawScrollbar(
+            thumbColor: Colors.white,
+            thumbVisibility: true,
+            controller: controller,
+            child: body));
+    final result = await showDialog<bool?>(
+      context: context,
+      builder: (context) {
+        return DialogOverlay(
+            child: FullScreenDialog(
+                withScroll: false,
+                title: data.title,
+                summary: '',
+                child: content));
+      },
+    );
     if (result != true) {
       currentGame!.handleUserInputCallback(input, -1, '');
     }

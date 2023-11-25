@@ -247,19 +247,13 @@ class NonFullScreenDialog extends StatefulWidget {
 
 class NonFullScreenDialogState extends State<NonFullScreenDialog> {
   NonFullScreenDialogState();
-  late StreamSubscription subClose;
   @override
   void initState() {
     super.initState();
-    subClose = currentGame!.hideUIStream.stream.listen((event) {
-      Navigator.pop(context);
-      subClose.cancel();
-    });
   }
 
   @override
   void dispose() {
-    subClose.cancel();
     super.dispose();
   }
 
@@ -303,10 +297,15 @@ class NonFullScreenDialogState extends State<NonFullScreenDialog> {
 
 class FullScreenDialog extends StatelessWidget {
   const FullScreenDialog(
-      {super.key, required this.title, this.summary = "", required this.child});
+      {super.key,
+      required this.title,
+      this.summary = "",
+      this.withScroll = true,
+      required this.child});
   final String title;
   final String summary;
   final Widget child;
+  final bool withScroll;
   @override
   Widget build(BuildContext context) {
     final scrollController = ScrollController();
@@ -330,11 +329,14 @@ class FullScreenDialog extends StatelessWidget {
           padding: const EdgeInsets.fromLTRB(10, 10, 10, 20),
           child: Summary(summary)));
     }
-    children.add(Expanded(
-        child: Scrollbar(
-            controller: scrollController,
-            child: SingleChildScrollView(
-                controller: scrollController, child: child))));
+    Widget body = child;
+    if (withScroll) {
+      body = Scrollbar(
+          controller: scrollController,
+          child: SingleChildScrollView(
+              controller: scrollController, child: child));
+    }
+    children.add(Expanded(child: body));
     return Fullscreen(
         minWidth: 640,
         child: Padding(
@@ -360,19 +362,13 @@ class DialogOverlay extends StatefulWidget {
 
 class DialogOverlayState extends State<DialogOverlay> {
   DialogOverlayState();
-  late StreamSubscription subClose;
   @override
   void initState() {
     super.initState();
-    subClose = currentGame!.hideUIStream.stream.listen((event) {
-      Navigator.pop(context);
-      subClose.cancel();
-    });
   }
 
   @override
   void dispose() {
-    subClose.cancel();
     super.dispose();
   }
 
@@ -422,14 +418,18 @@ class DialogOverlayState extends State<DialogOverlay> {
 }
 
 class TCell extends StatelessWidget {
-  const TCell(this.child, {super.key});
+  const TCell(this.child, {super.key, this.alignment = Alignment.centerLeft});
+  final AlignmentGeometry? alignment;
   final Widget child;
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.fromLTRB(10, 12, 10, 12),
-      child: child,
-    );
+    return TableCell(
+        verticalAlignment: TableCellVerticalAlignment.middle,
+        child: Container(
+          alignment: alignment,
+          padding: const EdgeInsets.fromLTRB(10, 12, 10, 12),
+          child: child,
+        ));
   }
 }
 

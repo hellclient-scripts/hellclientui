@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:hellclientui/models/message.dart';
 import '../../workers/game.dart';
 import '../../states/appstate.dart';
 import 'appui.dart';
+import 'dart:async';
+import 'dart:convert';
 
 const textStyleBottomGameName = TextStyle(
   color: Colors.white,
@@ -65,10 +69,35 @@ class DisplayBottom extends StatefulWidget {
   State<StatefulWidget> createState() => DisplayBottomState();
 }
 
-var inputController = TextEditingController();
-
 class DisplayBottomState extends State<DisplayBottom> {
   DisplayBottomState();
+  late StreamSubscription subCommand;
+  late TextEditingController inputController;
+  @override
+  void initState() {
+    inputController = TextEditingController();
+    subCommand = currentGame!.commandStream.stream.listen((event) async {
+      if (event is GameCommand) {
+        switch (event.command) {
+          case "foundhistory":
+            final data = FoundHistory.fromJson(jsonDecode(event.data));
+            inputController.value = TextEditingValue(text: data.command);
+            inputController.selection = TextSelection(
+                baseOffset: 0, extentOffset: inputController.value.text.length);
+            currentGame!.historypos = data.position;
+            break;
+        }
+      }
+    });
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    subCommand.cancel();
+  }
+
   Widget buildBottom(BuildContext context) {
     var focusNode = FocusNode();
     focusNode.requestFocus();
@@ -115,32 +144,54 @@ class DisplayBottomState extends State<DisplayBottom> {
           Expanded(
               child: SingleChildScrollView(
                   scrollDirection: Axis.vertical,
-                  child: TextField(
-                    controller: inputController,
-                    textInputAction: TextInputAction.next,
-                    focusNode: focusNode,
-                    maxLines: 1,
-                    autofocus: true,
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: currentAppState.renderSettings.fontSize,
-                    ),
-                    decoration: (const InputDecoration(
-                        isDense: true, // Added this
-                        contentPadding: EdgeInsets.all(8), // Added this
-                        hintText: "输入指令",
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.zero,
-                          gapPadding: 0,
-                        ))),
-                    onSubmitted: (value) {
-                      currentGame?.handleSend(value);
-                      focusNode.requestFocus();
-                      inputController.selection = TextSelection(
-                          baseOffset: 0,
-                          extentOffset: inputController.value.text.length);
-                    },
-                  ))),
+                  child: KeyboardListener(
+                      focusNode: FocusNode(),
+                      onKeyEvent: (value) {
+                        if (value is KeyUpEvent) {
+                          switch (value.logicalKey.keyLabel) {
+                            case 'Arrow Up':
+                              currentGame!.handleCmd(
+                                  "findhistory", currentGame!.historypos + 1);
+                              break;
+                            case 'Arrow Down':
+                              if (currentGame!.historypos <= 0) {
+                                currentGame!.historypos = -1;
+                                inputController.text = "";
+                                return;
+                              }
+                              currentGame!.handleCmd(
+                                  "findhistory", currentGame!.historypos - 1);
+
+                              break;
+                          }
+                        }
+                      },
+                      child: TextField(
+                        controller: inputController,
+                        textInputAction: TextInputAction.next,
+                        focusNode: focusNode,
+                        maxLines: 1,
+                        autofocus: true,
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: currentAppState.renderSettings.fontSize,
+                        ),
+                        decoration: (const InputDecoration(
+                            isDense: true, // Added this
+                            contentPadding: EdgeInsets.all(8), // Added this
+                            hintText: "输入指令",
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.zero,
+                              gapPadding: 0,
+                            ))),
+                        onSubmitted: (value) {
+                          currentGame?.handleSend(value);
+                          focusNode.requestFocus();
+                          inputController.selection = TextSelection(
+                              baseOffset: 0,
+                              extentOffset: inputController.value.text.length);
+                        },
+                      )))),
           MouseRegion(
               cursor: SystemMouseCursors.click,
               child: GestureDetector(

@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:hellclientui/models/message.dart';
 import 'package:hellclientui/states/appstate.dart';
@@ -87,34 +89,41 @@ class DisplayState extends State<Display> {
       }
     });
 
-    subCommand = currentGame!.commandStream.stream.listen((event) {
+    subCommand = currentGame!.commandStream.stream.listen((event) async {
       if (event is GameCommand) {
         switch (event.command) {
           case "current":
             setState(() {});
             break;
           case "scriptMessage":
-            currentGame!.hideUI('scriptMessage');
             final input = UserInput.fromJson(jsonDecode(event.data));
-            switch (input.name) {
-              case "userinput.popup":
-                UserInputHelper.popup(context, input);
-                break;
-              case "userinput.list":
-                UserInputHelper.list(context, input);
-                break;
-              case "userinput.prompt":
-                UserInputHelper.prompt(context, input);
-                break;
-              case "userinput.alert":
-                UserInputHelper.alert(context, input);
-                break;
-              case "userinput.confirm":
-                UserInputHelper.confirm(context, input);
-                break;
-              case "userinput.visualprompt":
-                UserInputHelper.visualPrompt(context, input);
-                break;
+            if (input.name != 'userinput.popup') {
+              Navigator.of(context).popUntil(ModalRoute.withName('/game'));
+            }
+            if (context.mounted) {
+              switch (input.name) {
+                case "userinput.popup":
+                  UserInputHelper.popup(context, input);
+                  break;
+                case "userinput.list":
+                  UserInputHelper.list(context, input);
+                  break;
+                case "userinput.prompt":
+                  UserInputHelper.prompt(context, input);
+                  break;
+                case "userinput.alert":
+                  UserInputHelper.alert(context, input);
+                  break;
+                case "userinput.confirm":
+                  UserInputHelper.confirm(context, input);
+                  break;
+                case "userinput.visualprompt":
+                  UserInputHelper.visualPrompt(context, input);
+                  break;
+                case "userinput.note":
+                  UserInputHelper.note(context, input);
+                  break;
+              }
             }
         }
       }

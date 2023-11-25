@@ -151,8 +151,8 @@ class UserInputTitleIntro {
   String title = "";
   String intro = "";
   UserInputTitleIntro.fromJson(dynamic json)
-      : title = json["Title"],
-        intro = json["Intro"];
+      : title = json["Title"] ??= "",
+        intro = json["Intro"] ??= "";
 }
 
 class UserInputTitleIntroType {
@@ -161,9 +161,20 @@ class UserInputTitleIntroType {
   String intro = "";
   String type = "";
   UserInputTitleIntroType.fromJson(dynamic json)
-      : title = json["Title"],
-        intro = json["Intro"],
-        type = json["Type"];
+      : title = json["Title"] ??= "",
+        intro = json["Intro"] ??= "",
+        type = json["Type"] ??= "";
+}
+
+class UserInputTitleBodyType {
+  UserInputTitleBodyType();
+  String title = "";
+  String body = "";
+  String type = "";
+  UserInputTitleBodyType.fromJson(dynamic json)
+      : title = json["Title"] ??= "",
+        body = json["Body"] ??= "",
+        type = json["Type"] ??= "";
 }
 
 class UserInputTitleIntroValue {
@@ -172,9 +183,9 @@ class UserInputTitleIntroValue {
   String intro = "";
   String value = "";
   UserInputTitleIntroValue.fromJson(dynamic json)
-      : title = json["Title"],
-        intro = json["Intro"],
-        value = json["Value"];
+      : title = json["Title"] ??= "",
+        intro = json["Intro"] ??= "",
+        value = json["Value"] ??= "";
 }
 
 class Callback {
@@ -288,4 +299,14 @@ class UpdatePasswordForm {
         "Password": password,
         "RepeatPassword": repeatPassword
       };
+}
+
+class FoundHistory {
+  FoundHistory();
+  int position = 0;
+  String command = "";
+  FoundHistory.fromJson(Map<String, dynamic> json) {
+    position = json['Position'] ?? 0;
+    command = json['Command'] ?? "";
+  }
 }
