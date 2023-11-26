@@ -9,6 +9,7 @@ import '../widgets/notopened.dart';
 import '../../workers/game.dart' as gameengine;
 import '../../models/message.dart' as message;
 import '../widgets/appui.dart';
+import '../widgets/gameui.dart';
 
 Future<String?> showNotOpened(
     BuildContext context, message.NotOpened games) async {
@@ -105,6 +106,22 @@ class GameState extends State<Game> {
                         '服务器版本: ${jsonDecode(event.data) as String}'),
                   ],
                 ));
+            break;
+          case 'authorized':
+            final dynamic jsondata = json.decode(event.data);
+            final authorized = message.Authorized.fromJson(jsondata);
+            GameUI.showAuthorized(context, authorized);
+            break;
+          case 'requestPermissions':
+            final dynamic jsondata = json.decode(event.data);
+            final request = message.RequestTrust.fromJson(jsondata);
+            GameUI.requestPermissions(context, request);
+            break;
+          case 'requestTrustDomains':
+            final dynamic jsondata = json.decode(event.data);
+            final request = message.RequestTrust.fromJson(jsondata);
+            GameUI.requestTrustDomains(context, request);
+            break;
         }
       }
     });

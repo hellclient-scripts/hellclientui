@@ -12,6 +12,10 @@ const BorderRadiusGeometry _radiusRight =
     BorderRadius.horizontal(right: Radius.circular(4));
 
 class AppUI {
+  static hideUI(BuildContext context) {
+    Navigator.of(context).popUntil(ModalRoute.withName('/game'));
+  }
+
   static showMsgBox(
       BuildContext context, String title, String summary, Widget? child) {
     showDialog(

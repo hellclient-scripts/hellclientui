@@ -1,7 +1,6 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:hellclientui/views/pages/nav.dart';
 import 'package:hellclientui/workers/game.dart';
 import '../views/widgets/appui.dart';
 import '../models/message.dart';

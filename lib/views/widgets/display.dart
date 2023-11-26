@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:hellclientui/models/message.dart';
 import 'package:hellclientui/states/appstate.dart';
+import 'package:hellclientui/views/widgets/appui.dart';
 import 'package:provider/provider.dart';
 import '../../workers/renderer.dart';
 import '../../workers/game.dart';
@@ -98,7 +99,7 @@ class DisplayState extends State<Display> {
           case "scriptMessage":
             final input = UserInput.fromJson(jsonDecode(event.data));
             if (input.name != 'userinput.popup') {
-              Navigator.of(context).popUntil(ModalRoute.withName('/game'));
+              AppUI.hideUI(context);
             }
             if (context.mounted) {
               switch (input.name) {

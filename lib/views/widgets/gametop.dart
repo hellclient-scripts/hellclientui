@@ -115,7 +115,7 @@ class GameTopState extends State<GameTop> {
     return SizedBox(height: 28, child: Row(children: children));
   }
 
-  Widget buildToolbar(BuildContext context) {
+  Widget buildToolbar(BuildContext context, bool large) {
     final client = currentGame?.currentClient;
     if (client == null) {
       return Container();
@@ -135,12 +135,28 @@ class GameTopState extends State<GameTop> {
         currentGame!.handleCmd('close', currentGame!.current);
       }
     }, '关闭游戏', Colors.white, const Color(0xffF56C6C)));
+    if (large) {
+      children.add(AppUI.buildIconButton(
+          context, const Icon(Icons.document_scanner), () async {
+        currentGame!.handleCmd("allLines", null);
+        showAllLines(context);
+      }, '历史输出', const Color(0xff606266), Colors.white,
+          borderColor: const Color(0xffDCDFE6)));
+    }
+
+    children.add(const SizedBox(
+      width: 5,
+    ));
     children.add(AppUI.buildIconButton(
-        context, const Icon(Icons.document_scanner), () async {
-      currentGame!.handleCmd("allLines", null);
-      showAllLines(context);
-    }, '历史输出', const Color(0xff606266), Colors.white,
-        borderColor: const Color(0xffDCDFE6)));
+      context,
+      const Icon(Icons.key),
+      () async {
+        currentGame!.handleCmd("authorized", currentGame!.current);
+      },
+      '授权',
+      Colors.white,
+      const Color(0xffE6A23C),
+    ));
 
     children.add(const SizedBox(
       width: 5,
@@ -219,7 +235,7 @@ class GameTopState extends State<GameTop> {
   @override
   Widget build(BuildContext context) {
     return LayoutBuilder(builder: (context, constraints) {
-      // final large = constraints.maxWidth >= 1121;
+      final large = constraints.maxWidth >= 1121;
       final List<Widget> children = [
         buildHeader(context),
         const Divider(height: 1, color: Color(0xffE4E7ED)),
@@ -234,7 +250,8 @@ class GameTopState extends State<GameTop> {
         children.add(SingleChildScrollView(
           scrollDirection: Axis.horizontal,
           child: Padding(
-              padding: const EdgeInsets.all(2), child: buildToolbar(context)),
+              padding: const EdgeInsets.all(2),
+              child: buildToolbar(context, large)),
         ));
       }
 

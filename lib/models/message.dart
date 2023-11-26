@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 class Word {
   String text = "";
   String color = "";
@@ -301,6 +303,25 @@ class UpdatePasswordForm {
       };
 }
 
+class CreateGameForm {
+  CreateGameForm({
+    required this.id,
+    required this.host,
+    required this.port,
+    required this.charset,
+  });
+  String id = "";
+  String host = "";
+  String port = "";
+  String charset = "";
+  Map<String, dynamic> toJson() => {
+        "ID": id,
+        "Host": host,
+        "Port": port,
+        "Charset": charset,
+      };
+}
+
 class FoundHistory {
   FoundHistory();
   int position = 0;
@@ -309,4 +330,44 @@ class FoundHistory {
     position = json['Position'] ?? 0;
     command = json['Command'] ?? "";
   }
+}
+
+class Authorized {
+  Authorized();
+  List<String> permissions = [];
+  List<String> domains = [];
+  Authorized.fromJson(Map<String, dynamic> json) {
+    if (json['Permissions'] != null) {
+      permissions = List<dynamic>.from(json['Permissions'])
+          .map((e) => e as String)
+          .toList();
+    }
+    if (json['Domains'] != null) {
+      domains =
+          List<dynamic>.from(json['Domains']).map((e) => e as String).toList();
+    }
+  }
+}
+
+class RequestTrust {
+  RequestTrust();
+  List<String> items = [];
+  String reason = '';
+  String script = '';
+  String world = '';
+  RequestTrust.fromJson(Map<String, dynamic> json) {
+    reason = json['Reason'] ?? '';
+    script = json['Script'] ?? '';
+    world = json['World'] ?? '';
+    if (json['Items'] != null) {
+      items =
+          List<dynamic>.from(json['Items']).map((e) => e as String).toList();
+    }
+  }
+  Map<String, dynamic> toJson() => {
+        'Reason': reason,
+        'Script': script,
+        'World': world,
+        'Items': items.map((e) => e as dynamic).toList(),
+      };
 }

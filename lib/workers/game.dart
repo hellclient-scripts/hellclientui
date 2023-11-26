@@ -296,6 +296,14 @@ class Game {
       case 'foundhistory':
         commandStream.add(GameCommand(command: command, data: data));
         break;
+      case 'defaultCharset':
+      case 'defaultServer':
+      case 'createSuccess':
+      case 'authorized':
+      case 'requestTrustDomains':
+      case 'requestPermissions':
+        commandStream.add(GameCommand(command: command, data: data));
+        break;
     }
   }
 
