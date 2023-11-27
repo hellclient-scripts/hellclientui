@@ -147,6 +147,18 @@ class GameTopState extends State<GameTop> {
     children.add(const SizedBox(
       width: 5,
     ));
+    if (large) {
+      children.add(AppUI.buildIconButton(
+          context, const Icon(Icons.display_settings), () async {
+        currentGame!.handleCmd("worldSettings", currentGame!.current);
+      }, '游戏设置', const Color(0xff606266), Colors.white,
+          borderColor: const Color(0xffDCDFE6)));
+      children.add(AppUI.buildIconButton(context, const Icon(Icons.computer),
+          () async {
+        currentGame!.handleCmd("scriptinfo", currentGame!.current);
+      }, '脚本', const Color(0xff606266), Colors.white,
+          borderColor: const Color(0xffDCDFE6)));
+    }
     children.add(AppUI.buildIconButton(
       context,
       const Icon(Icons.key),
@@ -210,9 +222,13 @@ class GameTopState extends State<GameTop> {
           },
           child: Row(children: [
             Icon(
-                color: isCurrent ? Colors.white : const Color(0xff303133),
+                color: isCurrent
+                    ? Colors.white
+                    : (clientinfo.running
+                        ? const Color(0xff67C23A)
+                        : const Color(0xffE6A23C)),
                 size: 14,
-                clientinfo.running ? Icons.play_arrow_outlined : Icons.pause),
+                clientinfo.running ? Icons.play_arrow : Icons.pause),
             Text(
               clientinfo.id,
               style: isCurrent
@@ -220,10 +236,15 @@ class GameTopState extends State<GameTop> {
                       color: Colors.white,
                       fontWeight: FontWeight.bold,
                     )
-                  : const TextStyle(
-                      color: Color(0xff303133),
+                  : TextStyle(
+                      color: (clientinfo.running
+                          ? const Color(0xff303133)
+                          : const Color(0xff666666)),
+                      fontWeight: (clientinfo.running
+                          ? FontWeight.bold
+                          : FontWeight.normal),
                     ),
-            )
+            ),
           ])));
     }
     return SizedBox(

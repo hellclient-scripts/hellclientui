@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:hellclientui/views/widgets/scriptinfolistview.dart';
 import 'package:provider/provider.dart';
 import 'package:hellclientui/states/appstate.dart';
 import '..//widgets/fullscreen.dart';
@@ -18,6 +20,18 @@ Future<String?> showNotOpened(
     builder: (context) {
       return Dialog.fullscreen(
         child: NotOpened(games: games.games),
+      );
+    },
+  );
+}
+
+Future<String?> showScriptInfoList(
+    BuildContext context, message.ScriptInfoList list) async {
+  return showDialog<String>(
+    context: context,
+    builder: (context) {
+      return Dialog.fullscreen(
+        child: ScriptInfoListView(list: list.list),
       );
     },
   );
@@ -88,6 +102,15 @@ class GameState extends State<Game> {
               game.handleCmd('open', id);
             }
             break;
+          case 'scriptinfoList':
+            final dynamic jsondata = json.decode(event.data);
+            final list = message.ScriptInfoList.fromJson(jsondata);
+            final id = await showScriptInfoList(context, list);
+            if (id != null) {
+              game.handleCmd('usescript', <dynamic>[game.current, id]);
+            }
+            break;
+
           case 'version':
             AppUI.showMsgBox(
                 context,
@@ -122,6 +145,16 @@ class GameState extends State<Game> {
             final request = message.RequestTrust.fromJson(jsondata);
             GameUI.requestTrustDomains(context, request);
             break;
+          case 'worldSettings':
+            final dynamic jsondata = json.decode(event.data);
+            final settings = message.WorldSettings.fromJson(jsondata);
+            GameUI.showWorldSettings(context, settings);
+            break;
+          case 'scriptinfo':
+            final dynamic jsondata = json.decode(event.data);
+            final scriptinfo = message.ScriptInfo.fromJson(jsondata);
+            GameUI.showScript(context, scriptinfo);
+            break;
         }
       }
     });
@@ -139,7 +172,10 @@ class GameState extends State<Game> {
     var server = appState.currentServer!;
     var focusNode = FocusNode(
       onKey: (node, event) {
-        return game.onKey(event);
+        if (event is RawKeyDownEvent && event.repeat == false) {
+          return game.onKey(event);
+        }
+        return KeyEventResult.ignored;
       },
     );
 
@@ -156,12 +192,17 @@ class GameState extends State<Game> {
                       context,
                       "快捷键帮助",
                       "在游戏主界面可以使用如下快捷键",
-                      const Column(children: [
-                        Text("单击:显示历史输出"),
-                        Text("双击:调用助手按纽"),
-                        Text("上划:进入游戏一览"),
-                        Text("下划:快速进入游戏"),
-                      ]));
+                      const Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text("单击:显示历史输出"),
+                            Text("双击:调用助手按纽"),
+                            Text("上划:进入游戏一览"),
+                            Text("下划:快速进入游戏"),
+                            Text("ctrl+数字快速进入游戏"),
+                            Text("ctrl+k 连接当前游戏"),
+                            Text("ctrl+shfit+k 断开前游戏"),
+                          ]));
                 },
                 tooltip: '快捷键帮助',
                 icon: const Icon(Icons.help_outline),

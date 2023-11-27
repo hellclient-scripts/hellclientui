@@ -3,6 +3,7 @@ import 'package:hellclientui/workers/game.dart';
 import 'appui.dart';
 import 'package:flutter/material.dart';
 import '../../models/message.dart' as message;
+import '../../forms/worldsettingsform.dart';
 
 const textStyleGameUIFieldLabel = TextStyle(
   color: Color(0xff333333),
@@ -38,6 +39,174 @@ class GameUI {
         style: TextStyle(color: color, fontSize: 13, height: 20 / 13),
       ),
     );
+  }
+
+  static showScript(BuildContext context, message.ScriptInfo scriptinfo) {
+    AppUI.hideUI(context);
+    showDialog<bool?>(
+        context: context,
+        builder: (context) {
+          return Dialog.fullscreen(
+              child: FullScreenDialog(
+                  title: '脚本信息',
+                  child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: buildFileds([
+                        const Text(
+                          '游戏ID',
+                          style: textStyleGameUIFieldLabel,
+                        ),
+                        Text(currentGame!.current),
+                        const Text(
+                          '脚本	',
+                          style: textStyleGameUIFieldLabel,
+                        ),
+                        Row(children: [
+                          Text(scriptinfo.id),
+                          const SizedBox(
+                            width: 8,
+                            child: Center(),
+                          ),
+                          SizedBox(
+                              height: 32,
+                              child: AppUI.buildTextButton(
+                                  context, scriptinfo.id.isEmpty ? '选择' : '已选择',
+                                  () {
+                                currentGame!.handleCmd(
+                                    'listScriptinfo', currentGame!.current);
+                              }, "选择游戏脚本", Colors.white,
+                                  const Color(0xff409EFF))),
+                          scriptinfo.id.isEmpty
+                              ? const Center()
+                              : SizedBox(
+                                  height: 32,
+                                  child: AppUI.buildIconButton(
+                                      context, const Icon(Icons.close), () {
+                                    currentGame!.handleCmd('usescript',
+                                        <dynamic>[currentGame!.current, '']);
+                                  }, "取消脚本", const Color(0xffE6A23C),
+                                      const Color(0xfffdf6ec))),
+                        ]),
+                        const Text(
+                          '类型		',
+                          style: textStyleGameUIFieldLabel,
+                        ),
+                        Text(scriptinfo.type),
+                        const Text(
+                          '描述			',
+                          style: textStyleGameUIFieldLabel,
+                        ),
+                        Text(scriptinfo.desc),
+                        const Text(
+                          '介绍',
+                          style: textStyleGameUIFieldLabel,
+                        ),
+                        Text(scriptinfo.intro),
+                      ]))));
+        });
+  }
+
+  static updateWorldSettings(
+      BuildContext context, message.WorldSettings worldSettings) {
+    showDialog<bool?>(
+        context: context,
+        builder: (context) {
+          return Dialog.fullscreen(
+              child: FullScreenDialog(
+                  title: '编辑游戏设置',
+                  child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: buildFileds([
+                        const Text(
+                          '游戏ID',
+                          style: textStyleGameUIFieldLabel,
+                        ),
+                        Text(currentGame!.current),
+                        const Text(
+                          '服务器地址	',
+                          style: textStyleGameUIFieldLabel,
+                        ),
+                        WorldSettingsForm(settings: worldSettings)
+                      ]))));
+        });
+  }
+
+  static showWorldSettings(
+      BuildContext context, message.WorldSettings worldSettings) {
+    AppUI.hideUI(context);
+    showDialog<bool?>(
+        context: context,
+        builder: (context) {
+          return Dialog.fullscreen(
+              child: FullScreenDialog(
+                  title: '游戏设置',
+                  child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: buildFileds([
+                        SizedBox(
+                            height: 32,
+                            child: AppUI.buildIconButton(
+                                context, const Icon(Icons.edit), () {
+                              updateWorldSettings(context, worldSettings);
+                            }, "编辑游戏设置", Colors.white,
+                                const Color(0xff409EFF))),
+                        const Text(
+                          '游戏ID',
+                          style: textStyleGameUIFieldLabel,
+                        ),
+                        Text(worldSettings.id),
+                        const Text(
+                          '服务器地址	',
+                          style: textStyleGameUIFieldLabel,
+                        ),
+                        Text(worldSettings.host),
+                        const Text(
+                          '服务器端口		',
+                          style: textStyleGameUIFieldLabel,
+                        ),
+                        Text(worldSettings.port),
+                        const Text(
+                          '字符集			',
+                          style: textStyleGameUIFieldLabel,
+                        ),
+                        Text(worldSettings.charset),
+                        const Text(
+                          '代理服务器				',
+                          style: textStyleGameUIFieldLabel,
+                        ),
+                        Text(worldSettings.proxy),
+                        const Text(
+                          '名称',
+                          style: textStyleGameUIFieldLabel,
+                        ),
+                        Text(worldSettings.name),
+                        const Text(
+                          '脚本前缀',
+                          style: textStyleGameUIFieldLabel,
+                        ),
+                        Text(worldSettings.scriptPrefix),
+                        const Text(
+                          '命令分割符',
+                          style: textStyleGameUIFieldLabel,
+                        ),
+                        Text(worldSettings.commandStackCharacter),
+                        const Text(
+                          '调试广播信息',
+                          style: textStyleGameUIFieldLabel,
+                        ),
+                        Text(worldSettings.showBroadcast ? "是" : "否"),
+                        const Text(
+                          '调试非文字信息',
+                          style: textStyleGameUIFieldLabel,
+                        ),
+                        Text(worldSettings.showSubneg ? "是" : "否"),
+                        const Text(
+                          '脚本模组(Mod)',
+                          style: textStyleGameUIFieldLabel,
+                        ),
+                        Text(worldSettings.modEnabled ? "是" : "否"),
+                      ]))));
+        });
   }
 
   static showAuthorized(BuildContext context, message.Authorized authorized) {

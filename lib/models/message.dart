@@ -322,6 +322,19 @@ class CreateGameForm {
       };
 }
 
+class CreateScriptForm {
+  CreateScriptForm({
+    required this.id,
+    required this.type,
+  });
+  String id = "";
+  String type = "";
+  Map<String, dynamic> toJson() => {
+        'ID': id,
+        'Type': type,
+      };
+}
+
 class FoundHistory {
   FoundHistory();
   int position = 0;
@@ -370,4 +383,104 @@ class RequestTrust {
         'World': world,
         'Items': items.map((e) => e as dynamic).toList(),
       };
+}
+
+class WorldSettings {
+  WorldSettings({
+    required this.id,
+    required this.host,
+    required this.port,
+    required this.charset,
+    required this.proxy,
+    required this.name,
+    required this.scriptPrefix,
+    required this.commandStackCharacter,
+    required this.showBroadcast,
+    required this.showSubneg,
+    required this.modEnabled,
+  });
+  String id = "";
+  String host = "";
+  String port = "";
+  String charset = "";
+  String proxy = "";
+  String name = "";
+  String scriptPrefix = "";
+  String commandStackCharacter = "";
+  bool showBroadcast = false;
+  bool showSubneg = false;
+  bool modEnabled = false;
+  WorldSettings.fromJson(Map<String, dynamic> json) {
+    id = json['ID'] ?? '';
+    host = json['Host'] ?? '';
+    port = json['Port'] ?? '';
+    charset = json['Charset'] ?? '';
+    proxy = json['Proxy'] ?? '';
+    name = json['Name'] ?? '';
+    scriptPrefix = json['ScriptPrefix'] ?? '';
+    commandStackCharacter = json['CommandStackCharacter'] ?? '';
+    showBroadcast = json['ShowBroadcast'] ?? false;
+    showSubneg = json['ShowSubneg'] ?? false;
+    modEnabled = json['ModEnabled'] ?? false;
+  }
+  Map<String, dynamic> toJson() => {
+        'ID': id,
+        'Host': host,
+        'Port': port,
+        'Charset': charset,
+        'Proxy': proxy,
+        'Name': name,
+        'ScriptPrefix': scriptPrefix,
+        'CommandStackCharacter': commandStackCharacter,
+        'ShowBroadcast': showBroadcast,
+        'ShowSubneg': showSubneg,
+        'ModEnabled': modEnabled,
+      };
+}
+
+class ScriptInfo {
+  String desc = "";
+  String id = "";
+  String intro = "";
+  String onAssist = "";
+  String onBroadCast = "";
+  String onBuffer = "";
+  int onBufferMax = 0;
+  int onBufferMin = 0;
+  String onClose = "";
+  String onConnect = "";
+  String onDisconnect = "";
+  String onFocus = "";
+  String onHUDClick = "";
+  String onKeyUp = "";
+  String onOpen = "";
+  String onResponse = "";
+  String onSubneg = "";
+  String type = "";
+  ScriptInfo.fromJson(Map<String, dynamic> json) {
+    desc = json['Desc'] ?? "";
+    id = json['ID'] ?? "";
+    intro = json['Intro'] ?? "";
+    onAssist = json['OnAssist'] ?? "";
+    onBroadCast = json['OnBroadCast'] ?? "";
+    onBuffer = json['OnBuffer'] ?? "";
+    onBufferMax = json['OnBufferMax'] ?? 0;
+    onBufferMin = json['OnBufferMin'] ?? 0;
+    onClose = json['OnClose'] ?? "";
+    onConnect = json['OnConnect'] ?? "";
+    onDisconnect = json['OnDisconnect'] ?? "";
+    onFocus = json['OnFocus'] ?? "";
+    onHUDClick = json['OnHUDClick'] ?? "";
+    onKeyUp = json['OnKeyUp'] ?? "";
+    onResponse = json['OnResponse'] ?? "";
+    onSubneg = json['OnSubneg'] ?? "";
+    type = json['Type'] ?? "";
+  }
+}
+
+class ScriptInfoList {
+  List<ScriptInfo> list = [];
+  ScriptInfoList.fromJson(dynamic json) {
+    list = List<dynamic>.from(json).map((e) => ScriptInfo.fromJson(e)).toList();
+  }
 }

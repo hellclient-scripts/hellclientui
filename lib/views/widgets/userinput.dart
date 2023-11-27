@@ -10,7 +10,6 @@ import '../../models/message.dart';
 import '../../workers/game.dart';
 import 'appui.dart';
 import 'package:carousel_slider/carousel_slider.dart';
-import 'package:markdown/markdown.dart' as md;
 import 'package:flutter_markdown/flutter_markdown.dart';
 
 const textStyleUserInputNote = TextStyle(
@@ -40,7 +39,7 @@ class UserInputHelper {
         context: context,
         title: data.title,
         type: type,
-        autoCloseDuration: const Duration(seconds: 5),
+        autoCloseDuration: const Duration(seconds: 3),
         style: ToastificationStyle.flat,
         description: data.intro,
         showProgressBar: false,
@@ -199,10 +198,12 @@ class UserInputHelper {
                 thumbColor: Colors.white,
                 thumbVisibility: true,
                 controller: controller,
-                child: SelectableText.rich(
-                  TextSpan(text: data.body),
-                  style: textStyleUserInputNote,
-                )));
+                child: SingleChildScrollView(
+                    controller: controller,
+                    child: SelectableText.rich(
+                      TextSpan(text: data.body),
+                      style: textStyleUserInputNote,
+                    ))));
     }
     final content = Container(
         width: double.infinity,

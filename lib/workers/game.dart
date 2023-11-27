@@ -204,6 +204,7 @@ class Game {
     }
     historypos = -1;
     output.renderer.reset();
+    hud.renderer.reset();
     clientsUpdateStream.add(null);
   }
 
@@ -283,6 +284,7 @@ class Game {
       case 'switchStatus':
         onCmdSwitchStatus(data);
         break;
+      case 'createScriptFail':
       case 'createFail':
         createFailStream.add(data);
         break;
@@ -302,6 +304,9 @@ class Game {
       case 'authorized':
       case 'requestTrustDomains':
       case 'requestPermissions':
+      case 'worldSettings':
+      case 'scriptinfo':
+      case 'scriptinfoList':
         commandStream.add(GameCommand(command: command, data: data));
         break;
     }
@@ -378,6 +383,19 @@ class Game {
       case "Pause":
         handleCmd("change", "");
         break;
+      case "K":
+        if (currentClient != null && key.isControlPressed) {
+          if (currentClient!.running) {
+            if (key.isShiftPressed) {
+              handleCmd("disconnect", currentGame?.current);
+            }
+          } else {
+            if (!key.isShiftPressed) {
+              handleCmd("connect", currentGame?.current);
+            }
+          }
+        }
+        break;
       case "1":
       case "2":
       case "3":
@@ -387,7 +405,7 @@ class Game {
       case "7":
       case "8":
       case "9":
-        if (current == "") {
+        if (current == "" || key.isControlPressed) {
           final index = int.parse(key.logicalKey.keyLabel) - 1;
           if (index >= 0 && index < clientinfos.clientInfos.length) {
             handleCmd('change', clientinfos.clientInfos[index].id);
