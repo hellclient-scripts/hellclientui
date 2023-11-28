@@ -353,12 +353,6 @@ class UserInputVisualPromptWidget extends StatefulWidget {
 class UserInputVisualPromptWidgetState
     extends State<UserInputVisualPromptWidget> {
   @override
-  void initState() {
-    // TODO: implement initState
-    super.initState();
-  }
-
-  @override
   Widget build(BuildContext context) {
     TextEditingController controller = TextEditingController.fromValue(
         TextEditingValue(text: widget.visualPrompt.value));

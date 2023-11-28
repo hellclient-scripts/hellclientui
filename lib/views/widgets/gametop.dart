@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:hellclientui/states/appstate.dart';
 import 'package:hellclientui/workers/game.dart';
 import 'dart:async';
 import 'appui.dart';
@@ -173,6 +174,12 @@ class GameTopState extends State<GameTop> {
     children.add(const SizedBox(
       width: 5,
     ));
+    children.add(AppUI.buildIconButton(context, const Icon(Icons.analytics),
+        () async {
+      currentGame!.handleCmd("params", currentGame!.current);
+    }, '变量', const Color(0xff606266), Colors.white,
+        borderColor: const Color(0xffDCDFE6)));
+
     children.add(AppUI.buildIconButton(
       context,
       const Icon(Icons.save_outlined),
@@ -201,6 +208,56 @@ class GameTopState extends State<GameTop> {
     }, '重新加载', const Color(0xff606266), Colors.white,
         borderColor: const Color(0xffDCDFE6)));
 
+    if (large) {
+      children.add(AppUI.buildIconButton(
+        context,
+        const Icon(Icons.lock_outline),
+        () async {
+          if (currentAppState.showMore) {
+            currentAppState.showMore = false;
+            setState(() {});
+          } else {
+            final result = await AppUI.showConfirmBox(context, '提示',
+                '是否开启脚本编辑模式?在脚本编辑模式中可以对脚本的触发器，计时器和别名进行编辑。', null);
+            if (result == true) {
+              currentAppState.showMore = true;
+              setState(() {});
+            }
+          }
+        },
+        currentAppState.showMore ? '关闭脚本编辑模式' : '开启脚本编辑模式',
+        Colors.white,
+        currentAppState.showMore
+            ? const Color(0xff909399)
+            : const Color(0xffE6A23C),
+      ));
+    }
+    if (large && currentAppState.showMore) {
+      children.add(const SizedBox(
+        width: 5,
+      ));
+      children.add(AppUI.buildIconButton(
+          context, const Icon(Icons.display_settings), () async {
+        currentGame!.handleCmd("scriptSettings", currentGame!.current);
+      }, '脚本设置', const Color(0xffE6A23C), const Color(0xfffdf6ec),
+          borderColor: const Color(0xfff5dab1)));
+
+      children.add(AppUI.buildIconButton(
+        context,
+        const Icon(Icons.save_outlined),
+        () async {
+          final result = await AppUI.showConfirmBox(
+              context, '提示', '原脚本将被覆盖，是否要保存脚本?', null);
+          if (result == true) {
+            currentGame!.handleCmd("savescript", currentGame!.current);
+          }
+        },
+        '保存脚本',
+        const Color(0xfff56C6C),
+        const Color(0xfffef0f0),
+        borderColor: const Color(0xfffbc4c4),
+      ));
+    }
     return SizedBox(height: 28, child: Row(children: children));
   }
 

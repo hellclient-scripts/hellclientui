@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:hellclientui/models/server.dart';
-import 'package:hellclientui/views/widgets/appui.dart';
 import '../models/rendersettings.dart';
 import '../states/appstate.dart';
 
@@ -30,6 +29,7 @@ class Game {
   String current = "";
   String status = "";
   int historypos = -1;
+  bool showAllParams = false;
   ClientInfo? currentClient;
   late RenderSettings renderSettings;
   late Connecting connecting;
@@ -118,11 +118,8 @@ class Game {
 
   void drawHud() async {
     hud.renderer.maxLines = hudContent.length;
-    hud.renderer.reset();
-    for (final line in hudContent) {
-      await hud.renderer.renderline(
-          renderSettings, line, true, true, renderSettings.hudbackground);
-    }
+    await hud.renderer.renderlines(
+        renderSettings, hudContent, true, true, renderSettings.hudbackground);
     hud.renderer.draw();
     hudUpdateStream.add(null);
   }
@@ -160,9 +157,7 @@ class Game {
   Future<void> onCmdLines(String data) async {
     final dynamic jsondata = json.decode(data);
     final lines = Lines.fromJson(jsondata);
-    for (final line in lines.lines) {
-      await output.renderer.drawLine(line);
-    }
+    await output.renderer.drawLines(lines.lines);
     output.renderer.draw();
   }
 
@@ -307,6 +302,8 @@ class Game {
       case 'worldSettings':
       case 'scriptinfo':
       case 'scriptinfoList':
+      case 'scriptSettings':
+      case 'paramsinfo':
         commandStream.add(GameCommand(command: command, data: data));
         break;
     }

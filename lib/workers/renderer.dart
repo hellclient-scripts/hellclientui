@@ -222,6 +222,11 @@ class Renderer {
         renderSettings, line, false, false, renderSettings.background);
   }
 
+  Future<void> drawLines(List<Line> lines) async {
+    await renderlines(
+        renderSettings, lines, false, false, renderSettings.background);
+  }
+
   TextStyle getIconStyle(
       double devicePixelRatio, Color iconcolor, Color background) {
     var textstyle = TextStyle(
@@ -237,42 +242,58 @@ class Renderer {
     return textstyle;
   }
 
+  Future<void> renderlines(RenderSettings settings, List<Line> lines,
+      bool withouticon, bool nocr, Color? bcolor) async {
+    await lock.synchronized(() async {
+      reset();
+      for (var line in lines) {
+        await _renderline(settings, line, withouticon, nocr, bcolor);
+      }
+      updated = true;
+    });
+  }
+
   Future<void> renderline(RenderSettings settings, Line line, bool withouticon,
       bool nocr, Color? bcolor) async {
     await lock.synchronized(() async {
-      bcolor ??= background;
-      var linestyle = getLineStyle(line);
-      var rendering =
-          RenderingLine.create(line, settings, devicePixelRatio, background);
-      var index = 0;
-      if (!withouticon) {
-        rendering.drawicon(
-            getIconStyle(devicePixelRatio, linestyle.color, bcolor!),
-            linestyle,
-            bcolor!);
-      }
-      for (final word in line.words) {
-        final textStyle = getWordStyle(word,
-                withouticon ? renderSettings.color : linestyle.color, bcolor!)
-            .toTextStyle(settings);
-        for (final char in word.text.characters) {
-          if (char == "\n" && nocr) {
-            continue;
+      await _renderline(settings, line, withouticon, nocr, bcolor);
+      updated = true;
+    });
+  }
+
+  Future<void> _renderline(RenderSettings settings, Line line, bool withouticon,
+      bool nocr, Color? bcolor) async {
+    bcolor ??= background;
+    var linestyle = getLineStyle(line);
+    var rendering =
+        RenderingLine.create(line, settings, devicePixelRatio, background);
+    var index = 0;
+    if (!withouticon) {
+      rendering.drawicon(
+          getIconStyle(devicePixelRatio, linestyle.color, bcolor),
+          linestyle,
+          bcolor);
+    }
+    for (final word in line.words) {
+      final textStyle = getWordStyle(word,
+              withouticon ? renderSettings.color : linestyle.color, bcolor)
+          .toTextStyle(settings);
+      for (final char in word.text.characters) {
+        if (char == "\n" || rendering.addText(char, textStyle)) {
+          if (nocr) {
+            break;
           }
-          if (char == "\n" || rendering.addText(char, textStyle)) {
-            index++;
-            rows.add(await rendering.toRow());
-            rendering = RenderingLine.create(
-                line, settings, devicePixelRatio, background);
-            rendering.index = index;
-          }
+          index++;
+          rows.add(await rendering.toRow());
+          rendering = RenderingLine.create(
+              line, settings, devicePixelRatio, background);
+          rendering.index = index;
         }
       }
-      if (rendering.position > 0) {
-        rows.add(await rendering.toRow());
-      }
-    });
-    updated = true;
+    }
+    if (rendering.position > 0) {
+      rows.add(await rendering.toRow());
+    }
   }
 
   LineStyle getLineStyle(Line line) {

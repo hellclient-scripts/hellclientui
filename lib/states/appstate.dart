@@ -21,6 +21,7 @@ class AppState extends ChangeNotifier {
   RenderSettings renderSettings = RenderSettings();
   RenderConfig renderConfig = RenderConfig();
   int currentPage = 0;
+  bool showMore = true;
   Server? currentServer;
   static Future<AppState> init() async {
     var state = AppState();

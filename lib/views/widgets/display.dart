@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:hellclientui/models/message.dart';
 import 'package:hellclientui/states/appstate.dart';
@@ -234,7 +232,7 @@ class DisplayState extends State<Display> {
         ])),
       );
       children.add(buildPrompt(context));
-      children.add(DisplayBottom());
+      children.add(const DisplayBottom());
     } else {
       if (currentGame?.current == "") {
         children.add(const Expanded(child: Overview()));

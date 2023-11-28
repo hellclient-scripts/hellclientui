@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:hellclientui/workers/game.dart';
 import 'fullscreen.dart';
 import '../../models/message.dart';
 import 'dart:async';
@@ -14,6 +13,85 @@ const BorderRadiusGeometry _radiusRight =
 class AppUI {
   static hideUI(BuildContext context) {
     Navigator.of(context).popUntil(ModalRoute.withName('/game'));
+  }
+
+  static Future<String?> promptText(BuildContext context, String title,
+      String summary, String hint, String value) async {
+    return await showDialog<String?>(
+      context: context,
+      builder: (context) {
+        final controller = TextEditingController.fromValue(TextEditingValue(
+            text: value,
+            selection:
+                TextSelection(baseOffset: 0, extentOffset: value.length)));
+        return DialogOverlay(
+            child: FullScreenDialog(
+                title: title,
+                summary: summary,
+                child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Padding(
+                          padding: const EdgeInsets.all(4),
+                          child: Text(
+                            hint,
+                            style: textStyleHint,
+                          )),
+                      Container(
+                          color: const Color(0xffeeeeee),
+                          padding: const EdgeInsets.all(4),
+                          child: TextFormField(
+                            controller: controller,
+                          )),
+                      ConfirmOrCancelWidget(onConfirm: () {
+                        Navigator.of(context).pop(controller.text);
+                      }, onCancal: () {
+                        Navigator.of(context).pop(null);
+                      })
+                    ])));
+      },
+    );
+  }
+
+  static Future<String?> promptTextArea(BuildContext context, String title,
+      String summary, String hint, String value) async {
+    return await showDialog<String?>(
+      context: context,
+      builder: (context) {
+        final controller = TextEditingController.fromValue(TextEditingValue(
+            text: value,
+            selection:
+                TextSelection(baseOffset: 0, extentOffset: value.length)));
+        return DialogOverlay(
+            child: FullScreenDialog(
+                title: title,
+                summary: summary,
+                child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Padding(
+                          padding: const EdgeInsets.all(4),
+                          child: Text(
+                            hint,
+                            style: textStyleHint,
+                          )),
+                      Container(
+                          color: const Color(0xffeeeeee),
+                          padding: const EdgeInsets.all(4),
+                          child: TextFormField(
+                            controller: controller,
+                            maxLines: null,
+                            minLines: 10,
+                            keyboardType: TextInputType.multiline,
+                          )),
+                      ConfirmOrCancelWidget(onConfirm: () {
+                        Navigator.of(context).pop(controller.text);
+                      }, onCancal: () {
+                        Navigator.of(context).pop(null);
+                      })
+                    ])));
+      },
+    );
   }
 
   static showMsgBox(
@@ -145,7 +223,7 @@ class AppUI {
     } else {
       radius = (radiusLeft == true) ? _radiusLeft : _radiusNone;
     }
-    return Container(
+    Widget body = Container(
         margin: const EdgeInsets.fromLTRB(0, 0, 1, 0),
         child: IconButton(
             style: ButtonStyle(
@@ -158,16 +236,23 @@ class AppUI {
                       side: borderColor == null
                           ? BorderSide.none
                           : BorderSide(
-                              color: borderColor!,
+                              color: borderColor,
                             ))),
               backgroundColor: MaterialStatePropertyAll<Color>(background),
               iconColor: MaterialStatePropertyAll<Color>(color),
             ),
-            tooltip: tooltip,
             iconSize: 16,
             splashRadius: 3,
             onPressed: onPressed,
             icon: icon));
+
+    if (tooltip != null && tooltip != "") {
+      body = Tooltip(
+        message: tooltip,
+        child: body,
+      );
+    }
+    return body;
   }
 }
 
@@ -191,6 +276,12 @@ class H1 extends StatelessWidget {
     );
   }
 }
+
+const textStyleHint = TextStyle(
+  fontSize: 14,
+  height: 20 / 14,
+  color: Color(0xff444444),
+);
 
 const textStyleSummary = TextStyle(
   fontSize: 14,

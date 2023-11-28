@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 class Word {
   String text = "";
   String color = "";
@@ -482,5 +480,104 @@ class ScriptInfoList {
   List<ScriptInfo> list = [];
   ScriptInfoList.fromJson(dynamic json) {
     list = List<dynamic>.from(json).map((e) => ScriptInfo.fromJson(e)).toList();
+  }
+}
+
+class ScriptSettings {
+  ScriptSettings();
+  String channel = '';
+  String desc = '';
+  String intro = '';
+  String name = '';
+  String onAssist = '';
+  String onBroadcast = '';
+  String onBuffer = '';
+  int onBufferMax = 0;
+  int onBufferMin = 0;
+  String onClose = '';
+  String onConnect = '';
+  String onDisconnect = '';
+  String onFocus = '';
+  String onHUDClick = '';
+  String onKeyUp = '';
+  String onOpen = '';
+  String onResponse = '';
+  String onSubneg = '';
+  String type = '';
+  ScriptSettings.fromJson(Map<String, dynamic> json) {
+    channel = json['Channel'];
+    desc = json['Desc'];
+    intro = json['Intro'];
+    name = json['Name'];
+    onAssist = json['OnAssist'];
+    onBroadcast = json['OnBroadcast'];
+    onBuffer = json['OnBuffer'];
+    onBufferMax = json['OnBufferMax'];
+    onBufferMin = json['OnBufferMin'];
+    onClose = json['OnClose'];
+    onConnect = json['OnConnect'];
+    onDisconnect = json['OnDisconnect'];
+    onFocus = json['OnFocus'];
+    onHUDClick = json['OnHUDClick'];
+    onKeyUp = json['OnKeyUp'];
+    onOpen = json['OnOpen'];
+    onResponse = json['OnResponse'];
+    onSubneg = json['OnSubneg'];
+    type = json['Type'];
+  }
+}
+
+class UpdateScriptSettingsForm extends ScriptSettings {
+  String id = "";
+  UpdateScriptSettingsForm();
+  Map<String, dynamic> toJson() => {
+        'Channel': channel,
+        'Desc': desc,
+        'Intro': intro,
+        'Name': name,
+        'OnAssist': onAssist,
+        'OnBroadcast': onBroadcast,
+        'OnBuffer': onBuffer,
+        'OnBufferMax': onBufferMax,
+        'OnBufferMin': onBufferMin,
+        'OnClose': onClose,
+        'OnConnect': onConnect,
+        'OnDisconnect': onDisconnect,
+        'OnFocus': onFocus,
+        'OnHUDClick': onHUDClick,
+        'OnKeyUp': onKeyUp,
+        'OnOpen': onOpen,
+        'OnResponse': onResponse,
+        'OnSubneg': onSubneg,
+        'Type': type,
+        'ID': id,
+      };
+}
+
+class RequiredParam {
+  String name = "";
+  String intro = "";
+  String desc = "";
+  RequiredParam.fromJson(Map<String, dynamic> json) {
+    name = json['Name'];
+    intro = json['Intro'];
+    desc = json['Desc'];
+  }
+}
+
+class ParamsInfo {
+  Map<String, String> paramComments = {};
+  Map<String, String> params = {};
+  List<RequiredParam> requiredParams = [];
+  ParamsInfo.fromJson(Map<String, dynamic> json) {
+    paramComments = Map<String, dynamic>.from(json['ParamComments'])
+        .map((key, value) => MapEntry(key, value as String));
+    params = Map<String, dynamic>.from(json['Params'])
+        .map((key, value) => MapEntry(key, value as String));
+    if (json['RequiredParams'] != null) {
+      requiredParams = List<dynamic>.from(json['RequiredParams'])
+          .map((e) => RequiredParam.fromJson(e))
+          .toList();
+    }
   }
 }

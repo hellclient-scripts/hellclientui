@@ -150,10 +150,20 @@ class GameState extends State<Game> {
             final settings = message.WorldSettings.fromJson(jsondata);
             GameUI.showWorldSettings(context, settings);
             break;
+          case 'scriptSettings':
+            final dynamic jsondata = json.decode(event.data);
+            final settings = message.ScriptSettings.fromJson(jsondata);
+            GameUI.showScriptSettings(context, settings);
+            break;
           case 'scriptinfo':
             final dynamic jsondata = json.decode(event.data);
             final scriptinfo = message.ScriptInfo.fromJson(jsondata);
             GameUI.showScript(context, scriptinfo);
+            break;
+          case 'paramsinfo':
+            final dynamic jsondata = json.decode(event.data);
+            final paramsinfo = message.ParamsInfo.fromJson(jsondata);
+            GameUI.showParamsInfo(context, paramsinfo);
             break;
         }
       }
