@@ -33,8 +33,8 @@ class ScriptInfoListViewState extends State<ScriptInfoListView> {
           '名称',
           textAlign: TextAlign.start,
         ),
-        const TableHead('类型', textAlign: TextAlign.start),
         const TableHead('描述', textAlign: TextAlign.start),
+        const TableHead('介绍', textAlign: TextAlign.start),
         const TableHead('操作', textAlign: TextAlign.end),
       ])
     ];

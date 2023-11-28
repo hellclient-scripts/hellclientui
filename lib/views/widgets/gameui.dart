@@ -49,60 +49,64 @@ class GameUI {
           return Dialog.fullscreen(
               child: FullScreenDialog(
                   title: '脚本信息',
-                  child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: buildFileds([
-                        const Text(
-                          '游戏ID',
-                          style: textStyleGameUIFieldLabel,
-                        ),
-                        Text(currentGame!.current),
-                        const Text(
-                          '脚本	',
-                          style: textStyleGameUIFieldLabel,
-                        ),
-                        Row(children: [
-                          Text(scriptinfo.id),
-                          const SizedBox(
-                            width: 8,
-                            child: Center(),
-                          ),
-                          SizedBox(
-                              height: 32,
-                              child: AppUI.buildTextButton(
-                                  context, scriptinfo.id.isEmpty ? '选择' : '已选择',
-                                  () {
-                                currentGame!.handleCmd(
-                                    'listScriptinfo', currentGame!.current);
-                              }, "选择游戏脚本", Colors.white,
-                                  const Color(0xff409EFF))),
-                          scriptinfo.id.isEmpty
-                              ? const Center()
-                              : SizedBox(
+                  child: SizedBox(
+                      width: double.infinity,
+                      child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: buildFileds([
+                            const Text(
+                              '游戏ID',
+                              style: textStyleGameUIFieldLabel,
+                            ),
+                            Text(currentGame!.current),
+                            const Text(
+                              '脚本	',
+                              style: textStyleGameUIFieldLabel,
+                            ),
+                            Row(children: [
+                              Text(scriptinfo.id),
+                              const SizedBox(
+                                width: 8,
+                                child: Center(),
+                              ),
+                              SizedBox(
                                   height: 32,
-                                  child: AppUI.buildIconButton(
-                                      context, const Icon(Icons.close), () {
-                                    currentGame!.handleCmd('usescript',
-                                        <dynamic>[currentGame!.current, '']);
-                                  }, "取消脚本", const Color(0xffE6A23C),
-                                      const Color(0xfffdf6ec))),
-                        ]),
-                        const Text(
-                          '类型		',
-                          style: textStyleGameUIFieldLabel,
-                        ),
-                        Text(scriptinfo.type),
-                        const Text(
-                          '描述			',
-                          style: textStyleGameUIFieldLabel,
-                        ),
-                        Text(scriptinfo.desc),
-                        const Text(
-                          '介绍',
-                          style: textStyleGameUIFieldLabel,
-                        ),
-                        Text(scriptinfo.intro),
-                      ]))));
+                                  child: AppUI.buildTextButton(context,
+                                      scriptinfo.id.isEmpty ? '选择' : '已选择', () {
+                                    currentGame!.handleCmd(
+                                        'listScriptinfo', currentGame!.current);
+                                  }, "选择游戏脚本", Colors.white,
+                                      const Color(0xff409EFF))),
+                              scriptinfo.id.isEmpty
+                                  ? const Center()
+                                  : SizedBox(
+                                      height: 32,
+                                      child: AppUI.buildIconButton(
+                                          context, const Icon(Icons.close), () {
+                                        currentGame!.handleCmd(
+                                            'usescript', <dynamic>[
+                                          currentGame!.current,
+                                          ''
+                                        ]);
+                                      }, "取消脚本", const Color(0xffE6A23C),
+                                          const Color(0xfffdf6ec))),
+                            ]),
+                            const Text(
+                              '类型		',
+                              style: textStyleGameUIFieldLabel,
+                            ),
+                            Text(scriptinfo.type),
+                            const Text(
+                              '描述			',
+                              style: textStyleGameUIFieldLabel,
+                            ),
+                            Text(scriptinfo.desc),
+                            const Text(
+                              '介绍',
+                              style: textStyleGameUIFieldLabel,
+                            ),
+                            Text(scriptinfo.intro),
+                          ])))));
         });
   }
 
@@ -140,72 +144,74 @@ class GameUI {
           return Dialog.fullscreen(
               child: FullScreenDialog(
                   title: '游戏设置',
-                  child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: buildFileds([
-                        SizedBox(
-                            height: 32,
-                            child: AppUI.buildIconButton(
-                                context, const Icon(Icons.edit), () {
-                              updateWorldSettings(context, worldSettings);
-                            }, "编辑游戏设置", Colors.white,
-                                const Color(0xff409EFF))),
-                        const Text(
-                          '游戏ID',
-                          style: textStyleGameUIFieldLabel,
-                        ),
-                        Text(worldSettings.id),
-                        const Text(
-                          '服务器地址	',
-                          style: textStyleGameUIFieldLabel,
-                        ),
-                        Text(worldSettings.host),
-                        const Text(
-                          '服务器端口		',
-                          style: textStyleGameUIFieldLabel,
-                        ),
-                        Text(worldSettings.port),
-                        const Text(
-                          '字符集			',
-                          style: textStyleGameUIFieldLabel,
-                        ),
-                        Text(worldSettings.charset),
-                        const Text(
-                          '代理服务器				',
-                          style: textStyleGameUIFieldLabel,
-                        ),
-                        Text(worldSettings.proxy),
-                        const Text(
-                          '名称',
-                          style: textStyleGameUIFieldLabel,
-                        ),
-                        Text(worldSettings.name),
-                        const Text(
-                          '脚本前缀',
-                          style: textStyleGameUIFieldLabel,
-                        ),
-                        Text(worldSettings.scriptPrefix),
-                        const Text(
-                          '命令分割符',
-                          style: textStyleGameUIFieldLabel,
-                        ),
-                        Text(worldSettings.commandStackCharacter),
-                        const Text(
-                          '调试广播信息',
-                          style: textStyleGameUIFieldLabel,
-                        ),
-                        Text(worldSettings.showBroadcast ? "是" : "否"),
-                        const Text(
-                          '调试非文字信息',
-                          style: textStyleGameUIFieldLabel,
-                        ),
-                        Text(worldSettings.showSubneg ? "是" : "否"),
-                        const Text(
-                          '脚本模组(Mod)',
-                          style: textStyleGameUIFieldLabel,
-                        ),
-                        Text(worldSettings.modEnabled ? "是" : "否"),
-                      ]))));
+                  child: SizedBox(
+                      width: double.infinity,
+                      child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: buildFileds([
+                            SizedBox(
+                                height: 32,
+                                child: AppUI.buildIconButton(
+                                    context, const Icon(Icons.edit), () {
+                                  updateWorldSettings(context, worldSettings);
+                                }, "编辑游戏设置", Colors.white,
+                                    const Color(0xff409EFF))),
+                            const Text(
+                              '游戏ID',
+                              style: textStyleGameUIFieldLabel,
+                            ),
+                            Text(worldSettings.id),
+                            const Text(
+                              '服务器地址	',
+                              style: textStyleGameUIFieldLabel,
+                            ),
+                            Text(worldSettings.host),
+                            const Text(
+                              '服务器端口		',
+                              style: textStyleGameUIFieldLabel,
+                            ),
+                            Text(worldSettings.port),
+                            const Text(
+                              '字符集			',
+                              style: textStyleGameUIFieldLabel,
+                            ),
+                            Text(worldSettings.charset),
+                            const Text(
+                              '代理服务器				',
+                              style: textStyleGameUIFieldLabel,
+                            ),
+                            Text(worldSettings.proxy),
+                            const Text(
+                              '名称',
+                              style: textStyleGameUIFieldLabel,
+                            ),
+                            Text(worldSettings.name),
+                            const Text(
+                              '脚本前缀',
+                              style: textStyleGameUIFieldLabel,
+                            ),
+                            Text(worldSettings.scriptPrefix),
+                            const Text(
+                              '命令分割符',
+                              style: textStyleGameUIFieldLabel,
+                            ),
+                            Text(worldSettings.commandStackCharacter),
+                            const Text(
+                              '调试广播信息',
+                              style: textStyleGameUIFieldLabel,
+                            ),
+                            Text(worldSettings.showBroadcast ? "是" : "否"),
+                            const Text(
+                              '调试非文字信息',
+                              style: textStyleGameUIFieldLabel,
+                            ),
+                            Text(worldSettings.showSubneg ? "是" : "否"),
+                            const Text(
+                              '脚本模组(Mod)',
+                              style: textStyleGameUIFieldLabel,
+                            ),
+                            Text(worldSettings.modEnabled ? "是" : "否"),
+                          ])))));
         });
   }
 
@@ -215,71 +221,73 @@ class GameUI {
       context: context,
       builder: (context) {
         return DialogOverlay(
-            child: FullScreenDialog(
-          title: '授权',
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: buildFileds([
-              const Text(
-                '游戏ID',
-                style: textStyleGameUIFieldLabel,
-              ),
-              Text(currentGame!.current),
-              const Text(
-                '已授权权限',
-                style: textStyleGameUIFieldLabel,
-              ),
-              Text.rich(TextSpan(
-                  children: authorized.permissions
-                      .map((e) => WidgetSpan(
-                          child: buildTag(e, const Color(0xfff56c6c),
-                              const Color(0xfffef0f0))))
-                      .toList())),
-              const Text(
-                '已信任域名',
-                style: textStyleGameUIFieldLabel,
-              ),
-              Text.rich(TextSpan(
-                  children: authorized.domains
-                      .map((e) => WidgetSpan(
-                          child: buildTag(e, const Color(0xfff56c6c),
-                              const Color(0xfffef0f0))))
-                      .toList())),
-              Row(
-                children: [
-                  const Expanded(child: Center()),
-                  SizedBox(
-                      width: 120,
-                      child: AppUI.buildTextButton(
-                        context,
-                        '注销所有授权',
-                        () async {
-                          if (await AppUI.showConfirmBox(
-                                  context,
-                                  "注销权限",
-                                  '',
-                                  const Text.rich(TextSpan(children: [
-                                    WidgetSpan(
-                                        child: Icon(
-                                      Icons.warning,
-                                      color: Color(0xffE6A23C),
-                                    )),
-                                    TextSpan(text: '是否要注销所有权限?')
-                                  ]))) ==
-                              true) {
-                            currentGame!.handleCmd(
-                                'revokeAuthorized', currentGame!.current);
-                          }
-                        },
-                        null,
-                        Colors.white,
-                        const Color(0xffE6A23C),
-                      ))
-                ],
-              )
-            ]),
-          ),
-        ));
+            child: SizedBox(
+                width: double.infinity,
+                child: FullScreenDialog(
+                  title: '授权',
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: buildFileds([
+                      const Text(
+                        '游戏ID',
+                        style: textStyleGameUIFieldLabel,
+                      ),
+                      Text(currentGame!.current),
+                      const Text(
+                        '已授权权限',
+                        style: textStyleGameUIFieldLabel,
+                      ),
+                      Text.rich(TextSpan(
+                          children: authorized.permissions
+                              .map((e) => WidgetSpan(
+                                  child: buildTag(e, const Color(0xfff56c6c),
+                                      const Color(0xfffef0f0))))
+                              .toList())),
+                      const Text(
+                        '已信任域名',
+                        style: textStyleGameUIFieldLabel,
+                      ),
+                      Text.rich(TextSpan(
+                          children: authorized.domains
+                              .map((e) => WidgetSpan(
+                                  child: buildTag(e, const Color(0xfff56c6c),
+                                      const Color(0xfffef0f0))))
+                              .toList())),
+                      Row(
+                        children: [
+                          const Expanded(child: Center()),
+                          SizedBox(
+                              width: 120,
+                              child: AppUI.buildTextButton(
+                                context,
+                                '注销所有授权',
+                                () async {
+                                  if (await AppUI.showConfirmBox(
+                                          context,
+                                          "注销权限",
+                                          '',
+                                          const Text.rich(TextSpan(children: [
+                                            WidgetSpan(
+                                                child: Icon(
+                                              Icons.warning,
+                                              color: Color(0xffE6A23C),
+                                            )),
+                                            TextSpan(text: '是否要注销所有权限?')
+                                          ]))) ==
+                                      true) {
+                                    currentGame!.handleCmd('revokeAuthorized',
+                                        currentGame!.current);
+                                  }
+                                },
+                                null,
+                                Colors.white,
+                                const Color(0xffE6A23C),
+                              ))
+                        ],
+                      )
+                    ]),
+                  ),
+                )));
       },
     );
   }
@@ -342,42 +350,44 @@ class GameUI {
         builder: (context) {
           return DialogOverlay(
               child: FullScreenDialog(
-            title: ('请求授权'),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: buildFileds([
-                const Text(
-                  '游戏ID',
-                  style: textStyleGameUIFieldLabel,
-                ),
-                Text(currentGame!.current),
-                const Text(
-                  '脚本请求信任以下域名',
-                  style: textStyleGameUIFieldLabel,
-                ),
-                Text.rich(TextSpan(
-                    children: request.items
-                        .map((e) => WidgetSpan(
-                            child: buildTag(e, const Color(0xfff56c6c),
-                                const Color(0xfffef0f0))))
-                        .toList())),
-                const Text(
-                  '脚本申请信任域名的理由为',
-                  style: textStyleGameUIFieldLabel,
-                ),
-                Text(request.reason),
-                ConfirmOrCancelWidget(
-                  onConfirm: () {
-                    Navigator.of(context).pop(true);
-                  },
-                  onCancal: () {
-                    Navigator.of(context).pop(false);
-                  },
-                  labelSubmit: '授权  ',
-                )
-              ]),
-            ),
-          ));
+                  title: ('请求授权'),
+                  child: SizedBox(
+                    width: double.infinity,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: buildFileds([
+                        const Text(
+                          '游戏ID',
+                          style: textStyleGameUIFieldLabel,
+                        ),
+                        Text(currentGame!.current),
+                        const Text(
+                          '脚本请求信任以下域名',
+                          style: textStyleGameUIFieldLabel,
+                        ),
+                        Text.rich(TextSpan(
+                            children: request.items
+                                .map((e) => WidgetSpan(
+                                    child: buildTag(e, const Color(0xfff56c6c),
+                                        const Color(0xfffef0f0))))
+                                .toList())),
+                        const Text(
+                          '脚本申请信任域名的理由为',
+                          style: textStyleGameUIFieldLabel,
+                        ),
+                        Text(request.reason),
+                        ConfirmOrCancelWidget(
+                          onConfirm: () {
+                            Navigator.of(context).pop(true);
+                          },
+                          onCancal: () {
+                            Navigator.of(context).pop(false);
+                          },
+                          labelSubmit: '授权  ',
+                        )
+                      ]),
+                    ),
+                  )));
         });
     if (result == true) {
       currentGame!.handleCmd('requestTrustDomains', request);
