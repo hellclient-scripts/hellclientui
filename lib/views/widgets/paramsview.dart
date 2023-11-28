@@ -241,7 +241,7 @@ class AllParamsState extends State<AllParams> {
       Table(
         columnWidths: const {
           0: FixedColumnWidth(180),
-          2: FixedColumnWidth(140)
+          2: FixedColumnWidth(160)
         },
         children: children,
       )
