@@ -611,3 +611,104 @@ class UpdateRequiredParams {
         'RequiredParams': params.toJson(),
       };
 }
+
+class Trigger {
+  String id = '';
+  String name = '';
+  bool enabled = false;
+  String match = '';
+  String send = '';
+  int colourChangeType = 0;
+  int colour = 0;
+  int wildcard = 0;
+  String soundFileName = '';
+  bool soundIfInactive = false;
+  String script = '';
+  int sendTo = 0;
+  int sequence = 0;
+  bool expandVariables = false;
+  bool temporary = false;
+  bool oneShot = false;
+  bool regexp = false;
+  bool repeat = false;
+  bool multiLine = false;
+  int linesToMatch = 0;
+  bool wildcardLowerCase = false;
+  String group = '';
+  bool ignoreCase = false;
+  bool keepEvaluating = false;
+  bool omitFromLog = false;
+  bool omitFromOutput = false;
+  bool inverse = false;
+  bool italic = false;
+  String variable = '';
+  Trigger.fromJson(Map<String, dynamic> json) {
+    id = json['ID'];
+    name = json['Name'];
+    enabled = json['Enabled'];
+    match = json['Match'];
+    send = json['Send'];
+    colourChangeType = json['ColourChangeType'];
+    colour = json['Colour'];
+    wildcard = json['Wildcard'];
+    soundFileName = json['SoundFileName'];
+    soundIfInactive = json['SoundIfInactive'];
+    script = json['Script'];
+    sendTo = json['SendTo'];
+    sequence = json['Sequence'];
+    expandVariables = json['ExpandVariables'];
+    temporary = json['Temporary'];
+    oneShot = json['OneShot'];
+    regexp = json['Regexp'];
+    repeat = json['Repeat'];
+    multiLine = json['MultiLine'];
+    linesToMatch = json['LinesToMatch'];
+    wildcardLowerCase = json['WildcardLowerCase'];
+    group = json['Group'];
+    ignoreCase = json['IgnoreCase'];
+    keepEvaluating = json['KeepEvaluating'];
+    omitFromLog = json['OmitFromLog'];
+    omitFromOutput = json['OmitFromOutput'];
+    inverse = json['Inverse'];
+    italic = json['Italic'];
+    variable = json['Variable'];
+  }
+  Map<String, dynamic> toJson() => {
+        'ID': id,
+        'Name': name,
+        'Enabled': enabled,
+        'Match': match,
+        'Send': send,
+        'ColourChangeType': colourChangeType,
+        'Colour': colour,
+        'Wildcard': wildcard,
+        'SoundFileName': soundFileName,
+        'SoundIfInactive': soundIfInactive,
+        'Script': script,
+        'SendTo': sendTo,
+        'Sequence': sequence,
+        'ExpandVariables': expandVariables,
+        'Temporary': temporary,
+        'OneShot': oneShot,
+        'Regexp': regexp,
+        'Repeat': repeat,
+        'MultiLine': multiLine,
+        'LinesToMatch': linesToMatch,
+        'WildcardLowerCase': wildcardLowerCase,
+        'Group': group,
+        'IgnoreCase': ignoreCase,
+        'KeepEvaluating': keepEvaluating,
+        'OmitFromLog': omitFromLog,
+        'OmitFromOutput': omitFromOutput,
+        'Inverse': inverse,
+        'Italic': italic,
+        'Variable': variable,
+      };
+}
+
+class Triggers {
+  List<Trigger> list = [];
+  Triggers.fromJson(dynamic json) {
+    list = List<dynamic>.from(json).map((e) => Trigger.fromJson(e)).toList();
+  }
+}

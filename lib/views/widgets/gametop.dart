@@ -138,7 +138,7 @@ class GameTopState extends State<GameTop> {
     }, '关闭游戏', Colors.white, const Color(0xffF56C6C)));
     if (large) {
       children.add(AppUI.buildIconButton(
-          context, const Icon(Icons.document_scanner), () async {
+          context, const Icon(Icons.chat_outlined), () async {
         currentGame!.handleCmd("allLines", null);
         showAllLines(context);
       }, '历史输出', const Color(0xff606266), Colors.white,
@@ -154,8 +154,8 @@ class GameTopState extends State<GameTop> {
         currentGame!.handleCmd("worldSettings", currentGame!.current);
       }, '游戏设置', const Color(0xff606266), Colors.white,
           borderColor: const Color(0xffDCDFE6)));
-      children.add(AppUI.buildIconButton(context, const Icon(Icons.computer),
-          () async {
+      children.add(AppUI.buildIconButton(
+          context, const Icon(Icons.memory_sharp), () async {
         currentGame!.handleCmd("scriptinfo", currentGame!.current);
       }, '脚本', const Color(0xff606266), Colors.white,
           borderColor: const Color(0xffDCDFE6)));
@@ -174,7 +174,7 @@ class GameTopState extends State<GameTop> {
     children.add(const SizedBox(
       width: 5,
     ));
-    children.add(AppUI.buildIconButton(context, const Icon(Icons.analytics),
+    children.add(AppUI.buildIconButton(context, const Icon(Icons.bar_chart),
         () async {
       currentGame!.handleCmd("params", currentGame!.current);
     }, '变量', const Color(0xff606266), Colors.white,
@@ -241,11 +241,18 @@ class GameTopState extends State<GameTop> {
         currentGame!.handleCmd("scriptSettings", currentGame!.current);
       }, '脚本设置', const Color(0xffE6A23C), const Color(0xfffdf6ec),
           borderColor: const Color(0xfff5dab1)));
-      children.add(AppUI.buildIconButton(context, const Icon(Icons.analytics),
+
+      children.add(AppUI.buildIconButton(context, const Icon(Icons.bar_chart),
           () async {
         currentGame!.handleCmd("requiredParams", currentGame!.current);
       }, '编辑变量说明', const Color(0xffE6A23C), const Color(0xfffdf6ec),
           borderColor: const Color(0xfff5dab1)));
+      children.add(AppUI.buildIconButton(context, const Icon(Icons.settings),
+          () async {
+        currentGame!.handleCmd("triggers", [currentGame!.current, '']);
+      }, '脚本触发器', const Color(0xffE6A23C), const Color(0xfffdf6ec),
+          borderColor: const Color(0xfff5dab1)));
+
       children.add(AppUI.buildIconButton(
         context,
         const Icon(Icons.save_outlined),

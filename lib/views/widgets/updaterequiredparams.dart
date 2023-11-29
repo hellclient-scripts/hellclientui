@@ -61,17 +61,19 @@ class UpdateRequiredParamsState extends State<UpdateRequiredParams> {
           child: Row(children: [
             SizedBox(
                 width: 32,
-                child: Tooltip(
-                  message: '拖动调整顺序',
-                  child: ReorderableDragStartListener(
-                    index: i,
-                    child: const Icon(
-                      Icons.drag_handle,
-                      size: 14,
-                      color: Colors.black,
-                    ),
-                  ),
-                )),
+                child: filter.text.isNotEmpty
+                    ? const Center()
+                    : Tooltip(
+                        message: '拖动调整顺序',
+                        child: ReorderableDragStartListener(
+                          index: i,
+                          child: const Icon(
+                            Icons.drag_handle,
+                            size: 14,
+                            color: Colors.black,
+                          ),
+                        ),
+                      )),
             SizedBox(
                 width: 180,
                 child: Text(param.name, textAlign: TextAlign.start)),

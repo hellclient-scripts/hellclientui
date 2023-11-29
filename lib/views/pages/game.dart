@@ -170,6 +170,12 @@ class GameState extends State<Game> {
             final requiredParams = message.RequiredParams.fromJson(jsondata);
             GameUI.showUpdateRequiredParams(context, requiredParams);
             break;
+          case 'scripttriggers':
+            final dynamic jsondata = json.decode(event.data);
+            final triggers = message.Triggers.fromJson(jsondata);
+            GameUI.showScriptTriggers(context, triggers);
+            // GameUI.showUpdateRequiredParams(context, requiredParams);
+            break;
         }
       }
     });

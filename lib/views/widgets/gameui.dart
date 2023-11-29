@@ -5,8 +5,10 @@ import 'package:flutter/material.dart';
 import '../../models/message.dart' as message;
 import '../../forms/worldsettingsform.dart';
 import '../../forms/scriptsettingsform.dart';
+import '../../forms/triggerform.dart';
 import 'package:hellclientui/views/widgets/paramsview.dart';
 import 'updaterequiredparams.dart';
+import 'scripttriggers.dart';
 
 const textStyleGameUIFieldLabel = TextStyle(
   color: Color(0xff333333),
@@ -51,6 +53,15 @@ class GameUI {
         context: context,
         builder: (context) {
           return UpdateRequiredParams(params: params);
+        });
+  }
+
+  static showScriptTriggers(BuildContext context, message.Triggers triggers) {
+    AppUI.hideUI(context);
+    showDialog<bool?>(
+        context: context,
+        builder: (context) {
+          return ScriptTriggers(triggers: triggers);
         });
   }
 

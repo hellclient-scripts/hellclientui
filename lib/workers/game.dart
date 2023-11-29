@@ -305,6 +305,7 @@ class Game {
       case 'scriptSettings':
       case 'paramsinfo':
       case 'requiredParams':
+      case 'scripttriggers':
         commandStream.add(GameCommand(command: command, data: data));
         break;
     }
