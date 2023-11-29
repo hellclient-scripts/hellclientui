@@ -17,27 +17,55 @@ class ParamsViewState extends State<ParamsView> {
     final Widget body = currentGame!.showAllParams
         ? AllParams(info: widget.info)
         : RequiredParams(info: widget.info);
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Row(
+    return Dialog.fullscreen(
+        child: Stack(children: [
+      FullScreenDialog(
+        title: currentGame!.showAllParams ? '变量设置-全部变量' : '变量设置-可设置变量',
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Tooltip(
-                message: '显示不需要填写或者其他脚本试用的变量',
-                child: Checkbox(
-                  value: currentGame!.showAllParams,
-                  onChanged: (value) {
-                    setState(() {
-                      currentGame!.showAllParams = (value == true);
-                    });
-                  },
-                )),
-            const Text('显示全部变量'),
+            body,
+            const SizedBox(
+              height: 150,
+            )
           ],
         ),
-        body,
-      ],
-    );
+      ),
+      Positioned(
+          right: 30,
+          bottom: 30,
+          child: Row(children: [
+            currentGame!.showAllParams
+                ? Container(
+                    padding: const EdgeInsets.fromLTRB(0, 0, 10, 0),
+                    child: FloatingActionButton(
+                      onPressed: () async {
+                        final result =
+                            await AppUI.promptText(context, '添加变量', '', '', '');
+                        if (result != null && result != '') {
+                          currentGame!.handleCmd('updateParam',
+                              [currentGame!.current, result, '']);
+                        }
+                      },
+                      tooltip: '添加变量',
+                      child: const Icon(Icons.add),
+                    ))
+                : const Center(),
+            FloatingActionButton(
+              onPressed: () {
+                setState(() {
+                  currentGame!.showAllParams = !currentGame!.showAllParams;
+                });
+              },
+              tooltip: currentGame!.showAllParams
+                  ? '显示脚本使用的变量'
+                  : '显示不需要填写或者其他脚本试用的变量',
+              child: Icon(currentGame!.showAllParams
+                  ? Icons.zoom_in_map_sharp
+                  : Icons.zoom_out_map_sharp),
+            ),
+          ]))
+    ]));
   }
 }
 
@@ -91,6 +119,9 @@ class RequiredParamsState extends State<RequiredParams> {
                     Icons.chat,
                     size: 12,
                   ),
+                  color: ((widget.info.paramComments[info.name] ?? '') != '')
+                      ? const Color(0xff67C23A)
+                      : null,
                   onPressed: () async {
                     final result = await AppUI.promptTextArea(
                         context,
@@ -116,7 +147,6 @@ class RequiredParamsState extends State<RequiredParams> {
       }
     }
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-      const H1('可设置变量列表'),
       Row(children: [
         Expanded(
             child: Padding(
@@ -215,16 +245,6 @@ class AllParamsState extends State<AllParams> {
       }
     }
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-      const H1('全部变量'),
-      TCell(
-        AppUI.buildIconButton(context, const Icon(Icons.add), () async {
-          final result = await AppUI.promptText(context, '添加变量', '', '', '');
-          if (result != null && result != '') {
-            currentGame!
-                .handleCmd('updateParam', [currentGame!.current, result, '']);
-          }
-        }, "添加变量", Colors.white, const Color(0xff409EFF)),
-      ),
       Row(children: [
         Expanded(
             child: Padding(
@@ -241,7 +261,7 @@ class AllParamsState extends State<AllParams> {
       Table(
         columnWidths: const {
           0: FixedColumnWidth(180),
-          2: FixedColumnWidth(160)
+          2: FixedColumnWidth(180)
         },
         children: children,
       )

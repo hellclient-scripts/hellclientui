@@ -208,7 +208,7 @@ class ScriptSettingsFormState extends State<ScriptSettingsForm> {
             color: const Color(0xffeeeeee),
             padding: const EdgeInsets.all(4),
             child: TextFormField(
-              controller: desc,
+              controller: intro,
               maxLines: null,
               minLines: 4,
               keyboardType: TextInputType.multiline,

@@ -4,7 +4,7 @@ import 'appui.dart';
 import 'userinput.dart';
 import '../../forms/createscriptform.dart' as createscriptform;
 
-Future<bool?> showCreateGame(BuildContext context) async {
+Future<bool?> showCreateScript(BuildContext context) async {
   return showDialog<bool>(
     context: context,
     builder: (context) {
@@ -59,35 +59,45 @@ class ScriptInfoListViewState extends State<ScriptInfoListView> {
         ]));
       }
     }
-    return FullScreenDialog(
-        title: "选择脚本",
-        summary: '请选择你要使用的脚本',
-        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          Row(children: [
-            AppUI.buildIconButton(context, const Icon(Icons.add), () async {
-              await showCreateGame(context);
-            }, "新建脚本", Colors.white, const Color(0xff409EFF)),
-            Expanded(
-                child: Padding(
-                    padding: const EdgeInsets.all(10),
-                    child: TextField(
-                        decoration: const InputDecoration(
-                            hintText: '请输入需要过滤的关键字',
-                            hintStyle: textStyleUserInputFilter),
-                        controller: controller,
-                        onChanged: (value) {
-                          setState(() {
-                            filter = controller.value;
-                          });
-                        }))),
-          ]),
-          Table(
-            columnWidths: const {
-              0: FixedColumnWidth(180),
-              3: FixedColumnWidth(80)
+    return Stack(children: [
+      FullScreenDialog(
+          title: "选择脚本",
+          summary: '请选择你要使用的脚本',
+          child:
+              Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            Padding(
+                padding: const EdgeInsets.all(10),
+                child: TextField(
+                    decoration: const InputDecoration(
+                        hintText: '请输入需要过滤的关键字',
+                        hintStyle: textStyleUserInputFilter),
+                    controller: controller,
+                    onChanged: (value) {
+                      setState(() {
+                        filter = controller.value;
+                      });
+                    })),
+            Table(
+              columnWidths: const {
+                0: FixedColumnWidth(180),
+                3: FixedColumnWidth(80)
+              },
+              children: children,
+            ),
+            const SizedBox(
+              height: 150,
+            )
+          ])),
+      Positioned(
+          right: 30,
+          bottom: 30,
+          child: FloatingActionButton(
+            onPressed: () async {
+              await showCreateScript(context);
             },
-            children: children,
-          )
-        ]));
+            tooltip: '新建脚本',
+            child: const Icon(Icons.add),
+          ))
+    ]);
   }
 }

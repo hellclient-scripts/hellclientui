@@ -54,32 +54,42 @@ class NotOpenedState extends State<NotOpened> {
         ]));
       }
     }
-    return FullScreenDialog(
-        title: "打开游戏",
-        summary: '请选择你要打开的游戏。',
-        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          Row(children: [
-            AppUI.buildIconButton(context, const Icon(Icons.add), () async {
+    return Stack(children: [
+      FullScreenDialog(
+          title: "打开游戏",
+          summary: '请选择你要打开的游戏。',
+          child:
+              Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            Padding(
+                padding: const EdgeInsets.all(10),
+                child: TextField(
+                    decoration: const InputDecoration(
+                        hintText: '请输入需要过滤的关键字',
+                        hintStyle: textStyleUserInputFilter),
+                    controller: controller,
+                    onChanged: (value) {
+                      setState(() {
+                        filter = controller.value;
+                      });
+                    })),
+            Table(
+              columnWidths: const {2: FixedColumnWidth(80)},
+              children: children,
+            ),
+            const SizedBox(
+              height: 150,
+            )
+          ])),
+      Positioned(
+          right: 30,
+          bottom: 30,
+          child: FloatingActionButton(
+            onPressed: () async {
               await showCreateGame(context);
-            }, "新建游戏", Colors.white, const Color(0xff409EFF)),
-            Expanded(
-                child: Padding(
-                    padding: const EdgeInsets.all(10),
-                    child: TextField(
-                        decoration: const InputDecoration(
-                            hintText: '请输入需要过滤的关键字',
-                            hintStyle: textStyleUserInputFilter),
-                        controller: controller,
-                        onChanged: (value) {
-                          setState(() {
-                            filter = controller.value;
-                          });
-                        }))),
-          ]),
-          Table(
-            columnWidths: const {2: FixedColumnWidth(80)},
-            children: children,
-          )
-        ]));
+            },
+            tooltip: '新建游戏',
+            child: const Icon(Icons.add),
+          ))
+    ]);
   }
 }

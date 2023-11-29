@@ -555,6 +555,7 @@ class UpdateScriptSettingsForm extends ScriptSettings {
 }
 
 class RequiredParam {
+  RequiredParam({required this.name, required this.intro, required this.desc});
   String name = "";
   String intro = "";
   String desc = "";
@@ -563,6 +564,11 @@ class RequiredParam {
     intro = json['Intro'];
     desc = json['Desc'];
   }
+  Map<String, dynamic> toJson() => {
+        "Name": name,
+        "Intro": intro,
+        "Desc": desc,
+      };
 }
 
 class ParamsInfo {
@@ -580,4 +586,28 @@ class ParamsInfo {
           .toList();
     }
   }
+}
+
+class RequiredParams {
+  List<RequiredParam> list = [];
+  RequiredParams.fromJson(dynamic json) {
+    if (json != null) {
+      list = List<dynamic>.from(json)
+          .map((e) => RequiredParam.fromJson(e))
+          .toList();
+    }
+  }
+  dynamic toJson() {
+    return list.map((e) => e.toJson()).toList();
+  }
+}
+
+class UpdateRequiredParams {
+  UpdateRequiredParams({required this.current, required this.params});
+  final String current;
+  final RequiredParams params;
+  Map<String, dynamic> toJson() => {
+        'Current': current,
+        'RequiredParams': params.toJson(),
+      };
 }

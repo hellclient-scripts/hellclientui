@@ -71,7 +71,7 @@ class AppUI {
                     children: [
                       Padding(
                           padding: const EdgeInsets.all(4),
-                          child: Text(
+                          child: SelectableText(
                             hint,
                             style: textStyleHint,
                           )),

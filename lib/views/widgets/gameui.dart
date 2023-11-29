@@ -6,6 +6,7 @@ import '../../models/message.dart' as message;
 import '../../forms/worldsettingsform.dart';
 import '../../forms/scriptsettingsform.dart';
 import 'package:hellclientui/views/widgets/paramsview.dart';
+import 'updaterequiredparams.dart';
 
 const textStyleGameUIFieldLabel = TextStyle(
   color: Color(0xff333333),
@@ -43,16 +44,22 @@ class GameUI {
     );
   }
 
+  static showUpdateRequiredParams(
+      BuildContext context, message.RequiredParams params) {
+    AppUI.hideUI(context);
+    showDialog<bool?>(
+        context: context,
+        builder: (context) {
+          return UpdateRequiredParams(params: params);
+        });
+  }
+
   static showParamsInfo(BuildContext context, message.ParamsInfo paramsInfo) {
     AppUI.hideUI(context);
     showDialog<bool?>(
         context: context,
         builder: (context) {
-          return Dialog.fullscreen(
-              child: FullScreenDialog(
-            title: '变量设置',
-            child: ParamsView(info: paramsInfo),
-          ));
+          return ParamsView(info: paramsInfo);
         });
   }
 
@@ -157,20 +164,14 @@ class GameUI {
         context: context,
         builder: (context) {
           return Dialog.fullscreen(
-              child: FullScreenDialog(
+            child: Stack(children: [
+              FullScreenDialog(
                   title: '游戏设置',
                   child: SizedBox(
                       width: double.infinity,
                       child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: buildFileds([
-                            SizedBox(
-                                height: 32,
-                                child: AppUI.buildIconButton(
-                                    context, const Icon(Icons.edit), () {
-                                  updateWorldSettings(context, worldSettings);
-                                }, "编辑游戏设置", Colors.white,
-                                    const Color(0xff409EFF))),
                             const Text(
                               '游戏ID',
                               style: textStyleGameUIFieldLabel,
@@ -226,7 +227,22 @@ class GameUI {
                               style: textStyleGameUIFieldLabel,
                             ),
                             Text(worldSettings.modEnabled ? "是" : "否"),
-                          ])))));
+                            const SizedBox(
+                              height: 150,
+                            )
+                          ])))),
+              Positioned(
+                  right: 30,
+                  bottom: 30,
+                  child: FloatingActionButton(
+                    onPressed: () {
+                      updateWorldSettings(context, worldSettings);
+                    },
+                    tooltip: '编辑游戏设置',
+                    child: const Icon(Icons.edit),
+                  ))
+            ]),
+          );
         });
   }
 
@@ -263,111 +279,119 @@ class GameUI {
         context: context,
         builder: (context) {
           return Dialog.fullscreen(
-              child: FullScreenDialog(
-                  title: '脚本设置',
-                  child: SizedBox(
-                      width: double.infinity,
-                      child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: buildFileds([
-                            SizedBox(
-                                height: 32,
-                                child: AppUI.buildIconButton(
-                                    context, const Icon(Icons.edit), () {
-                                  updateScriptSettings(context, scriptSettings);
-                                }, "编辑脚本设置", Colors.white,
-                                    const Color(0xff409EFF))),
-                            const Text(
-                              '脚本名',
-                              style: textStyleGameUIFieldLabel,
-                            ),
-                            Text(scriptSettings.name),
-                            const Text(
-                              '类型',
-                              style: textStyleGameUIFieldLabel,
-                            ),
-                            Text(scriptSettings.type),
-                            const Text(
-                              '广播频道',
-                              style: textStyleGameUIFieldLabel,
-                            ),
-                            Text(scriptSettings.channel),
-                            const Text(
-                              '助理触发函数',
-                              style: textStyleGameUIFieldLabel,
-                            ),
-                            Text(scriptSettings.onAssist),
-                            const Text(
-                              '快捷键触发函数',
-                              style: textStyleGameUIFieldLabel,
-                            ),
-                            Text(scriptSettings.onKeyUp),
-                            const Text(
-                              '广播触发函数',
-                              style: textStyleGameUIFieldLabel,
-                            ),
-                            Text(scriptSettings.onBroadcast),
-                            const Text(
-                              '响应触发函数',
-                              style: textStyleGameUIFieldLabel,
-                            ),
-                            Text(scriptSettings.onResponse),
-                            const Text(
-                              '加载触发函数',
-                              style: textStyleGameUIFieldLabel,
-                            ),
-                            Text(scriptSettings.onOpen),
-                            const Text(
-                              '关闭触发函数',
-                              style: textStyleGameUIFieldLabel,
-                            ),
-                            Text(scriptSettings.onClose),
-                            const Text(
-                              '连线触发函数',
-                              style: textStyleGameUIFieldLabel,
-                            ),
-                            Text(scriptSettings.onConnect),
-                            const Text(
-                              '掉线触发函数',
-                              style: textStyleGameUIFieldLabel,
-                            ),
-                            Text(scriptSettings.onDisconnect),
-                            const Text(
-                              'HUD点击函数',
-                              style: textStyleGameUIFieldLabel,
-                            ),
-                            Text(scriptSettings.onHUDClick),
-                            const Text(
-                              'Buffer处理函数',
-                              style: textStyleGameUIFieldLabel,
-                            ),
-                            Text(scriptSettings.onBuffer),
-                            const Text(
-                              'Buffer处理函数最小响应字数',
-                              style: textStyleGameUIFieldLabel,
-                            ),
-                            Text(scriptSettings.onBufferMin.toString()),
-                            const Text(
-                              'Buffer处理函数最大响应字数',
-                              style: textStyleGameUIFieldLabel,
-                            ),
-                            Text(scriptSettings.onBufferMax.toString()),
-                            const Text(
-                              'SubNegotiation处理函数',
-                              style: textStyleGameUIFieldLabel,
-                            ),
-                            Text(scriptSettings.onSubneg),
-                            const Text(
-                              '获取焦点函数',
-                              style: textStyleGameUIFieldLabel,
-                            ),
-                            Text(scriptSettings.onFocus),
-                            const Text(
-                              '描述',
-                              style: textStyleGameUIFieldLabel,
-                            ),
-                            Text(scriptSettings.desc),
-                          ])))));
+              child: Stack(children: [
+            FullScreenDialog(
+                title: '脚本设置',
+                child: SizedBox(
+                    width: double.infinity,
+                    child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: buildFileds([
+                          const Text(
+                            '脚本名',
+                            style: textStyleGameUIFieldLabel,
+                          ),
+                          Text(scriptSettings.name),
+                          const Text(
+                            '类型',
+                            style: textStyleGameUIFieldLabel,
+                          ),
+                          Text(scriptSettings.type),
+                          const Text(
+                            '广播频道',
+                            style: textStyleGameUIFieldLabel,
+                          ),
+                          Text(scriptSettings.channel),
+                          const Text(
+                            '助理触发函数',
+                            style: textStyleGameUIFieldLabel,
+                          ),
+                          Text(scriptSettings.onAssist),
+                          const Text(
+                            '快捷键触发函数',
+                            style: textStyleGameUIFieldLabel,
+                          ),
+                          Text(scriptSettings.onKeyUp),
+                          const Text(
+                            '广播触发函数',
+                            style: textStyleGameUIFieldLabel,
+                          ),
+                          Text(scriptSettings.onBroadcast),
+                          const Text(
+                            '响应触发函数',
+                            style: textStyleGameUIFieldLabel,
+                          ),
+                          Text(scriptSettings.onResponse),
+                          const Text(
+                            '加载触发函数',
+                            style: textStyleGameUIFieldLabel,
+                          ),
+                          Text(scriptSettings.onOpen),
+                          const Text(
+                            '关闭触发函数',
+                            style: textStyleGameUIFieldLabel,
+                          ),
+                          Text(scriptSettings.onClose),
+                          const Text(
+                            '连线触发函数',
+                            style: textStyleGameUIFieldLabel,
+                          ),
+                          Text(scriptSettings.onConnect),
+                          const Text(
+                            '掉线触发函数',
+                            style: textStyleGameUIFieldLabel,
+                          ),
+                          Text(scriptSettings.onDisconnect),
+                          const Text(
+                            'HUD点击函数',
+                            style: textStyleGameUIFieldLabel,
+                          ),
+                          Text(scriptSettings.onHUDClick),
+                          const Text(
+                            'Buffer处理函数',
+                            style: textStyleGameUIFieldLabel,
+                          ),
+                          Text(scriptSettings.onBuffer),
+                          const Text(
+                            'Buffer处理函数最小响应字数',
+                            style: textStyleGameUIFieldLabel,
+                          ),
+                          Text(scriptSettings.onBufferMin.toString()),
+                          const Text(
+                            'Buffer处理函数最大响应字数',
+                            style: textStyleGameUIFieldLabel,
+                          ),
+                          Text(scriptSettings.onBufferMax.toString()),
+                          const Text(
+                            'SubNegotiation处理函数',
+                            style: textStyleGameUIFieldLabel,
+                          ),
+                          Text(scriptSettings.onSubneg),
+                          const Text(
+                            '获取焦点函数',
+                            style: textStyleGameUIFieldLabel,
+                          ),
+                          Text(scriptSettings.onFocus),
+                          const Text(
+                            '描述',
+                            style: textStyleGameUIFieldLabel,
+                          ),
+                          Text(scriptSettings.desc),
+                          const SizedBox(
+                            height: 150,
+                          )
+                        ])))),
+            Positioned(
+                right: 30,
+                bottom: 30,
+                child: FloatingActionButton(
+                  onPressed: () {
+                    updateScriptSettings(context, scriptSettings);
+                  },
+                  tooltip: '编辑脚本设置',
+                  child: const Icon(Icons.edit),
+                ))
+          ]));
         });
   }
 

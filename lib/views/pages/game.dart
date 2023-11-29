@@ -165,6 +165,11 @@ class GameState extends State<Game> {
             final paramsinfo = message.ParamsInfo.fromJson(jsondata);
             GameUI.showParamsInfo(context, paramsinfo);
             break;
+          case 'requiredParams':
+            final dynamic jsondata = json.decode(event.data);
+            final requiredParams = message.RequiredParams.fromJson(jsondata);
+            GameUI.showUpdateRequiredParams(context, requiredParams);
+            break;
         }
       }
     });
