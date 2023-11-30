@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:hellclientui/models/feature.dart';
 import 'package:hellclientui/models/server.dart';
 import '../models/rendersettings.dart';
 import '../states/appstate.dart';
@@ -13,12 +14,6 @@ import 'package:synchronized/synchronized.dart';
 
 Game? currentGame;
 
-class GameFormFail {
-  const GameFormFail({required this.formID, required this.data});
-  final String formID;
-  final dynamic data;
-}
-
 class GameCommand {
   const GameCommand({required this.command, this.data = ""});
   final String command;
@@ -31,6 +26,7 @@ class Game {
   int historypos = -1;
   bool showAllParams = false;
   ClientInfo? currentClient;
+  APIVersion? apiVersion;
   late RenderSettings renderSettings;
   late Connecting connecting;
   late Server server;
@@ -293,6 +289,11 @@ class Game {
       case 'foundhistory':
         commandStream.add(GameCommand(command: command, data: data));
         break;
+      case 'apiversion':
+        final dynamic jsondata = json.decode(data);
+        apiVersion = APIVersion.fromJson(jsondata);
+        print(apiVersion);
+        break;
       case 'defaultCharset':
       case 'defaultServer':
       case 'createSuccess':
@@ -306,9 +307,17 @@ class Game {
       case 'paramsinfo':
       case 'requiredParams':
       case 'scripttriggers':
+      case 'usertriggers':
         commandStream.add(GameCommand(command: command, data: data));
         break;
     }
+  }
+
+  bool support(Feature feature) {
+    if (apiVersion == null) {
+      return false;
+    }
+    return feature.isSupported(apiVersion!);
   }
 
   Future<void> connect(AppState appState, Function(String) errorhandler) async {

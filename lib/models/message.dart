@@ -613,6 +613,7 @@ class UpdateRequiredParams {
 }
 
 class Trigger {
+  Trigger();
   String id = '';
   String name = '';
   bool enabled = false;
@@ -625,7 +626,7 @@ class Trigger {
   bool soundIfInactive = false;
   String script = '';
   int sendTo = 0;
-  int sequence = 0;
+  int sequence = 100;
   bool expandVariables = false;
   bool temporary = false;
   bool oneShot = false;
@@ -642,6 +643,10 @@ class Trigger {
   bool inverse = false;
   bool italic = false;
   String variable = '';
+  Trigger clone() {
+    return Trigger.fromJson(toJson());
+  }
+
   Trigger.fromJson(Map<String, dynamic> json) {
     id = json['ID'];
     name = json['Name'];
@@ -710,5 +715,78 @@ class Triggers {
   List<Trigger> list = [];
   Triggers.fromJson(dynamic json) {
     list = List<dynamic>.from(json).map((e) => Trigger.fromJson(e)).toList();
+  }
+}
+
+class CreateTrigger {
+  CreateTrigger(this.trigger);
+  bool byUser = false;
+  String world = '';
+  Trigger trigger;
+  Map<String, dynamic> toJson() {
+    final result = trigger.toJson();
+    result['ByUser'] = byUser;
+    result['World'] = world;
+    return result;
+  }
+}
+
+class UpdateTrigger {
+  UpdateTrigger(this.trigger);
+  bool byUser = false;
+  String world = '';
+  Trigger trigger;
+  Map<String, dynamic> toJson() {
+    final result = trigger.toJson();
+    result['ByUser'] = byUser;
+    result['World'] = world;
+    return result;
+  }
+}
+
+class APIVersion {
+  const APIVersion(
+      {this.major = 0,
+      this.year = 0,
+      this.month = 0,
+      this.day = 0,
+      this.patch = 0,
+      this.build = ''});
+  final int major;
+  final int year;
+  final int month;
+  final int day;
+  final int patch;
+  final String build;
+  int compareTo(APIVersion other) {
+    if (major != other.major) {
+      return major.compareTo(other.major);
+    }
+    if (year != other.year) {
+      return year.compareTo(other.year);
+    }
+    if (month != other.month) {
+      return month.compareTo(other.month);
+    }
+    if (day != other.day) {
+      return day.compareTo(other.day);
+    }
+    return patch.compareTo(other.patch);
+  }
+
+  static APIVersion fromJson(Map<String, dynamic> json) {
+    final major = json["Major"] ?? 0;
+    final year = json["Year"] ?? 0;
+    final month = json["Month"] ?? 0;
+    final day = json["Day"] ?? 0;
+    final patch = json["Patch"] ?? 0;
+    final build = json["Build"] ?? '';
+    return APIVersion(
+        major: major,
+        year: year,
+        month: month,
+        day: day,
+        patch: patch,
+        build: build);
   }
 }

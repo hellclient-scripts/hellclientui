@@ -1,27 +1,57 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import '../../models/message.dart' as message;
 import 'appui.dart';
 import 'userinput.dart';
 import '../../forms/triggerform.dart';
 import 'package:hellclientui/workers/game.dart';
 
-Future<message.RequiredParam?> showCreateTrigger(BuildContext context) async {
-  showDialog<bool?>(
+showCreateTrigger(BuildContext context, bool byUser) async {
+  showDialog(
     context: context,
     builder: (context) {
-      return const Dialog.fullscreen(
+      return Dialog.fullscreen(
           child: FullScreenDialog(
-              title: '创建脚本触发器',
+              title: byUser ? '创建用户触发器' : '创建脚本触发器',
               child: TriggerForm(
-                byUser: false,
+                trigger: message.Trigger(),
+                onSubmit: (trigger) {
+                  final createtirgger = message.CreateTrigger(trigger);
+                  createtirgger.byUser = byUser;
+                  createtirgger.world = currentGame!.current;
+                  currentGame!.handleCmd('createTrigger', createtirgger);
+                },
+              )));
+    },
+  );
+}
+
+showUpdateTrigger(
+    BuildContext context, message.Trigger trigger, bool byUser) async {
+  showDialog(
+    context: context,
+    builder: (context) {
+      return Dialog.fullscreen(
+          child: FullScreenDialog(
+              title: byUser ? '修改用户触发器' : '修改脚本触发器',
+              child: TriggerForm(
+                trigger: trigger,
+                onSubmit: (trigger) {
+                  final updatetrigger = message.UpdateTrigger(trigger);
+                  updatetrigger.byUser = false;
+                  updatetrigger.world = currentGame!.current;
+                  currentGame!.handleCmd('updateTrigger', updatetrigger);
+                },
               )));
     },
   );
 }
 
 class ScriptTriggers extends StatefulWidget {
-  const ScriptTriggers({super.key, required this.triggers});
+  const ScriptTriggers(
+      {super.key, required this.triggers, required this.byUser});
   final message.Triggers triggers;
+  final bool byUser;
   @override
   State<StatefulWidget> createState() => ScriptTriggersState();
 }
@@ -53,12 +83,7 @@ class ScriptTriggersState extends State<ScriptTriggers> {
           trigger.script.contains(filter.text) ||
           trigger.name.contains(filter.text)) {
         void update() async {
-          // final result = await AppUI.promptTextArea(
-          //     context, '设置变量$key', '', '', widget.info.params[key] ?? '');
-          // if (result != null) {
-          //   currentGame!
-          //       .handleCmd('updateParam', [currentGame!.current, key, result]);
-          // }
+          showUpdateTrigger(context, trigger, widget.byUser);
         }
 
         children.add(createTableRow([
@@ -90,12 +115,12 @@ class ScriptTriggersState extends State<ScriptTriggers> {
                                     Icons.warning,
                                     color: Color(0xffE6A23C),
                                   )),
-                                  TextSpan(text: '是否要删除该变量?'),
+                                  TextSpan(text: '是否要删除该触发器?'),
                                 ]),
                               )) ==
                           true) {
-                        // currentGame!.handleCmd(
-                        //     'deleteParam', [currentGame!.current, key]);
+                        currentGame!.handleCmd('deleteTrigger',
+                            [currentGame!.current, trigger.id]);
                       }
                     },
                     child: const Text(
@@ -110,7 +135,7 @@ class ScriptTriggersState extends State<ScriptTriggers> {
     return Dialog.fullscreen(
         child: Stack(children: [
       FullScreenDialog(
-          title: '脚本触发器',
+          title: widget.byUser ? '用户触发器' : '脚本触发器',
           child:
               Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
             Row(children: [
@@ -142,9 +167,9 @@ class ScriptTriggersState extends State<ScriptTriggers> {
           bottom: 30,
           child: FloatingActionButton(
             onPressed: () async {
-              final result = await showCreateTrigger(context);
+              await showCreateTrigger(context, widget.byUser);
             },
-            tooltip: '新建脚本变量',
+            tooltip: widget.byUser ? '新建用户变量' : '新建脚本变量',
             child: const Icon(Icons.add),
           ))
     ]));

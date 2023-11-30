@@ -61,7 +61,19 @@ class GameUI {
     showDialog<bool?>(
         context: context,
         builder: (context) {
-          return ScriptTriggers(triggers: triggers);
+          return ScriptTriggers(
+            triggers: triggers,
+            byUser: false,
+          );
+        });
+  }
+
+  static showUserTriggers(BuildContext context, message.Triggers triggers) {
+    AppUI.hideUI(context);
+    showDialog<bool?>(
+        context: context,
+        builder: (context) {
+          return ScriptTriggers(triggers: triggers, byUser: true);
         });
   }
 

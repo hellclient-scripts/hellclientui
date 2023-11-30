@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -8,8 +9,9 @@ import '../models/message.dart' as message;
 import 'dart:async';
 
 class TriggerForm extends StatefulWidget {
-  const TriggerForm({super.key, required this.byUser});
-  final bool byUser;
+  const TriggerForm({super.key, required this.trigger, required this.onSubmit});
+  final message.Trigger trigger;
+  final void Function(message.Trigger) onSubmit;
   @override
   State<StatefulWidget> createState() => TriggerFormState();
 }
@@ -39,6 +41,25 @@ class TriggerFormState extends State<TriggerForm> {
   late StreamSubscription sub;
   @override
   void initState() {
+    match.text = widget.trigger.match;
+    name.text = widget.trigger.name;
+    sendTo = widget.trigger.sendTo;
+    sequence.text = widget.trigger.sequence.toString();
+    script.text = widget.trigger.script;
+    group.text = widget.trigger.group;
+    ignoreCase = widget.trigger.ignoreCase;
+    enabled = widget.trigger.enabled;
+    regexp = widget.trigger.regexp;
+    keepEvaluating = widget.trigger.keepEvaluating;
+    repeat = widget.trigger.repeat;
+    expandVariables = widget.trigger.expandVariables;
+    oneShot = widget.trigger.oneShot;
+    temporary = widget.trigger.temporary;
+    multiLine = widget.trigger.multiLine;
+    linesToMatch.text = widget.trigger.linesToMatch.toString();
+    wildcardLowerCase = widget.trigger.wildcardLowerCase;
+    omitFromOutput = widget.trigger.omitFromOutput;
+    omitFromLog = widget.trigger.omitFromLog;
     sequence.text = '100';
     sub = currentGame!.createFailStream.stream.listen((event) {
       final newfail = message.CreateFail.fromJson(jsonDecode(event));
@@ -272,12 +293,24 @@ class TriggerFormState extends State<TriggerForm> {
           const Text('不出现在日志'),
         ]),
         ConfirmOrCancelWidget(onConfirm: () {
-          // currentGame!.handleCmd(
-          //     'updatepassword',
-          //     UpdatePasswordForm(
-          //         username: username!.text,
-          //         password: password!.text,
-          //         repeatPassword: repeatpassword!.text));
+          final trigger = widget.trigger.clone();
+          trigger.match = match.text;
+          trigger.name = name.text;
+          trigger.send = send.text;
+          trigger.sequence = int.parse(sequence.text);
+          trigger.script = script.text;
+          trigger.group = group.text;
+          trigger.linesToMatch = int.parse(linesToMatch.text);
+          trigger.ignoreCase = ignoreCase;
+          trigger.regexp = regexp;
+          trigger.keepEvaluating = keepEvaluating;
+          trigger.repeat = repeat;
+          trigger.expandVariables = expandVariables;
+          trigger.oneShot = oneShot;
+          trigger.temporary = temporary;
+          trigger.multiLine = multiLine;
+          trigger.wildcardLowerCase = wildcardLowerCase;
+          widget.onSubmit(trigger);
         }, onCancal: () {
           Navigator.of(context).pop();
         })

@@ -205,7 +205,7 @@ class Renderer {
             Offset(
                 0,
                 devicePixelRatio * renderSettings.lineheight * maxLines -
-                    (maxLines - index) *
+                    (rows.length - index) *
                         devicePixelRatio *
                         renderSettings.lineheight),
             Paint());
