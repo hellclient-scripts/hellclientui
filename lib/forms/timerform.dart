@@ -6,60 +6,52 @@ import '../views/widgets/appui.dart';
 import '../models/message.dart' as message;
 import 'dart:async';
 
-class TriggerForm extends StatefulWidget {
-  const TriggerForm({super.key, required this.trigger, required this.onSubmit});
-  final message.Trigger trigger;
-  final void Function(message.Trigger) onSubmit;
+class TimerForm extends StatefulWidget {
+  const TimerForm({super.key, required this.timer, required this.onSubmit});
+  final message.Timer timer;
+  final void Function(message.Timer) onSubmit;
   @override
-  State<StatefulWidget> createState() => TriggerFormState();
+  State<StatefulWidget> createState() => TimerFormState();
 }
 
-class TriggerFormState extends State<TriggerForm> {
-  final match = TextEditingController();
+class TimerFormState extends State<TimerForm> {
   final name = TextEditingController();
+  final hour = TextEditingController();
+  final minute = TextEditingController();
+  final second = TextEditingController();
+  bool atTime = false;
   int sendTo = 0;
   final send = TextEditingController();
-  final sequence = TextEditingController();
   final script = TextEditingController();
   final group = TextEditingController();
-  bool ignoreCase = false;
+  bool actionWhenDisconnectd = false;
   bool enabled = false;
-  bool regexp = false;
-  bool keepEvaluating = false;
-  bool repeat = false;
-  bool expandVariables = false;
   bool oneShot = false;
+  final variable = TextEditingController();
   bool temporary = false;
-  bool multiLine = false;
-  final linesToMatch = TextEditingController();
-  bool wildcardLowerCase = false;
   bool omitFromOutput = false;
   bool omitFromLog = false;
+
   message.CreateFail? fail;
   late StreamSubscription sub;
   @override
   void initState() {
-    match.text = widget.trigger.match;
-    name.text = widget.trigger.name;
-    sendTo = widget.trigger.sendTo;
-    send.text = widget.trigger.send;
-    sequence.text = widget.trigger.sequence.toString();
-    script.text = widget.trigger.script;
-    group.text = widget.trigger.group;
-    ignoreCase = widget.trigger.ignoreCase;
-    enabled = widget.trigger.enabled;
-    regexp = widget.trigger.regexp;
-    keepEvaluating = widget.trigger.keepEvaluating;
-    repeat = widget.trigger.repeat;
-    expandVariables = widget.trigger.expandVariables;
-    oneShot = widget.trigger.oneShot;
-    temporary = widget.trigger.temporary;
-    multiLine = widget.trigger.multiLine;
-    linesToMatch.text = widget.trigger.linesToMatch.toString();
-    wildcardLowerCase = widget.trigger.wildcardLowerCase;
-    omitFromOutput = widget.trigger.omitFromOutput;
-    omitFromLog = widget.trigger.omitFromLog;
-    sequence.text = '100';
+    name.text = widget.timer.name;
+    hour.text = widget.timer.hour.toString();
+    minute.text = widget.timer.minute.toString();
+    second.text = widget.timer.second.toString();
+    atTime = widget.timer.atTime;
+    send.text = widget.timer.send;
+    sendTo = widget.timer.sendTo;
+    script.text = widget.timer.script;
+    group.text = widget.timer.group;
+    actionWhenDisconnectd = widget.timer.actionWhenDisconnectd;
+    enabled = widget.timer.enabled;
+    oneShot = widget.timer.oneShot;
+    variable.text = widget.timer.variable;
+    temporary = widget.timer.temporary;
+    omitFromOutput = widget.timer.omitFromOutput;
+    omitFromLog = widget.timer.omitFromLog;
     sub = currentGame!.createFailStream.stream.listen((event) {
       final newfail = message.CreateFail.fromJson(jsonDecode(event));
       setState(() {
@@ -80,12 +72,54 @@ class TriggerFormState extends State<TriggerForm> {
     return Column(
       children: [
         CreateFailMessage(fail: fail),
-        TextFormField(
-          controller: match,
-          decoration: const InputDecoration(
-            label: Text("匹配"),
-          ),
-        ),
+        Row(children: [
+          Text(atTime ? '触发时间' : '触发间隔'),
+          Flexible(
+              flex: 1,
+              child: Padding(
+                  padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
+                  child: TextFormField(
+                    controller: hour,
+                    inputFormatters: <TextInputFormatter>[
+                      FilteringTextInputFormatter.digitsOnly
+                    ], // Only numbers can be entered
+                    keyboardType:
+                        const TextInputType.numberWithOptions(decimal: true),
+                    decoration: const InputDecoration(
+                      label: Text("小时"),
+                    ),
+                  ))),
+          Flexible(
+              flex: 1,
+              child: Padding(
+                  padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
+                  child: TextFormField(
+                    controller: minute,
+                    inputFormatters: <TextInputFormatter>[
+                      FilteringTextInputFormatter.digitsOnly
+                    ], // Only numbers can be entered
+                    keyboardType:
+                        const TextInputType.numberWithOptions(decimal: true),
+                    decoration: const InputDecoration(
+                      label: Text("分钟"),
+                    ),
+                  ))),
+          Flexible(
+              flex: 1,
+              child: Padding(
+                  padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
+                  child: TextFormField(
+                    controller: second,
+                    inputFormatters: <TextInputFormatter>[
+                      FilteringTextInputFormatter.allow(RegExp(r'[0-9.]'))
+                    ], // Only numbers can be entered
+                    keyboardType:
+                        const TextInputType.numberWithOptions(decimal: true),
+                    decoration: const InputDecoration(
+                      label: Text("秒"),
+                    ),
+                  ))),
+        ]),
         TextFormField(
           controller: name,
           decoration: const InputDecoration(
@@ -121,6 +155,7 @@ class TriggerFormState extends State<TriggerForm> {
           ],
           onChanged: (value) {
             sendTo = value;
+            setState(() {});
           },
         ),
         Container(
@@ -136,16 +171,6 @@ class TriggerFormState extends State<TriggerForm> {
               ),
             )),
         TextFormField(
-          controller: sequence,
-          inputFormatters: <TextInputFormatter>[
-            FilteringTextInputFormatter.digitsOnly
-          ], // Only numbers can be entered
-          keyboardType: const TextInputType.numberWithOptions(decimal: true),
-          decoration: const InputDecoration(
-            label: Text("优先级"),
-          ),
-        ),
-        TextFormField(
           controller: script,
           decoration: const InputDecoration(
             label: Text("调用脚本函数"),
@@ -157,29 +182,24 @@ class TriggerFormState extends State<TriggerForm> {
             label: Text("分组名"),
           ),
         ),
-        !multiLine
-            ? const Center()
-            : TextFormField(
-                controller: linesToMatch,
-                inputFormatters: <TextInputFormatter>[
-                  FilteringTextInputFormatter.digitsOnly
-                ], // Only numbers can be entered
-                keyboardType:
-                    const TextInputType.numberWithOptions(decimal: true),
+        sendTo == 9
+            ? TextFormField(
+                controller: variable,
                 decoration: const InputDecoration(
-                  label: Text("匹配行数(0-100)"),
+                  label: Text("变量"),
                 ),
-              ),
+              )
+            : const Center(),
         Row(children: [
           Checkbox(
-            value: ignoreCase,
+            value: atTime,
             onChanged: (value) {
               setState(() {
-                ignoreCase = (value == true);
+                atTime = (value == true);
               });
             },
           ),
-          const Text('不区分大小写'),
+          const Text('具体时分秒'),
         ]),
         Row(children: [
           Checkbox(
@@ -194,36 +214,14 @@ class TriggerFormState extends State<TriggerForm> {
         ]),
         Row(children: [
           Checkbox(
-            value: keepEvaluating,
+            value: actionWhenDisconnectd,
             onChanged: (value) {
               setState(() {
-                keepEvaluating = (value == true);
+                actionWhenDisconnectd = (value == true);
               });
             },
           ),
-          const Text('继续执行'),
-        ]),
-        Row(children: [
-          Checkbox(
-            value: repeat,
-            onChanged: (value) {
-              setState(() {
-                repeat = (value == true);
-              });
-            },
-          ),
-          const Text('重复触发'),
-        ]),
-        Row(children: [
-          Checkbox(
-            value: expandVariables,
-            onChanged: (value) {
-              setState(() {
-                expandVariables = (value == true);
-              });
-            },
-          ),
-          const Text('展开变量'),
+          const Text('离线可用'),
         ]),
         Row(children: [
           Checkbox(
@@ -249,28 +247,6 @@ class TriggerFormState extends State<TriggerForm> {
         ]),
         Row(children: [
           Checkbox(
-            value: multiLine,
-            onChanged: (value) {
-              setState(() {
-                multiLine = (value == true);
-              });
-            },
-          ),
-          const Text('多行匹配'),
-        ]),
-        Row(children: [
-          Checkbox(
-            value: wildcardLowerCase,
-            onChanged: (value) {
-              setState(() {
-                wildcardLowerCase = (value == true);
-              });
-            },
-          ),
-          const Text('匹配内容转小写'),
-        ]),
-        Row(children: [
-          Checkbox(
             value: omitFromOutput,
             onChanged: (value) {
               setState(() {
@@ -292,24 +268,23 @@ class TriggerFormState extends State<TriggerForm> {
           const Text('不出现在日志'),
         ]),
         ConfirmOrCancelWidget(onConfirm: () {
-          final trigger = widget.trigger.clone();
-          trigger.match = match.text;
-          trigger.name = name.text;
-          trigger.send = send.text;
-          trigger.sequence = int.tryParse(sequence.text) ?? 0;
-          trigger.script = script.text;
-          trigger.group = group.text;
-          trigger.linesToMatch = int.tryParse(linesToMatch.text) ?? 0;
-          trigger.ignoreCase = ignoreCase;
-          trigger.regexp = regexp;
-          trigger.keepEvaluating = keepEvaluating;
-          trigger.repeat = repeat;
-          trigger.expandVariables = expandVariables;
-          trigger.oneShot = oneShot;
-          trigger.temporary = temporary;
-          trigger.multiLine = multiLine;
-          trigger.wildcardLowerCase = wildcardLowerCase;
-          widget.onSubmit(trigger);
+          final timer = widget.timer.clone();
+          timer.hour = int.tryParse(hour.text) ?? 0;
+          timer.minute = int.tryParse(minute.text) ?? 0;
+          timer.second = num.tryParse(second.text) ?? 0;
+          timer.name = name.text;
+          timer.sendTo = sendTo;
+          timer.variable = variable.text;
+          timer.send = send.text;
+          timer.script = script.text;
+          timer.group = group.text;
+          timer.atTime = atTime;
+          timer.oneShot = oneShot;
+          timer.actionWhenDisconnectd = actionWhenDisconnectd;
+          timer.temporary = temporary;
+          timer.omitFromLog = omitFromLog;
+          timer.omitFromOutput = omitFromOutput;
+          widget.onSubmit(timer);
         }, onCancal: () {
           Navigator.of(context).pop();
         })

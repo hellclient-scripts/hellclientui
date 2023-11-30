@@ -190,6 +190,16 @@ class GameState extends State<Game> {
             final aliases = message.Aliases.fromJson(jsondata);
             GameUI.showUserAliases(context, aliases);
             break;
+          case 'scripttimers':
+            final dynamic jsondata = json.decode(event.data);
+            final timers = message.Timers.fromJson(jsondata);
+            GameUI.showScriptTimers(context, timers);
+            break;
+          case 'usertimers':
+            final dynamic jsondata = json.decode(event.data);
+            final timers = message.Timers.fromJson(jsondata);
+            GameUI.showUserTimers(context, timers);
+            break;
         }
       }
     });

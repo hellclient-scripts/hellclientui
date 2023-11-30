@@ -9,6 +9,7 @@ import 'package:hellclientui/views/widgets/paramsview.dart';
 import 'updaterequiredparams.dart';
 import 'triggers.dart';
 import 'aliases.dart';
+import 'timers.dart';
 
 const textStyleGameUIFieldLabel = TextStyle(
   color: Color(0xff333333),
@@ -53,6 +54,27 @@ class GameUI {
         context: context,
         builder: (context) {
           return UpdateRequiredParams(params: params);
+        });
+  }
+
+  static showScriptTimers(BuildContext context, message.Timers timers) {
+    AppUI.hideUI(context);
+    showDialog<bool?>(
+        context: context,
+        builder: (context) {
+          return Timers(
+            timers: timers,
+            byUser: false,
+          );
+        });
+  }
+
+  static showUserTimers(BuildContext context, message.Timers timers) {
+    AppUI.hideUI(context);
+    showDialog<bool?>(
+        context: context,
+        builder: (context) {
+          return Timers(timers: timers, byUser: true);
         });
   }
 

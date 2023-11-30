@@ -309,6 +309,8 @@ class Game {
       case 'usertriggers':
       case 'scriptaliases':
       case 'useraliases':
+      case 'scripttimers':
+      case 'usertimers':
         commandStream.add(GameCommand(command: command, data: data));
         break;
     }

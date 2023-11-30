@@ -185,6 +185,11 @@ class GameTopState extends State<GameTop> {
         currentGame!.handleCmd("triggers", [currentGame!.current, 'byuser']);
       }, '游戏触发器', const Color(0xff606266), Colors.white,
           borderColor: const Color(0xffDCDFE6)));
+      children.add(AppUI.buildIconButton(
+          context, const Icon(Icons.timer_outlined), () async {
+        currentGame!.handleCmd("timers", [currentGame!.current, 'byuser']);
+      }, '游戏计时器', const Color(0xff606266), Colors.white,
+          borderColor: const Color(0xffDCDFE6)));
       children.add(AppUI.buildIconButton(context, const Icon(Icons.send),
           () async {
         currentGame!.handleCmd("aliases", [currentGame!.current, 'byuser']);
@@ -263,6 +268,11 @@ class GameTopState extends State<GameTop> {
           () async {
         currentGame!.handleCmd("triggers", [currentGame!.current, '']);
       }, '脚本触发器', const Color(0xffE6A23C), const Color(0xfffdf6ec),
+          borderColor: const Color(0xfff5dab1)));
+      children.add(AppUI.buildIconButton(
+          context, const Icon(Icons.timer_outlined), () async {
+        currentGame!.handleCmd("timers", [currentGame!.current, '']);
+      }, '脚本别名', const Color(0xffE6A23C), const Color(0xfffdf6ec),
           borderColor: const Color(0xfff5dab1)));
       children.add(AppUI.buildIconButton(context, const Icon(Icons.send),
           () async {

@@ -254,7 +254,7 @@ class AliasFormState extends State<AliasForm> {
           alias.match = match.text;
           alias.name = name.text;
           alias.send = send.text;
-          alias.sequence = int.parse(sequence.text);
+          alias.sequence = int.tryParse(sequence.text) ?? 0;
           alias.script = script.text;
           alias.group = group.text;
           alias.ignoreCase = ignoreCase;

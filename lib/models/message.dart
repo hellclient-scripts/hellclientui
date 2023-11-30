@@ -849,6 +849,102 @@ class UpdateTrigger {
   }
 }
 
+class Timer {
+  Timer();
+  String id = '';
+  String name = '';
+  bool enabled = false;
+  int hour = 0;
+  int minute = 0;
+  num second = 0;
+  String send = '';
+  String script = '';
+  bool atTime = false;
+  int sendTo = 0;
+  bool actionWhenDisconnectd = false;
+  bool temporary = false;
+  bool oneShot = false;
+  String group = '';
+  bool omitFromLog = false;
+  bool omitFromOutput = false;
+  String variable = '';
+  Timer clone() {
+    return Timer.fromJson(toJson());
+  }
+
+  Timer.fromJson(Map<String, dynamic> json) {
+    id = json['ID'];
+    name = json['Name'];
+    enabled = json['Enabled'];
+    hour = json['Hour'];
+    minute = json['Minute'];
+    second = json['Second'];
+    send = json['Send'];
+    script = json['Script'];
+    atTime = json['AtTime'];
+    sendTo = json['SendTo'];
+    actionWhenDisconnectd = json['ActionWhenDisconnectd'];
+    temporary = json['Temporary'];
+    oneShot = json['OneShot'];
+    group = json['Group'];
+    omitFromLog = json['OmitFromLog'];
+    omitFromOutput = json['OmitFromOutput'];
+    variable = json['Variable'];
+  }
+  Map<String, dynamic> toJson() => {
+        'ID': id,
+        'Name': name,
+        'Enabled': enabled,
+        "Hour": hour,
+        "Minute": minute,
+        "Second": second,
+        'Send': send,
+        'Script': script,
+        'AtTime': atTime,
+        'SendTo': sendTo,
+        'ActionWhenDisconnectd': actionWhenDisconnectd,
+        'Temporary': temporary,
+        'OneShot': oneShot,
+        'Group': group,
+        'OmitFromLog': omitFromLog,
+        'OmitFromOutput': omitFromOutput,
+        'Variable': variable,
+      };
+}
+
+class Timers {
+  List<Timer> list = [];
+  Timers.fromJson(dynamic json) {
+    list = List<dynamic>.from(json).map((e) => Timer.fromJson(e)).toList();
+  }
+}
+
+class CreateTimer {
+  CreateTimer(this.timer);
+  bool byUser = false;
+  String world = '';
+  Timer timer;
+  Map<String, dynamic> toJson() {
+    final result = timer.toJson();
+    result['ByUser'] = byUser;
+    result['World'] = world;
+    return result;
+  }
+}
+
+class UpdateTimer {
+  UpdateTimer(this.timer);
+  bool byUser = false;
+  String world = '';
+  Timer timer;
+  Map<String, dynamic> toJson() {
+    final result = timer.toJson();
+    result['ByUser'] = byUser;
+    result['World'] = world;
+    return result;
+  }
+}
+
 class APIVersion {
   const APIVersion(
       {this.major = 0,

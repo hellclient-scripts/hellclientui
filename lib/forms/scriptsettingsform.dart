@@ -232,8 +232,8 @@ class ScriptSettingsFormState extends State<ScriptSettingsForm> {
           form.onDisconnect = onDisconnect.text;
           form.onHUDClick = onHUDClick.text;
           form.onBuffer = onBuffer.text;
-          form.onBufferMin = int.parse(onBufferMin.text);
-          form.onBufferMax = int.parse(onBufferMax.text);
+          form.onBufferMin = int.tryParse(onBufferMin.text) ?? 0;
+          form.onBufferMax = int.tryParse(onBufferMax.text) ?? 0;
           form.onSubneg = onSubneg.text;
           form.onFocus = onFocus.text;
           form.intro = intro.text;
