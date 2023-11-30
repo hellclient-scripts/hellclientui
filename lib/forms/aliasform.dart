@@ -22,6 +22,7 @@ class AliasFormState extends State<AliasForm> {
   final sequence = TextEditingController();
   final script = TextEditingController();
   final group = TextEditingController();
+  final variable = TextEditingController();
   bool ignoreCase = false;
   bool enabled = false;
   bool regexp = false;
@@ -52,6 +53,7 @@ class AliasFormState extends State<AliasForm> {
     omitFromOutput = widget.alias.omitFromOutput;
     omitFromLog = widget.alias.omitFromLog;
     omitFromCommandHistory = widget.alias.omitFromCommandHistory;
+    variable.text = widget.alias.variable;
     sequence.text = '100';
     sub = currentGame!.createFailStream.stream.listen((event) {
       final newfail = message.CreateFail.fromJson(jsonDecode(event));
@@ -114,6 +116,7 @@ class AliasFormState extends State<AliasForm> {
           ],
           onChanged: (value) {
             sendTo = value;
+            setState(() {});
           },
         ),
         Container(
@@ -150,6 +153,14 @@ class AliasFormState extends State<AliasForm> {
             label: Text("分组名"),
           ),
         ),
+        sendTo == 9
+            ? TextFormField(
+                controller: variable,
+                decoration: const InputDecoration(
+                  label: Text("变量"),
+                ),
+              )
+            : const Center(),
         Row(children: [
           Checkbox(
             value: ignoreCase,
@@ -264,6 +275,7 @@ class AliasFormState extends State<AliasForm> {
           alias.oneShot = oneShot;
           alias.temporary = temporary;
           alias.omitFromCommandHistory = omitFromCommandHistory;
+          alias.variable = variable.text;
           widget.onSubmit(alias);
         }, onCancal: () {
           Navigator.of(context).pop();

@@ -78,6 +78,9 @@ class GameState extends State<Game> {
     disconnectSub = game.disconnectStream.stream.listen((data) async {
       if (await showDisconneded(context) == true) {
         try {
+          if (context.mounted) {
+            AppUI.hideUI(context);
+          }
           await (reconnect());
         } catch (e) {
           if (context.mounted) {

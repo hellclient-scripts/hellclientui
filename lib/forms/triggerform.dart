@@ -22,6 +22,8 @@ class TriggerFormState extends State<TriggerForm> {
   final sequence = TextEditingController();
   final script = TextEditingController();
   final group = TextEditingController();
+  final variable = TextEditingController();
+
   bool ignoreCase = false;
   bool enabled = false;
   bool regexp = false;
@@ -59,6 +61,7 @@ class TriggerFormState extends State<TriggerForm> {
     wildcardLowerCase = widget.trigger.wildcardLowerCase;
     omitFromOutput = widget.trigger.omitFromOutput;
     omitFromLog = widget.trigger.omitFromLog;
+    variable.text = widget.trigger.variable;
     sequence.text = '100';
     sub = currentGame!.createFailStream.stream.listen((event) {
       final newfail = message.CreateFail.fromJson(jsonDecode(event));
@@ -121,6 +124,7 @@ class TriggerFormState extends State<TriggerForm> {
           ],
           onChanged: (value) {
             sendTo = value;
+            setState(() {});
           },
         ),
         Container(
@@ -170,6 +174,14 @@ class TriggerFormState extends State<TriggerForm> {
                   label: Text("匹配行数(0-100)"),
                 ),
               ),
+        sendTo == 9
+            ? TextFormField(
+                controller: variable,
+                decoration: const InputDecoration(
+                  label: Text("变量"),
+                ),
+              )
+            : const Center(),
         Row(children: [
           Checkbox(
             value: ignoreCase,
@@ -309,6 +321,7 @@ class TriggerFormState extends State<TriggerForm> {
           trigger.temporary = temporary;
           trigger.multiLine = multiLine;
           trigger.wildcardLowerCase = wildcardLowerCase;
+          trigger.variable = variable.text;
           widget.onSubmit(trigger);
         }, onCancal: () {
           Navigator.of(context).pop();
