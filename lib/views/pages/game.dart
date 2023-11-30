@@ -174,12 +174,21 @@ class GameState extends State<Game> {
             final dynamic jsondata = json.decode(event.data);
             final triggers = message.Triggers.fromJson(jsondata);
             GameUI.showScriptTriggers(context, triggers);
-            // GameUI.showUpdateRequiredParams(context, requiredParams);
             break;
           case 'usertriggers':
             final dynamic jsondata = json.decode(event.data);
             final triggers = message.Triggers.fromJson(jsondata);
             GameUI.showUserTriggers(context, triggers);
+            break;
+          case 'scriptaliases':
+            final dynamic jsondata = json.decode(event.data);
+            final aliases = message.Aliases.fromJson(jsondata);
+            GameUI.showScriptAliases(context, aliases);
+            break;
+          case 'useraliases':
+            final dynamic jsondata = json.decode(event.data);
+            final aliases = message.Aliases.fromJson(jsondata);
+            GameUI.showUserAliases(context, aliases);
             break;
         }
       }

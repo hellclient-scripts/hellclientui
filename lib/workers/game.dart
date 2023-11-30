@@ -292,7 +292,6 @@ class Game {
       case 'apiversion':
         final dynamic jsondata = json.decode(data);
         apiVersion = APIVersion.fromJson(jsondata);
-        print(apiVersion);
         break;
       case 'defaultCharset':
       case 'defaultServer':
@@ -308,6 +307,8 @@ class Game {
       case 'requiredParams':
       case 'scripttriggers':
       case 'usertriggers':
+      case 'scriptaliases':
+      case 'useraliases':
         commandStream.add(GameCommand(command: command, data: data));
         break;
     }

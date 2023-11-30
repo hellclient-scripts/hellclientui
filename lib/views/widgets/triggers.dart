@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/scheduler.dart';
 import '../../models/message.dart' as message;
 import 'appui.dart';
 import 'userinput.dart';
@@ -47,16 +46,15 @@ showUpdateTrigger(
   );
 }
 
-class ScriptTriggers extends StatefulWidget {
-  const ScriptTriggers(
-      {super.key, required this.triggers, required this.byUser});
+class Triggers extends StatefulWidget {
+  const Triggers({super.key, required this.triggers, required this.byUser});
   final message.Triggers triggers;
   final bool byUser;
   @override
-  State<StatefulWidget> createState() => ScriptTriggersState();
+  State<StatefulWidget> createState() => TriggersState();
 }
 
-class ScriptTriggersState extends State<ScriptTriggers> {
+class TriggersState extends State<Triggers> {
   final TextEditingController filter = TextEditingController();
 
   @override
@@ -169,7 +167,7 @@ class ScriptTriggersState extends State<ScriptTriggers> {
             onPressed: () async {
               await showCreateTrigger(context, widget.byUser);
             },
-            tooltip: widget.byUser ? '新建用户变量' : '新建脚本变量',
+            tooltip: widget.byUser ? '新建用户触发器' : '新建脚本触发器',
             child: const Icon(Icons.add),
           ))
     ]));

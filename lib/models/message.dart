@@ -612,6 +612,111 @@ class UpdateRequiredParams {
       };
 }
 
+class Alias {
+  Alias();
+  String id = '';
+  String name = '';
+  bool enabled = false;
+  String match = '';
+  String send = '';
+  String script = '';
+  int sendTo = 0;
+  int sequence = 100;
+  bool expandVariables = false;
+  bool temporary = false;
+  bool oneShot = false;
+  bool regexp = false;
+  String group = '';
+  bool ignoreCase = false;
+  bool keepEvaluating = false;
+  bool menu = false;
+  bool omitFromLog = false;
+  bool omitFromOutput = false;
+  bool omitFromCommandHistory = false;
+  String variable = '';
+  Alias clone() {
+    return Alias.fromJson(toJson());
+  }
+
+  Alias.fromJson(Map<String, dynamic> json) {
+    id = json['ID'];
+    name = json['Name'];
+    enabled = json['Enabled'];
+    match = json['Match'];
+    send = json['Send'];
+    script = json['Script'];
+    sendTo = json['SendTo'];
+    sequence = json['Sequence'];
+    expandVariables = json['ExpandVariables'];
+    temporary = json['Temporary'];
+    oneShot = json['OneShot'];
+    regexp = json['Regexp'];
+    group = json['Group'];
+    ignoreCase = json['IgnoreCase'];
+    menu = json['Menu'];
+    keepEvaluating = json['KeepEvaluating'];
+    omitFromLog = json['OmitFromLog'];
+    omitFromOutput = json['OmitFromOutput'];
+    omitFromCommandHistory = json['OmitFromCommandHistory'];
+    variable = json['Variable'];
+  }
+  Map<String, dynamic> toJson() => {
+        'ID': id,
+        'Name': name,
+        'Enabled': enabled,
+        'Match': match,
+        'Send': send,
+        'Script': script,
+        'SendTo': sendTo,
+        'Sequence': sequence,
+        'ExpandVariables': expandVariables,
+        'Temporary': temporary,
+        'OneShot': oneShot,
+        'Regexp': regexp,
+        'Group': group,
+        'IgnoreCase': ignoreCase,
+        'Menu': menu,
+        'KeepEvaluating': keepEvaluating,
+        'OmitFromLog': omitFromLog,
+        'OmitFromOutput': omitFromOutput,
+        'OmitFromCommandHistory': omitFromCommandHistory,
+        'Variable': variable,
+      };
+}
+
+class Aliases {
+  List<Alias> list = [];
+  Aliases.fromJson(dynamic json) {
+    list = List<dynamic>.from(json).map((e) => Alias.fromJson(e)).toList();
+  }
+}
+
+class CreateAlias {
+  CreateAlias(this.alias);
+  bool byUser = false;
+  String world = '';
+  Alias alias;
+  Map<String, dynamic> toJson() {
+    final result = alias.toJson();
+    result['ByUser'] = byUser;
+    result['World'] = world;
+    return result;
+  }
+}
+
+class UpdateAlias {
+  UpdateAlias(this.alias);
+  bool byUser = false;
+  String world = '';
+  Alias alias;
+  Map<String, dynamic> toJson() {
+    final result = alias.toJson();
+    result['ByUser'] = byUser;
+    result['World'] = world;
+    return result;
+  }
+}
+
 class Trigger {
   Trigger();
   String id = '';

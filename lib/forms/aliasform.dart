@@ -6,15 +6,15 @@ import '../views/widgets/appui.dart';
 import '../models/message.dart' as message;
 import 'dart:async';
 
-class TriggerForm extends StatefulWidget {
-  const TriggerForm({super.key, required this.trigger, required this.onSubmit});
-  final message.Trigger trigger;
-  final void Function(message.Trigger) onSubmit;
+class AliasForm extends StatefulWidget {
+  const AliasForm({super.key, required this.alias, required this.onSubmit});
+  final message.Alias alias;
+  final void Function(message.Alias) onSubmit;
   @override
-  State<StatefulWidget> createState() => TriggerFormState();
+  State<StatefulWidget> createState() => AliasFormState();
 }
 
-class TriggerFormState extends State<TriggerForm> {
+class AliasFormState extends State<AliasForm> {
   final match = TextEditingController();
   final name = TextEditingController();
   int sendTo = 0;
@@ -26,38 +26,32 @@ class TriggerFormState extends State<TriggerForm> {
   bool enabled = false;
   bool regexp = false;
   bool keepEvaluating = false;
-  bool repeat = false;
   bool expandVariables = false;
   bool oneShot = false;
   bool temporary = false;
-  bool multiLine = false;
-  final linesToMatch = TextEditingController();
-  bool wildcardLowerCase = false;
   bool omitFromOutput = false;
   bool omitFromLog = false;
+  bool omitFromCommandHistory = false;
   message.CreateFail? fail;
   late StreamSubscription sub;
   @override
   void initState() {
-    match.text = widget.trigger.match;
-    name.text = widget.trigger.name;
-    sendTo = widget.trigger.sendTo;
-    sequence.text = widget.trigger.sequence.toString();
-    script.text = widget.trigger.script;
-    group.text = widget.trigger.group;
-    ignoreCase = widget.trigger.ignoreCase;
-    enabled = widget.trigger.enabled;
-    regexp = widget.trigger.regexp;
-    keepEvaluating = widget.trigger.keepEvaluating;
-    repeat = widget.trigger.repeat;
-    expandVariables = widget.trigger.expandVariables;
-    oneShot = widget.trigger.oneShot;
-    temporary = widget.trigger.temporary;
-    multiLine = widget.trigger.multiLine;
-    linesToMatch.text = widget.trigger.linesToMatch.toString();
-    wildcardLowerCase = widget.trigger.wildcardLowerCase;
-    omitFromOutput = widget.trigger.omitFromOutput;
-    omitFromLog = widget.trigger.omitFromLog;
+    match.text = widget.alias.match;
+    name.text = widget.alias.name;
+    sendTo = widget.alias.sendTo;
+    sequence.text = widget.alias.sequence.toString();
+    script.text = widget.alias.script;
+    group.text = widget.alias.group;
+    ignoreCase = widget.alias.ignoreCase;
+    enabled = widget.alias.enabled;
+    regexp = widget.alias.regexp;
+    keepEvaluating = widget.alias.keepEvaluating;
+    expandVariables = widget.alias.expandVariables;
+    oneShot = widget.alias.oneShot;
+    temporary = widget.alias.temporary;
+    omitFromOutput = widget.alias.omitFromOutput;
+    omitFromLog = widget.alias.omitFromLog;
+    omitFromCommandHistory = widget.alias.omitFromCommandHistory;
     sequence.text = '100';
     sub = currentGame!.createFailStream.stream.listen((event) {
       final newfail = message.CreateFail.fromJson(jsonDecode(event));
@@ -156,19 +150,6 @@ class TriggerFormState extends State<TriggerForm> {
             label: Text("分组名"),
           ),
         ),
-        !multiLine
-            ? const Center()
-            : TextFormField(
-                controller: linesToMatch,
-                inputFormatters: <TextInputFormatter>[
-                  FilteringTextInputFormatter.digitsOnly
-                ], // Only numbers can be entered
-                keyboardType:
-                    const TextInputType.numberWithOptions(decimal: true),
-                decoration: const InputDecoration(
-                  label: Text("匹配行数(0-100)"),
-                ),
-              ),
         Row(children: [
           Checkbox(
             value: ignoreCase,
@@ -201,17 +182,6 @@ class TriggerFormState extends State<TriggerForm> {
             },
           ),
           const Text('继续执行'),
-        ]),
-        Row(children: [
-          Checkbox(
-            value: repeat,
-            onChanged: (value) {
-              setState(() {
-                repeat = (value == true);
-              });
-            },
-          ),
-          const Text('重复触发'),
         ]),
         Row(children: [
           Checkbox(
@@ -248,28 +218,6 @@ class TriggerFormState extends State<TriggerForm> {
         ]),
         Row(children: [
           Checkbox(
-            value: multiLine,
-            onChanged: (value) {
-              setState(() {
-                multiLine = (value == true);
-              });
-            },
-          ),
-          const Text('多行匹配'),
-        ]),
-        Row(children: [
-          Checkbox(
-            value: wildcardLowerCase,
-            onChanged: (value) {
-              setState(() {
-                wildcardLowerCase = (value == true);
-              });
-            },
-          ),
-          const Text('匹配内容转小写'),
-        ]),
-        Row(children: [
-          Checkbox(
             value: omitFromOutput,
             onChanged: (value) {
               setState(() {
@@ -290,25 +238,33 @@ class TriggerFormState extends State<TriggerForm> {
           ),
           const Text('不出现在日志'),
         ]),
+        Row(children: [
+          Checkbox(
+            value: omitFromCommandHistory,
+            onChanged: (value) {
+              setState(() {
+                omitFromCommandHistory = (value == true);
+              });
+            },
+          ),
+          const Text('不出现在历史纪录'),
+        ]),
         ConfirmOrCancelWidget(onConfirm: () {
-          final trigger = widget.trigger.clone();
-          trigger.match = match.text;
-          trigger.name = name.text;
-          trigger.send = send.text;
-          trigger.sequence = int.parse(sequence.text);
-          trigger.script = script.text;
-          trigger.group = group.text;
-          trigger.linesToMatch = int.parse(linesToMatch.text);
-          trigger.ignoreCase = ignoreCase;
-          trigger.regexp = regexp;
-          trigger.keepEvaluating = keepEvaluating;
-          trigger.repeat = repeat;
-          trigger.expandVariables = expandVariables;
-          trigger.oneShot = oneShot;
-          trigger.temporary = temporary;
-          trigger.multiLine = multiLine;
-          trigger.wildcardLowerCase = wildcardLowerCase;
-          widget.onSubmit(trigger);
+          final alias = widget.alias.clone();
+          alias.match = match.text;
+          alias.name = name.text;
+          alias.send = send.text;
+          alias.sequence = int.parse(sequence.text);
+          alias.script = script.text;
+          alias.group = group.text;
+          alias.ignoreCase = ignoreCase;
+          alias.regexp = regexp;
+          alias.keepEvaluating = keepEvaluating;
+          alias.expandVariables = expandVariables;
+          alias.oneShot = oneShot;
+          alias.temporary = temporary;
+          alias.omitFromCommandHistory = omitFromCommandHistory;
+          widget.onSubmit(alias);
         }, onCancal: () {
           Navigator.of(context).pop();
         })
