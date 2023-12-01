@@ -3,6 +3,7 @@ import 'dart:ui' as ui;
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:hellclientui/views/widgets/outputlines.dart';
 
 import 'package:toastification/toastification.dart';
 
@@ -190,6 +191,21 @@ class UserInputHelper {
                     },
                     data: data.body)));
         break;
+      case "output":
+        final lines = Lines.fromJson(jsonDecode(data.body));
+        body = Container(
+            width: double.infinity,
+            color: Colors.black,
+            child: RawScrollbar(
+                thumbColor: Colors.white,
+                thumbVisibility: true,
+                controller: controller,
+                child: SingleChildScrollView(
+                    controller: controller,
+                    child: OutputLines(
+                      lines: lines.lines,
+                    ))));
+        break;
       default:
         body = Container(
             width: double.infinity,
@@ -363,6 +379,18 @@ class UserInputVisualPromptWidgetState
         visual = UserInputVisualPromptBase64SlideWidget(
           rawdata: widget.visualPrompt.source,
         );
+      case "output":
+        final lines = Lines.fromJson(jsonDecode(widget.visualPrompt.source));
+        visual = Container(
+            width: double.infinity,
+            color: Colors.black,
+            child: OutputLines(
+              lines: lines.lines,
+            ));
+        break;
+      case "text":
+        visual = Text(widget.visualPrompt.source);
+        break;
       default:
         visual = const Text("不支持的媒体类型");
     }
