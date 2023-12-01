@@ -3,7 +3,7 @@ import 'package:hellclientui/states/appstate.dart';
 import 'package:provider/provider.dart';
 import 'nav.dart';
 import 'serverlist.dart';
-import 'notification.dart' as noti;
+import 'settingspage.dart';
 import '../../workers/notification.dart';
 
 class HomePage extends StatelessWidget {
@@ -17,7 +17,7 @@ class HomePage extends StatelessWidget {
         child = ServerList(servers: appState.config.servers);
         break;
       case 1:
-        child = const noti.Notification();
+        child = const SettingsPage();
         break;
       default:
         child = Center(
