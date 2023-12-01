@@ -374,6 +374,24 @@ class UserInputVisualPromptWidgetState
         TextEditingValue(text: widget.visualPrompt.value));
     final List<Widget> children = [];
     late Widget visual;
+
+    if (widget.visualPrompt.refreshCallback.isNotEmpty) {
+      children.add(Padding(
+          padding: const EdgeInsets.fromLTRB(2, 0, 2, 0),
+          child: Align(
+              alignment: Alignment.centerRight,
+              child: AppUI.buildIconButton(
+                context,
+                const Icon(Icons.refresh),
+                () async {
+                  currentGame!.handleUserInputScriptCallback(
+                      widget.input, widget.visualPrompt.refreshCallback, 0, '');
+                },
+                '刷新',
+                Colors.white,
+                const Color(0xff409EFF),
+              ))));
+    }
     switch (widget.visualPrompt.mediaType) {
       case "base64slide":
         visual = UserInputVisualPromptBase64SlideWidget(
@@ -390,6 +408,9 @@ class UserInputVisualPromptWidgetState
         break;
       case "text":
         visual = Text(widget.visualPrompt.source);
+        break;
+      case "image":
+        visual = Image.network(widget.visualPrompt.source);
         break;
       default:
         visual = const Text("不支持的媒体类型");
