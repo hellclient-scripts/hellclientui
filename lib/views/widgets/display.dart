@@ -5,6 +5,7 @@ import 'package:hellclientui/views/widgets/appui.dart';
 import 'package:provider/provider.dart';
 import '../../workers/renderer.dart';
 import '../../workers/game.dart';
+import 'datagridview.dart';
 import 'package:web_socket_channel/io.dart';
 import 'alllines.dart';
 import 'gametop.dart';
@@ -79,6 +80,20 @@ class DisplayState extends State<Display> {
     super.dispose();
   }
 
+  bool gridDisplayed = false;
+  showGrid(BuildContext context, UserInput input) async {
+    currentGame!.updateDatagrid(input);
+    if (!gridDisplayed) {
+      gridDisplayed = true;
+      await showDialog(
+          context: context,
+          builder: (context) {
+            return const DatagridView();
+          });
+      gridDisplayed = false;
+    }
+  }
+
   @override
   void initState() {
     super.initState();
@@ -96,9 +111,6 @@ class DisplayState extends State<Display> {
             break;
           case "scriptMessage":
             final input = UserInput.fromJson(jsonDecode(event.data));
-            if (input.name != 'userinput.popup') {
-              AppUI.hideUI(context);
-            }
             if (context.mounted) {
               switch (input.name) {
                 case "userinput.popup":
@@ -121,6 +133,12 @@ class DisplayState extends State<Display> {
                   break;
                 case "userinput.note":
                   UserInputHelper.note(context, input);
+                  break;
+                case "hideall":
+                  AppUI.hideUI(context);
+                  break;
+                case "userinput.datagrid":
+                  showGrid(context, input);
                   break;
               }
             }

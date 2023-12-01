@@ -1,3 +1,4 @@
+import 'package:hellclientui/models/feature.dart';
 import 'package:hellclientui/workers/game.dart';
 
 import 'appui.dart';
@@ -293,6 +294,15 @@ class GameUI {
                               style: textStyleGameUIFieldLabel,
                             ),
                             Text(worldSettings.modEnabled ? "是" : "否"),
+                            currentGame!.support(Features.autoSave)
+                                ? const Text(
+                                    '自动保存',
+                                    style: textStyleGameUIFieldLabel,
+                                  )
+                                : const Center(),
+                            currentGame!.support(Features.autoSave)
+                                ? Text(worldSettings.autoSave ? "是" : "否")
+                                : const Center(),
                             const SizedBox(
                               height: 150,
                             )

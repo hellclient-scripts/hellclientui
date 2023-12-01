@@ -144,6 +144,16 @@ class UserInput {
     cb.data = data;
     return cb;
   }
+
+  Callback callbackScript(String cbscript, int code, dynamic data) {
+    final cb = Callback();
+    cb.id = id;
+    cb.name = name;
+    cb.script = cbscript;
+    cb.code = code;
+    cb.data = data;
+    return cb;
+  }
 }
 
 class UserInputTitleIntro {
@@ -261,6 +271,41 @@ class VisualPrompt {
       for (final item in itemlist) {
         items.add(UserInputItem.fromJson(item));
       }
+    }
+  }
+}
+
+class Datagrid {
+  String title = '';
+  String intro = '';
+  List<UserInputItem> items = [];
+  int maxPage = 0;
+  int page = 0;
+  String filter = '';
+  String onPage = '';
+  String onFilter = '';
+  String onDelete = '';
+  String onUpdate = '';
+  String onView = '';
+  String onCreate = '';
+  String onSelect = '';
+  Datagrid.fromJson(Map<String, dynamic> json) {
+    title = json['Title'] ?? '';
+    intro = json['Intro'] ?? '';
+    maxPage = json['MaxPage'] ?? 0;
+    page = json['Page'] ?? 0;
+    filter = json['Filter'] ?? '';
+    onPage = json['OnPage'] ?? '';
+    onFilter = json['OnFilter'] ?? '';
+    onDelete = json['OnDelete'] ?? '';
+    onUpdate = json['OnUpdate'] ?? '';
+    onView = json['OnView'] ?? '';
+    onCreate = json['OnCreate'] ?? '';
+    onSelect = json['OnSelect'] ?? '';
+    if (json['Items'] != null) {
+      items = List<dynamic>.from(json['Items'])
+          .map((e) => UserInputItem.fromJson(e))
+          .toList();
     }
   }
 }
@@ -396,6 +441,7 @@ class WorldSettings {
     required this.showBroadcast,
     required this.showSubneg,
     required this.modEnabled,
+    this.autoSave = false,
   });
   String id = "";
   String host = "";
@@ -408,6 +454,7 @@ class WorldSettings {
   bool showBroadcast = false;
   bool showSubneg = false;
   bool modEnabled = false;
+  bool autoSave = false;
   WorldSettings.fromJson(Map<String, dynamic> json) {
     id = json['ID'] ?? '';
     host = json['Host'] ?? '';
@@ -420,6 +467,7 @@ class WorldSettings {
     showBroadcast = json['ShowBroadcast'] ?? false;
     showSubneg = json['ShowSubneg'] ?? false;
     modEnabled = json['ModEnabled'] ?? false;
+    autoSave = json['AutoSave'] ?? false;
   }
   Map<String, dynamic> toJson() => {
         'ID': id,
@@ -433,6 +481,7 @@ class WorldSettings {
         'ShowBroadcast': showBroadcast,
         'ShowSubneg': showSubneg,
         'ModEnabled': modEnabled,
+        'AutoSave': autoSave,
       };
 }
 

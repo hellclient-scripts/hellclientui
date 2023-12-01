@@ -25,6 +25,14 @@ packages:
       url: "https://pub.flutter-io.cn"
     source: hosted
     version: "2.11.0"
+  auto_size_text:
+    dependency: transitive
+    description:
+      name: auto_size_text
+      sha256: "3f5261cd3fb5f2a9ab4e2fc3fba84fd9fcaac8821f20a1d4e71f557521b22599"
+      url: "https://pub.flutter-io.cn"
+    source: hosted
+    version: "3.0.0"
   boolean_selector:
     dependency: transitive
     description:
@@ -264,6 +272,14 @@ packages:
       url: "https://pub.flutter-io.cn"
     source: hosted
     version: "1.0.0"
+  number_paginator:
+    dependency: "direct main"
+    description:
+      name: number_paginator
+      sha256: e9a21f876b09ad41db5fb994883f52ceb54c5b18f611bf6015495487eb7300b1
+      url: "https://pub.flutter-io.cn"
+    source: hosted
+    version: "0.4.0"
   path:
     dependency: "direct main"
     description:

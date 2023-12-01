@@ -355,24 +355,24 @@ class Renderer {
         color: renderSettings.color, icon: "", iconcolor: renderSettings.color);
   }
 
-  Color getColorByName(colorname, defaultcolor) {
+  Color getColorByName(String colorname, Color colordefaultcolor, bool isBold) {
     switch (colorname) {
       case "Black":
-        return renderSettings.black;
+        return isBold ? renderSettings.brightBlack : renderSettings.black;
       case "Red":
-        return renderSettings.red;
+        return isBold ? renderSettings.brightRed : renderSettings.red;
       case "Green":
-        return renderSettings.green;
+        return isBold ? renderSettings.brightGreen : renderSettings.green;
       case "Yellow":
-        return renderSettings.yellow;
+        return isBold ? renderSettings.brightYellow : renderSettings.yellow;
       case "Blue":
-        return renderSettings.blue;
+        return isBold ? renderSettings.brightBlue : renderSettings.blue;
       case "Magenta":
-        return renderSettings.magenta;
+        return isBold ? renderSettings.brightMagenta : renderSettings.magenta;
       case "Cyan":
-        return renderSettings.cyan;
+        return isBold ? renderSettings.brightCyan : renderSettings.cyan;
       case "White":
-        return renderSettings.white;
+        return isBold ? renderSettings.brightWhite : renderSettings.white;
       case "BrightBlack":
         return renderSettings.brightBlack;
       case "BrightRed":
@@ -390,15 +390,15 @@ class Renderer {
       case "BrightWhite":
         return renderSettings.brightWhite;
     }
-    return defaultcolor;
+    return colordefaultcolor;
   }
 
   WordStyle getWordStyle(Word word, Color fontcolor, Color backgroundColor) {
     var result = WordStyle();
     var color = word.inverse ? word.background : word.color;
     var background = word.inverse ? word.color : word.background;
-    result.color = getColorByName(color, fontcolor);
-    result.background = getColorByName(background, backgroundColor);
+    result.color = getColorByName(color, fontcolor, word.bold);
+    result.background = getColorByName(background, backgroundColor, false);
     result.bold = word.bold;
     result.blinking = word.blinking;
     result.underlined = word.underlined;

@@ -73,6 +73,7 @@ class DisplayBottomState extends State<DisplayBottom> {
   DisplayBottomState();
   late StreamSubscription subCommand;
   late TextEditingController inputController;
+  var focusNode = FocusNode();
   @override
   void initState() {
     inputController = TextEditingController();
@@ -85,6 +86,9 @@ class DisplayBottomState extends State<DisplayBottom> {
             inputController.selection = TextSelection(
                 baseOffset: 0, extentOffset: inputController.value.text.length);
             currentGame!.historypos = data.position;
+            break;
+          case "current":
+            focusNode.requestFocus();
             break;
         }
       }
@@ -99,7 +103,6 @@ class DisplayBottomState extends State<DisplayBottom> {
   }
 
   Widget buildBottom(BuildContext context) {
-    var focusNode = FocusNode();
     focusNode.requestFocus();
     inputController.selection = TextSelection(
         baseOffset: 0, extentOffset: inputController.value.text.length);

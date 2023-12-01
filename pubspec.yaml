@@ -50,6 +50,7 @@ dependencies:
   carousel_slider:
   markdown:
   flutter_markdown: ^0.6.18+2
+  number_paginator:
 dev_dependencies:
   flutter_launcher_icons:
   flutter_test:

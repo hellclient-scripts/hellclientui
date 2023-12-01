@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'fullscreen.dart';
 import '../../models/message.dart';
+import '../../states/appstate.dart';
 import 'dart:async';
 
 const BorderRadiusGeometry _radiusBoth = BorderRadius.all(Radius.circular(4));
@@ -396,11 +397,13 @@ class FullScreenDialog extends StatelessWidget {
       required this.title,
       this.summary = "",
       this.withScroll = true,
-      required this.child});
+      required this.child,
+      this.onClose});
   final String title;
   final String summary;
   final Widget child;
   final bool withScroll;
+  final Function()? onClose;
   @override
   Widget build(BuildContext context) {
     final scrollController = ScrollController();
@@ -413,6 +416,10 @@ class FullScreenDialog extends StatelessWidget {
               Expanded(child: H1(title)),
               IconButton(
                   onPressed: () {
+                    if (onClose != null) {
+                      onClose!();
+                      return;
+                    }
                     Navigator.of(context).pop(null);
                   },
                   icon: const Icon(Icons.close)),
@@ -433,7 +440,7 @@ class FullScreenDialog extends StatelessWidget {
     }
     children.add(Expanded(child: body));
     return Fullscreen(
-        minWidth: 640,
+        minWidth: currentAppState.renderSettings.forceDesktopMode ? 1200 : 640,
         child: Padding(
             padding: const EdgeInsets.all(20),
             child: Column(

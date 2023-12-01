@@ -34,6 +34,7 @@ class Game {
   late RenderPainter prompt;
   late RenderPainter hud;
   int switchStatus = 0;
+  UserInput? datagrid;
   var hudLock = Lock();
   List<Line> hudContent = [];
   ClientInfos clientinfos = ClientInfos();
@@ -44,6 +45,7 @@ class Game {
   final hudUpdateStream = StreamController.broadcast();
   final disconnectStream = StreamController.broadcast();
   final createFailStream = StreamController.broadcast();
+  final datagridUpdateStream = StreamController.broadcast();
   static Game create(Connecting connecting) {
     connecting = connecting;
     var game = Game();
@@ -118,6 +120,11 @@ class Game {
         renderSettings, hudContent, true, true, renderSettings.hudbackground);
     hud.renderer.draw();
     hudUpdateStream.add(null);
+  }
+
+  void updateDatagrid(UserInput? grid) {
+    datagrid = grid;
+    datagridUpdateStream.add(grid);
   }
 
   Future<void> onCmdHudContent(String data) async {
@@ -311,6 +318,7 @@ class Game {
       case 'useraliases':
       case 'scripttimers':
       case 'usertimers':
+      case 'hideall':
         commandStream.add(GameCommand(command: command, data: data));
         break;
     }
@@ -361,6 +369,14 @@ class Game {
     handleCmd('callback', [
       currentGame!.current,
       jsonEncode(input.callback(code, data).toJson())
+    ]);
+  }
+
+  void handleUserInputScriptCallback(
+      UserInput input, String script, int code, dynamic data) {
+    handleCmd('callback', [
+      currentGame!.current,
+      jsonEncode(input.callbackScript(script, code, data).toJson())
     ]);
   }
 

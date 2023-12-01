@@ -262,9 +262,10 @@ class GameState extends State<Game> {
             // the App.build method, and use it to set our appbar title.
             title: Text(server.name.isEmpty ? server.host : server.name),
           ),
-          body: const Fullscreen(
-            minWidth: 640,
-            child: Display(),
+          body: Fullscreen(
+            minWidth:
+                currentAppState.renderSettings.forceDesktopMode ? 1200 : 640,
+            child: const Display(),
           ),
         ));
   }

@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:hellclientui/workers/game.dart';
 import '../views/widgets/appui.dart';
 import '../models/message.dart' as message;
+import '../models/feature.dart';
 import 'dart:async';
 
 class WorldSettingsForm extends StatefulWidget {
@@ -24,6 +25,7 @@ class WorldSettingsFormState extends State<WorldSettingsForm> {
   late bool showBroadcast;
   late bool showSubneg;
   late bool modEnabled;
+  late bool autoSave;
   message.CreateFail? fail;
 
   late StreamSubscription sub;
@@ -46,7 +48,7 @@ class WorldSettingsFormState extends State<WorldSettingsForm> {
     showBroadcast = widget.settings.showBroadcast;
     showSubneg = widget.settings.showSubneg;
     modEnabled = widget.settings.modEnabled;
-
+    autoSave = widget.settings.autoSave;
     sub = currentGame!.createFailStream.stream.listen((event) {
       final newfail = message.CreateFail.fromJson(jsonDecode(event));
       setState(() {
@@ -152,6 +154,18 @@ class WorldSettingsFormState extends State<WorldSettingsForm> {
               }),
           const Text('脚本模组(Mod)')
         ]),
+        currentGame!.support(Features.autoSave)
+            ? Row(children: [
+                Checkbox(
+                    value: modEnabled,
+                    onChanged: (value) {
+                      setState(() {
+                        modEnabled = (value == true);
+                      });
+                    }),
+                const Text('自动保存')
+              ])
+            : const Center(),
         ConfirmOrCancelWidget(onConfirm: () {
           final settings = message.WorldSettings(
             id: widget.settings.id,
@@ -165,6 +179,7 @@ class WorldSettingsFormState extends State<WorldSettingsForm> {
             showBroadcast: showBroadcast,
             showSubneg: showSubneg,
             modEnabled: modEnabled,
+            autoSave: autoSave,
           );
           currentGame!.handleCmd('updateWorldSettings', settings);
         }, onCancal: () {
