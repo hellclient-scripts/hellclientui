@@ -27,7 +27,7 @@ class ColorItem extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
             Container(
-              width: 80,
+              width: 60,
               alignment: Alignment.centerLeft,
               child: Text(label),
             ),
@@ -44,17 +44,19 @@ class ColorItem extends StatelessWidget {
               },
             ),
             SizedBox(
-                width: 48,
+                width: 32,
                 child: color != null
                     ? IconButton(
                         tooltip: '重置',
                         onPressed: () {
                           onReset();
                         },
-                        icon: const Icon(Icons.restore_sharp))
+                        icon: const Icon(Icons.restore_sharp),
+                        iconSize: 32,
+                      )
                     : const Center()),
             const SizedBox(
-              width: 20,
+              width: 8,
             )
           ],
         ));
@@ -102,373 +104,390 @@ class DisplaySettiingsFormState extends State<DisplaySettiingsForm> {
 
   @override
   Widget build(BuildContext context) {
-    return ListView(scrollDirection: Axis.vertical, children: [
-      Padding(
-          padding: const EdgeInsets.all(8),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              ColorItem(
-                  label: '前景色',
-                  color: config.color,
-                  defaultColor: defaultSettings.color,
-                  onSelect: (color) {
-                    setState(() {
-                      config.color = color;
-                    });
-                  },
-                  onReset: () {
-                    setState(() {
-                      config.color = null;
-                    });
-                  }),
-              ColorItem(
-                  label: '背景色',
-                  color: config.background,
-                  defaultColor: defaultSettings.background,
-                  onSelect: (color) {
-                    setState(() {
-                      config.background = color;
-                    });
-                  },
-                  onReset: () {
-                    setState(() {
-                      config.background = null;
-                    });
-                  }),
-              const SizedBox(
-                height: 16,
-              ),
-              Row(children: [
+    return Scaffold(
+      appBar: AppBar(
+          // TRY THIS: Try changing the color here to a specific color (to
+          // Colors.amber, perhaps?) and trigger a hot reload to see the AppBar
+          // change color while the other colors stay the same.
+          backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+          // Here we take the value from the MyHomePage object that was created by
+          // the App.build method, and use it to set our appbar title.
+          title: const Text("显示设置"),
+          actions: [
+            IconButton(
+                tooltip: '重置所有选项',
+                onPressed: () {
+                  setState(() {
+                    config = RenderConfig();
+                  });
+                },
+                icon: const Icon(Icons.restore)),
+            PopupMenuButton(
+              itemBuilder: (context) => [
+                const PopupMenuItem(
+                  value: 'import',
+                  child: Text('导入'),
+                ),
+                const PopupMenuItem(
+                  value: 'export',
+                  child: Text('导出'),
+                ),
+              ],
+              onSelected: (value) async {
+                switch (value) {
+                  case 'import':
+                    final input = await AppUI.promptTextArea(
+                        context, '导入显示设置', '请导入hcui-config:开头的设置输出', '', '');
+                    if (input != null) {
+                      if (input.startsWith('hcui-config:')) {
+                        try {
+                          final import = RenderConfig.fromJson(jsonDecode(
+                              utf8.decode(base64Decode(
+                                  input.replaceFirst('hcui-config:', '')))));
+                          config = import;
+                          setState(() {});
+                          return;
+                        } catch (e) {
+                          debugPrint(e.toString());
+                        }
+                      }
+                      if (context.mounted) {
+                        AppUI.showMsgBox(context, '导入数据失败', '导入的数据格式错误',
+                            SelectableText(input));
+                      }
+                    }
+                    break;
+                  case 'export':
+                    final String export =
+                        base64Encode(utf8.encode(jsonEncode(config.toJson())));
+                    AppUI.showMsgBox(context, '导出当前设置', '',
+                        SelectableText('hcui-config:$export'));
+
+                    break;
+                }
+              },
+            )
+          ]),
+      body: ListView(scrollDirection: Axis.vertical, children: [
+        Padding(
+            padding: const EdgeInsets.all(8),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
                 ColorItem(
-                    label: '黑色',
-                    color: config.black,
-                    defaultColor: defaultSettings.black,
+                    label: '前景色',
+                    color: config.color,
+                    defaultColor: defaultSettings.color,
                     onSelect: (color) {
                       setState(() {
-                        config.black = color;
+                        config.color = color;
                       });
                     },
                     onReset: () {
                       setState(() {
-                        config.black = null;
+                        config.color = null;
                       });
                     }),
                 ColorItem(
-                    label: '亮黑色',
-                    color: config.brightBlack,
-                    defaultColor: defaultSettings.brightBlack,
+                    label: '背景色',
+                    color: config.background,
+                    defaultColor: defaultSettings.background,
                     onSelect: (color) {
                       setState(() {
-                        config.brightBlack = color;
+                        config.background = color;
                       });
                     },
                     onReset: () {
                       setState(() {
-                        config.brightBlack = null;
+                        config.background = null;
                       });
                     }),
-              ]),
-              Row(children: [
-                ColorItem(
-                    label: '红色',
-                    color: config.red,
-                    defaultColor: defaultSettings.red,
-                    onSelect: (color) {
-                      setState(() {
-                        config.red = color;
-                      });
-                    },
-                    onReset: () {
-                      setState(() {
-                        config.red = null;
-                      });
-                    }),
-                ColorItem(
-                    label: '亮红色',
-                    color: config.brightRed,
-                    defaultColor: defaultSettings.brightRed,
-                    onSelect: (color) {
-                      setState(() {
-                        config.brightRed = color;
-                      });
-                    },
-                    onReset: () {
-                      setState(() {
-                        config.brightRed = null;
-                      });
-                    }),
-              ]),
-              Row(children: [
-                ColorItem(
-                    label: '绿色',
-                    color: config.green,
-                    defaultColor: defaultSettings.green,
-                    onSelect: (color) {
-                      setState(() {
-                        config.green = color;
-                      });
-                    },
-                    onReset: () {
-                      setState(() {
-                        config.green = null;
-                      });
-                    }),
-                ColorItem(
-                    label: '亮绿色',
-                    color: config.brightGreen,
-                    defaultColor: defaultSettings.brightGreen,
-                    onSelect: (color) {
-                      setState(() {
-                        config.brightGreen = color;
-                      });
-                    },
-                    onReset: () {
-                      setState(() {
-                        config.brightGreen = null;
-                      });
-                    }),
-              ]),
-              Row(children: [
-                ColorItem(
-                    label: '黄色',
-                    color: config.yellow,
-                    defaultColor: defaultSettings.yellow,
-                    onSelect: (color) {
-                      setState(() {
-                        config.yellow = color;
-                      });
-                    },
-                    onReset: () {
-                      setState(() {
-                        config.yellow = null;
-                      });
-                    }),
-                ColorItem(
-                    label: '亮黄色',
-                    color: config.brightYellow,
-                    defaultColor: defaultSettings.brightYellow,
-                    onSelect: (color) {
-                      setState(() {
-                        config.brightYellow = color;
-                      });
-                    },
-                    onReset: () {
-                      setState(() {
-                        config.brightYellow = null;
-                      });
-                    }),
-              ]),
-              Row(children: [
-                ColorItem(
-                    label: '蓝色',
-                    color: config.blue,
-                    defaultColor: defaultSettings.blue,
-                    onSelect: (color) {
-                      setState(() {
-                        config.blue = color;
-                      });
-                    },
-                    onReset: () {
-                      setState(() {
-                        config.blue = null;
-                      });
-                    }),
-                ColorItem(
-                    label: '亮蓝色',
-                    color: config.brightBlue,
-                    defaultColor: defaultSettings.brightBlue,
-                    onSelect: (color) {
-                      setState(() {
-                        config.brightBlue = color;
-                      });
-                    },
-                    onReset: () {
-                      setState(() {
-                        config.brightBlue = null;
-                      });
-                    }),
-              ]),
-              Row(children: [
-                ColorItem(
-                    label: '紫色',
-                    color: config.magenta,
-                    defaultColor: defaultSettings.magenta,
-                    onSelect: (color) {
-                      setState(() {
-                        config.magenta = color;
-                      });
-                    },
-                    onReset: () {
-                      setState(() {
-                        config.magenta = null;
-                      });
-                    }),
-                ColorItem(
-                    label: '亮紫色',
-                    color: config.brightMagenta,
-                    defaultColor: defaultSettings.brightMagenta,
-                    onSelect: (color) {
-                      setState(() {
-                        config.brightMagenta = color;
-                      });
-                    },
-                    onReset: () {
-                      setState(() {
-                        config.brightMagenta = null;
-                      });
-                    }),
-              ]),
-              Row(children: [
-                ColorItem(
-                    label: '青色',
-                    color: config.cyan,
-                    defaultColor: defaultSettings.cyan,
-                    onSelect: (color) {
-                      setState(() {
-                        config.cyan = color;
-                      });
-                    },
-                    onReset: () {
-                      setState(() {
-                        config.cyan = null;
-                      });
-                    }),
-                ColorItem(
-                    label: '亮青色',
-                    color: config.brightCyan,
-                    defaultColor: defaultSettings.brightCyan,
-                    onSelect: (color) {
-                      setState(() {
-                        config.brightCyan = color;
-                      });
-                    },
-                    onReset: () {
-                      setState(() {
-                        config.brightCyan = null;
-                      });
-                    }),
-              ]),
-              Row(children: [
-                ColorItem(
-                    label: '白色',
-                    color: config.white,
-                    defaultColor: defaultSettings.white,
-                    onSelect: (color) {
-                      setState(() {
-                        config.white = color;
-                      });
-                    },
-                    onReset: () {
-                      setState(() {
-                        config.white = null;
-                      });
-                    }),
-                ColorItem(
-                    label: '白色',
-                    color: config.brightWhite,
-                    defaultColor: defaultSettings.brightWhite,
-                    onSelect: (color) {
-                      setState(() {
-                        config.brightWhite = color;
-                      });
-                    },
-                    onReset: () {
-                      setState(() {
-                        config.brightWhite = null;
-                      });
-                    }),
-              ]),
-              Row(
-                children: [
-                  Checkbox(
-                      value: config.disableHidpi == true,
-                      onChanged: (value) {
+                const SizedBox(
+                  height: 16,
+                ),
+                Row(children: [
+                  ColorItem(
+                      label: '黑色',
+                      color: config.black,
+                      defaultColor: defaultSettings.black,
+                      onSelect: (color) {
                         setState(() {
-                          config.disableHidpi = (value == true);
+                          config.black = color;
+                        });
+                      },
+                      onReset: () {
+                        setState(() {
+                          config.black = null;
                         });
                       }),
-                  const Text('禁用Hidpi文字渲染，降低画质，提升效率')
-                ],
-              ),
-              Row(
-                children: [
-                  Checkbox(
-                      value: config.forceDesktopMode == true,
-                      onChanged: (value) {
+                  ColorItem(
+                      label: '亮黑色',
+                      color: config.brightBlack,
+                      defaultColor: defaultSettings.brightBlack,
+                      onSelect: (color) {
                         setState(() {
-                          config.forceDesktopMode = (value == true);
+                          config.brightBlack = color;
+                        });
+                      },
+                      onReset: () {
+                        setState(() {
+                          config.brightBlack = null;
                         });
                       }),
-                  const Text('强制使用桌面模式,在小屏幕上会缩小界面，难以操作')
-                ],
-              ),
-              Padding(
-                  padding: const EdgeInsets.fromLTRB(8, 16, 8, 4),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      ElevatedButton(
-                          onPressed: () {
-                            final String export = base64Encode(
-                                utf8.encode(jsonEncode(config.toJson())));
-                            AppUI.showMsgBox(context, '导出当前设置', '',
-                                SelectableText('hcui-config:$export'));
-                          },
-                          child: const Text('导出')),
-                      const SizedBox(
-                        width: 16,
-                      ),
-                      ElevatedButton(
-                          onPressed: () async {
-                            final input = await AppUI.promptTextArea(context,
-                                '导入显示设置', '请导入hcui-config:开头的设置输出', '', '');
-                            if (input != null) {
-                              if (input.startsWith('hcui-config:')) {
-                                try {
-                                  final import = RenderConfig.fromJson(
-                                      jsonDecode(utf8.decode(base64Decode(input
-                                          .replaceFirst('hcui-config:', '')))));
-                                  config = import;
-                                  setState(() {});
-                                  return;
-                                } catch (e) {
-                                  debugPrint(e.toString());
-                                }
-                              }
-                              if (context.mounted) {
-                                AppUI.showMsgBox(context, '导入数据失败', '导入的数据格式错误',
-                                    SelectableText(input));
-                              }
-                            }
-                          },
-                          child: const Text('导入')),
-                      const SizedBox(
-                        width: 16,
-                      ),
-                      ElevatedButton(
-                          onPressed: () {
-                            setState(() {
-                              config = RenderConfig();
-                            });
-                          },
-                          child: const Text('重置设置')),
-                      const SizedBox(
-                        width: 16,
-                      ),
-                      ElevatedButton(
-                          onPressed: () {
-                            currentAppState.renderConfig = config;
-                            currentAppState.renderSettings =
-                                config.getSettings();
-                            currentAppState.saveColors();
-                            Navigator.of(context).pop(true);
-                          },
-                          child: const Text('保存设置'))
-                    ],
-                  ))
-            ],
-          ))
-    ]);
+                ]),
+                Row(children: [
+                  ColorItem(
+                      label: '红色',
+                      color: config.red,
+                      defaultColor: defaultSettings.red,
+                      onSelect: (color) {
+                        setState(() {
+                          config.red = color;
+                        });
+                      },
+                      onReset: () {
+                        setState(() {
+                          config.red = null;
+                        });
+                      }),
+                  ColorItem(
+                      label: '亮红色',
+                      color: config.brightRed,
+                      defaultColor: defaultSettings.brightRed,
+                      onSelect: (color) {
+                        setState(() {
+                          config.brightRed = color;
+                        });
+                      },
+                      onReset: () {
+                        setState(() {
+                          config.brightRed = null;
+                        });
+                      }),
+                ]),
+                Row(children: [
+                  ColorItem(
+                      label: '绿色',
+                      color: config.green,
+                      defaultColor: defaultSettings.green,
+                      onSelect: (color) {
+                        setState(() {
+                          config.green = color;
+                        });
+                      },
+                      onReset: () {
+                        setState(() {
+                          config.green = null;
+                        });
+                      }),
+                  ColorItem(
+                      label: '亮绿色',
+                      color: config.brightGreen,
+                      defaultColor: defaultSettings.brightGreen,
+                      onSelect: (color) {
+                        setState(() {
+                          config.brightGreen = color;
+                        });
+                      },
+                      onReset: () {
+                        setState(() {
+                          config.brightGreen = null;
+                        });
+                      }),
+                ]),
+                Row(children: [
+                  ColorItem(
+                      label: '黄色',
+                      color: config.yellow,
+                      defaultColor: defaultSettings.yellow,
+                      onSelect: (color) {
+                        setState(() {
+                          config.yellow = color;
+                        });
+                      },
+                      onReset: () {
+                        setState(() {
+                          config.yellow = null;
+                        });
+                      }),
+                  ColorItem(
+                      label: '亮黄色',
+                      color: config.brightYellow,
+                      defaultColor: defaultSettings.brightYellow,
+                      onSelect: (color) {
+                        setState(() {
+                          config.brightYellow = color;
+                        });
+                      },
+                      onReset: () {
+                        setState(() {
+                          config.brightYellow = null;
+                        });
+                      }),
+                ]),
+                Row(children: [
+                  ColorItem(
+                      label: '蓝色',
+                      color: config.blue,
+                      defaultColor: defaultSettings.blue,
+                      onSelect: (color) {
+                        setState(() {
+                          config.blue = color;
+                        });
+                      },
+                      onReset: () {
+                        setState(() {
+                          config.blue = null;
+                        });
+                      }),
+                  ColorItem(
+                      label: '亮蓝色',
+                      color: config.brightBlue,
+                      defaultColor: defaultSettings.brightBlue,
+                      onSelect: (color) {
+                        setState(() {
+                          config.brightBlue = color;
+                        });
+                      },
+                      onReset: () {
+                        setState(() {
+                          config.brightBlue = null;
+                        });
+                      }),
+                ]),
+                Row(children: [
+                  ColorItem(
+                      label: '紫色',
+                      color: config.magenta,
+                      defaultColor: defaultSettings.magenta,
+                      onSelect: (color) {
+                        setState(() {
+                          config.magenta = color;
+                        });
+                      },
+                      onReset: () {
+                        setState(() {
+                          config.magenta = null;
+                        });
+                      }),
+                  ColorItem(
+                      label: '亮紫色',
+                      color: config.brightMagenta,
+                      defaultColor: defaultSettings.brightMagenta,
+                      onSelect: (color) {
+                        setState(() {
+                          config.brightMagenta = color;
+                        });
+                      },
+                      onReset: () {
+                        setState(() {
+                          config.brightMagenta = null;
+                        });
+                      }),
+                ]),
+                Row(children: [
+                  ColorItem(
+                      label: '青色',
+                      color: config.cyan,
+                      defaultColor: defaultSettings.cyan,
+                      onSelect: (color) {
+                        setState(() {
+                          config.cyan = color;
+                        });
+                      },
+                      onReset: () {
+                        setState(() {
+                          config.cyan = null;
+                        });
+                      }),
+                  ColorItem(
+                      label: '亮青色',
+                      color: config.brightCyan,
+                      defaultColor: defaultSettings.brightCyan,
+                      onSelect: (color) {
+                        setState(() {
+                          config.brightCyan = color;
+                        });
+                      },
+                      onReset: () {
+                        setState(() {
+                          config.brightCyan = null;
+                        });
+                      }),
+                ]),
+                Row(children: [
+                  ColorItem(
+                      label: '白色',
+                      color: config.white,
+                      defaultColor: defaultSettings.white,
+                      onSelect: (color) {
+                        setState(() {
+                          config.white = color;
+                        });
+                      },
+                      onReset: () {
+                        setState(() {
+                          config.white = null;
+                        });
+                      }),
+                  ColorItem(
+                      label: '白色',
+                      color: config.brightWhite,
+                      defaultColor: defaultSettings.brightWhite,
+                      onSelect: (color) {
+                        setState(() {
+                          config.brightWhite = color;
+                        });
+                      },
+                      onReset: () {
+                        setState(() {
+                          config.brightWhite = null;
+                        });
+                      }),
+                ]),
+                Row(
+                  children: [
+                    Checkbox(
+                        value: config.disableHidpi == true,
+                        onChanged: (value) {
+                          setState(() {
+                            config.disableHidpi = (value == true);
+                          });
+                        }),
+                    const Text('禁用Hidpi文字渲染', softWrap: true)
+                  ],
+                ),
+                Row(
+                  children: [
+                    Checkbox(
+                        value: config.forceDesktopMode == true,
+                        onChanged: (value) {
+                          setState(() {
+                            config.forceDesktopMode = (value == true);
+                          });
+                        }),
+                    const Text(
+                      '强制使用桌面模式',
+                      softWrap: true,
+                    )
+                  ],
+                ),
+                const SizedBox(
+                  height: 150,
+                )
+              ],
+            ))
+      ]),
+      floatingActionButton: FloatingActionButton(
+        tooltip: '保存',
+        onPressed: () {
+          currentAppState.renderConfig = config;
+          currentAppState.renderSettings = config.getSettings();
+          currentAppState.saveColors();
+          Navigator.of(context).pop(true);
+        },
+        child: const Icon(Icons.save),
+      ),
+    );
   }
 }
