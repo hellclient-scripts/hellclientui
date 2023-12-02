@@ -168,6 +168,7 @@ class DisplayState extends State<Display> {
             currentGame!.clientQuick();
           }
         }, onTap: () {
+          currentGame!.updateAlllines(null);
           currentGame!.handleCmd("allLines", null);
           showAllLines(context);
         }, onDoubleTap: () {

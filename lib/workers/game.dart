@@ -35,6 +35,7 @@ class Game {
   late RenderPainter hud;
   int switchStatus = 0;
   UserInput? datagrid;
+  Lines? alllines;
   var hudLock = Lock();
   List<Line> hudContent = [];
   ClientInfos clientinfos = ClientInfos();
@@ -46,6 +47,7 @@ class Game {
   final disconnectStream = StreamController.broadcast();
   final createFailStream = StreamController.broadcast();
   final datagridUpdateStream = StreamController.broadcast();
+  final alllinesUpdateStream = StreamController.broadcast();
   static Game create(Connecting connecting) {
     connecting = connecting;
     var game = Game();
@@ -114,6 +116,13 @@ class Game {
     }
   }
 
+  void onCmdAlllines(String data) {
+    final dynamic jsondata = json.decode(data);
+    final lines = Lines.fromJson(jsondata);
+    alllines = lines;
+    updateAlllines(lines);
+  }
+
   void drawHud() async {
     hud.renderer.maxLines = hudContent.length;
     await hud.renderer.renderlines(
@@ -125,6 +134,11 @@ class Game {
   void updateDatagrid(UserInput? grid) {
     datagrid = grid;
     datagridUpdateStream.add(grid);
+  }
+
+  void updateAlllines(Lines? lines) {
+    alllines = lines;
+    alllinesUpdateStream.add(lines);
   }
 
   Future<void> onCmdHudContent(String data) async {
@@ -247,7 +261,7 @@ class Game {
         await onCmdLine(data);
         break;
       case "allLines":
-        commandStream.add(GameCommand(command: command, data: data));
+        onCmdAlllines(data);
         break;
       case "clients":
         await onCmdClients(data);

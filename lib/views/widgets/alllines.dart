@@ -50,18 +50,14 @@ class AllLinesState extends State<AllLines> {
   late StreamSubscription subCommand;
   @override
   void initState() {
-    super.initState();
-    subCommand = currentGame!.commandStream.stream.listen((event) {
-      if (event is GameCommand) {
-        switch (event.command) {
-          case 'allLines':
-            final dynamic jsondata = json.decode(event.data);
-            lines = Lines.fromJson(jsondata);
-            setState(() {});
-            break;
-        }
+    lines = currentGame!.alllines;
+    subCommand = currentGame!.alllinesUpdateStream.stream.listen((event) {
+      if (event is Lines?) {
+        lines = event;
+        setState(() {});
       }
     });
+    super.initState();
   }
 
   @override
@@ -72,6 +68,9 @@ class AllLinesState extends State<AllLines> {
 
   @override
   Widget build(BuildContext context) {
+    if ((lines) == null) {
+      return const Center(child: Text('Loading...'));
+    }
     List<Widget> list = [];
     final renderer = currentGame!.output.renderer;
     if (lines != null) {

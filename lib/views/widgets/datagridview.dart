@@ -47,7 +47,7 @@ class DatagridViewState extends State<DatagridView> {
   @override
   Widget build(BuildContext context) {
     if (input == null || data == null) {
-      return const Center();
+      return const Center(child: Text('Loading...'));
     }
     final List<TableRow> children = [];
     children.add(createTableRow([

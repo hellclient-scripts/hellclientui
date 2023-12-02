@@ -35,6 +35,13 @@ class SettingsPage extends StatelessWidget {
               subtitle: const Text('管理能快速发送到服务器的指令'),
               trailing: const Icon(Icons.arrow_forward_ios),
               onTap: () {},
+            ),
+            ListTile(
+              leading: const Icon(Icons.question_answer_outlined),
+              title: const Text('常见问题'),
+              subtitle: const Text('一些关于本程序使用的常见问题和解释'),
+              trailing: const Icon(Icons.arrow_forward_ios),
+              onTap: () {},
             )
           ],
         ));
