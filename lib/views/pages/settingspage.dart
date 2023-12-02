@@ -20,7 +20,9 @@ class SettingsPage extends StatelessWidget {
               title: const Text('显示设置'),
               subtitle: const Text('进行颜色等显示设置'),
               trailing: const Icon(Icons.arrow_forward_ios),
-              onTap: () {},
+              onTap: () {
+                Navigator.pushNamed(context, "/displaysettings");
+              },
             ),
             ListTile(
               leading: const Icon(Icons.notifications),
@@ -41,7 +43,9 @@ class SettingsPage extends StatelessWidget {
               title: const Text('常见问题'),
               subtitle: const Text('一些关于本程序使用的常见问题和解释'),
               trailing: const Icon(Icons.arrow_forward_ios),
-              onTap: () {},
+              onTap: () {
+                Navigator.pushNamed(context, "/qa");
+              },
             )
           ],
         ));

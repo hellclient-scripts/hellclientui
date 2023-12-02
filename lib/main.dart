@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:hellclientui/views/pages/qapage.dart';
 import 'states/appstate.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -6,6 +7,7 @@ import 'views/pages/homepage.dart';
 import 'views/pages/createpage.dart';
 import 'views/pages/updatepage.dart';
 import 'views/pages/game.dart';
+import 'views/pages/displaysettings.dart';
 import 'workers/notification.dart';
 
 void main() async {
@@ -61,6 +63,8 @@ class MyApp extends StatelessWidget {
             "/create": (context) => CreatePage(),
             "/update": (context) => UpdatePage(),
             "/game": (context) => const Game(),
+            "/displaysettings": (context) => const DisplaySettings(),
+            "/qa": (context) => const QAPage(),
           }),
     );
   }

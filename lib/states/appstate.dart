@@ -47,7 +47,7 @@ class AppState extends ChangeNotifier {
 
     if (await colorfile.exists()) {
       final Map<String, dynamic> config =
-          json.decode(await file.readAsString());
+          json.decode(await colorfile.readAsString());
       state.renderConfig = RenderConfig.fromJson(config);
     } else {
       await state.saveColors();

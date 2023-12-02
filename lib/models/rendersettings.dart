@@ -20,6 +20,9 @@ class RenderConfig {
   Color? brightMagenta;
   Color? brightCyan;
   Color? brightWhite;
+  bool? disableHidpi;
+  bool? forceDesktopMode;
+
   RenderConfig.fromJson(Map<String, dynamic> json)
       : color = json['color'] != null ? Color(json['color']) : null,
         background =
@@ -46,7 +49,9 @@ class RenderConfig {
         brightCyan =
             json['brightCyan'] != null ? Color(json['brightCyan']) : null,
         brightWhite =
-            json['brightWhite'] != null ? Color(json['brightWhite']) : null;
+            json['brightWhite'] != null ? Color(json['brightWhite']) : null,
+        disableHidpi = json['disableHidpi'] ?? false,
+        forceDesktopMode = json['forceDesktopMode'] ?? false;
   Map<String, dynamic> toJson() => {
         'color': color?.value,
         'background': background?.value,
@@ -66,6 +71,8 @@ class RenderConfig {
         'brightMagenta': brightMagenta?.value,
         'brightCyan': brightCyan?.value,
         'brightWhite': brightWhite?.value,
+        'forceDesktopMode': forceDesktopMode == true,
+        'disableHidpi': disableHidpi == true,
       };
 
   RenderSettings getSettings() {
@@ -124,12 +131,18 @@ class RenderConfig {
     if (brightWhite != null) {
       settings.brightWhite = brightWhite!;
     }
-
+    settings.hidpi = disableHidpi != true;
+    settings.forceDesktopMode = forceDesktopMode == true;
     return settings;
+  }
+
+  RenderConfig clone() {
+    return RenderConfig.fromJson(toJson());
   }
 }
 
 class RenderSettings {
+  RenderSettings();
   double fontSize = 14.0;
   double lineheight = 20.0;
   double linemiddle = 10.0;
@@ -180,3 +193,5 @@ class RenderSettings {
   bool hidpi = true;
   bool forceDesktopMode = false;
 }
+
+final defaultRenderSettings = RenderSettings();
