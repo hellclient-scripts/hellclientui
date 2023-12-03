@@ -29,7 +29,9 @@ class SettingsPage extends StatelessWidget {
               title: const Text('通知设置'),
               subtitle: const Text('进行游戏的通知设置'),
               trailing: const Icon(Icons.arrow_forward_ios),
-              onTap: () {},
+              onTap: () {
+                Navigator.pushNamed(context, "/notification");
+              },
             ),
             ListTile(
               leading: const Icon(Icons.construction),

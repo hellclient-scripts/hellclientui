@@ -9,12 +9,22 @@ import 'views/pages/updatepage.dart';
 import 'views/pages/game.dart';
 import 'views/pages/displaysettings.dart';
 import 'workers/notification.dart';
+import 'views/pages/notificationpage.dart';
+import 'package:local_notifier/local_notifier.dart';
+import 'dart:io';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   // await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
   currentAppState = await AppState.init();
   currentNotification.updateConfig(currentAppState.config.notificationConfig);
+  if (Platform.isLinux || Platform.isWindows || Platform.isMacOS) {
+    await localNotifier.setup(
+      appName: 'hellcientui',
+      // The parameter shortcutPolicy only works on Windows
+      shortcutPolicy: ShortcutPolicy.requireCreate,
+    );
+  }
   runApp(MyApp(state: currentAppState));
 }
 
@@ -63,6 +73,7 @@ class MyApp extends StatelessWidget {
             "/create": (context) => CreatePage(),
             "/update": (context) => UpdatePage(),
             "/game": (context) => const Game(),
+            "/notification": (context) => const NotificationPage(),
             "/displaysettings": (context) => const DisplaySettings(),
             "/qa": (context) => const QAPage(),
           }),

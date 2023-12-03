@@ -248,6 +248,15 @@ packages:
       url: "https://pub.flutter-io.cn"
     source: hosted
     version: "2.1.1"
+  local_notifier:
+    dependency: "direct main"
+    description:
+      path: "."
+      ref: HEAD
+      resolved-ref: "7b64f0bcdd89ea2ba268e4694c9753f2f14ab93b"
+      url: "https://github.com/jarlyyn/local_notifier"
+    source: git
+    version: "0.1.5"
   markdown:
     dependency: "direct main"
     description:
