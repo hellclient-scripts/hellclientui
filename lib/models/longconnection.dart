@@ -18,8 +18,13 @@ class LongConnection {
   bool updated = false;
   void dispose() {
     _disconnect();
+    if (streamsub != null) {
+      streamsub!.cancel();
+    }
     timer.cancel();
   }
+
+  StreamSubscription? streamsub;
 
   final lock = Lock();
   bool keep = false;
@@ -60,17 +65,20 @@ class LongConnection {
     if (channel != null) {
       channel!.sink.close();
       channel = null;
+      if (streamsub != null) {
+        streamsub!.cancel();
+      }
     }
   }
 
   void execute() async {
     lock.synchronized(() async {
       if ((updated || keep == false) && channel != null) {
-        _disconnect();
+        await _disconnect();
       }
       updated = false;
       if (channel == null && keep) {
-        _connect();
+        await _connect();
       }
     });
   }
@@ -94,7 +102,6 @@ class LongConnection {
   }
 
   void _listen() {
-    late StreamSubscription streamsub;
     streamsub = channel!.stream.listen(
         (event) async {
           if (event is String) {
@@ -112,7 +119,9 @@ class LongConnection {
         },
         onError: (error) {},
         onDone: () {
-          streamsub.cancel();
+          if (streamsub != null) {
+            streamsub!.cancel();
+          }
           channel = null;
         },
         cancelOnError: true);
