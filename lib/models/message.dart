@@ -1040,3 +1040,25 @@ class APIVersion {
         build: build);
   }
 }
+
+class Request {
+  String world = "";
+  String id = "";
+  String type = "";
+  String data = "";
+  Request.fromJson(Map<String, dynamic> json) {
+    world = json['World'] ?? '';
+    id = json['ID'] ?? '';
+    type = json['Type'] ?? '';
+    data = json['Data'] ?? '';
+  }
+}
+
+class DesktopNotification {
+  String title = '';
+  String body = '';
+  DesktopNotification.fromJson(Map<String, dynamic> json) {
+    title = json['Title'] ?? '';
+    body = json['Body'] ?? '';
+  }
+}

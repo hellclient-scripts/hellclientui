@@ -7,6 +7,8 @@ class UpdatePage extends StatelessWidget {
   final Server server = Server();
   @override
   Widget build(BuildContext context) {
+    final origin = ModalRoute.of(context)!.settings.arguments as Server;
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
@@ -14,7 +16,7 @@ class UpdatePage extends StatelessWidget {
         // the App.build method, and use it to set our appbar title.
         title: const Text("编辑服务器"),
       ),
-      body: const UpdateForm(),
+      body: UpdateForm(origin: origin),
     );
   }
 }

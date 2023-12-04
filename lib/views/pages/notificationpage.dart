@@ -18,7 +18,7 @@ class NotificationPage extends StatelessWidget {
     if (Platform.isWindows || Platform.isLinux || Platform.isMacOS) {
       children.add(TextButton(
           onPressed: () {
-            currentNotification.destopNotify('桌面推送测试', '点击测试', () {
+            currentNotification.desktopNotify('桌面推送测试', '点击测试', () {
               AppUI.showMsgBox(context, '测试成功', '检测到点击事件', null);
             });
           },

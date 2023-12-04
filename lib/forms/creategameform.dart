@@ -13,20 +13,20 @@ class CreateGameForm extends StatefulWidget {
 }
 
 class CreateGameFormState extends State<CreateGameForm> {
-  TextEditingController? id;
-  TextEditingController? host;
-  TextEditingController? port;
-  String? charset;
+  late TextEditingController id;
+  late TextEditingController host;
+  late TextEditingController port;
+  late String charset;
   message.CreateFail? fail;
   late StreamSubscription sub;
   late StreamSubscription cmd;
 
   @override
   void initState() {
-    id ??= TextEditingController();
-    host ??= TextEditingController();
-    port ??= TextEditingController();
-    charset ??= "";
+    id = TextEditingController();
+    host = TextEditingController();
+    port = TextEditingController();
+    charset = "";
     sub = currentGame!.createFailStream.stream.listen((event) {
       final newfail = message.CreateFail.fromJson(jsonDecode(event));
       setState(() {

@@ -4,19 +4,31 @@ import 'package:provider/provider.dart';
 import '../models/server.dart';
 
 class UpdateForm extends StatefulWidget {
-  const UpdateForm({super.key});
-
+  const UpdateForm({super.key, required this.origin});
+  final Server origin;
   @override
   State<UpdateForm> createState() => UpdateFormState();
 }
 
 class UpdateFormState extends State<UpdateForm> {
-  late Server origin;
   final host = TextEditingController();
   final username = TextEditingController();
   final password = TextEditingController();
   final name = TextEditingController();
   final _formKey = GlobalKey<FormState>();
+  bool keepConnection = false;
+  bool acceptBatchCommand = false;
+  @override
+  void initState() {
+    name.text = widget.origin.name;
+    host.text = widget.origin.host;
+    username.text = widget.origin.username;
+    password.text = widget.origin.password;
+    keepConnection = widget.origin.keepConnection;
+    acceptBatchCommand = widget.origin.acceptBatchCommand;
+    super.initState();
+  }
+
   @override
   void dispose() {
     // Clean up the controller when the widget is disposed.
@@ -30,11 +42,6 @@ class UpdateFormState extends State<UpdateForm> {
   @override
   Widget build(BuildContext context) {
     var appState = context.watch<AppState>();
-    origin = ModalRoute.of(context)!.settings.arguments as Server;
-    name.text = origin.name;
-    host.text = origin.host;
-    username.text = origin.username;
-    password.text = origin.password;
     return Form(
         key: _formKey,
         child: Padding(
@@ -64,7 +71,7 @@ class UpdateFormState extends State<UpdateForm> {
                     if (value.endsWith("/")) {
                       return '服务器地址不应该以/结尾';
                     }
-                    if (value != origin.host &&
+                    if (value != widget.origin.host &&
                         appState.config.hasServer(value)) {
                       return '服务器已存在';
                     }
@@ -87,16 +94,41 @@ class UpdateFormState extends State<UpdateForm> {
                   ),
                   controller: password,
                 ),
+                Row(children: [
+                  Checkbox(
+                    value: keepConnection,
+                    onChanged: (value) {
+                      setState(() {
+                        keepConnection = (value == true);
+                      });
+                    },
+                  ),
+                  const Text('保持长连接，手机端使用会耗费更多电量和流量。'),
+                ]),
+                Row(children: [
+                  Checkbox(
+                    value: acceptBatchCommand,
+                    onChanged: (value) {
+                      setState(() {
+                        acceptBatchCommand = (value == true);
+                      });
+                    },
+                  ),
+                  const Text('接受执行批量命令'),
+                ]),
                 Padding(
                     padding: const EdgeInsets.symmetric(vertical: 16),
                     child: ElevatedButton(
                       child: const Text("提交"),
                       onPressed: () {
                         if (_formKey.currentState!.validate()) {
-                          origin.host = host.value.text;
-                          origin.username = username.value.text;
-                          origin.password = password.value.text;
-                          origin.name = name.value.text;
+                          widget.origin.host = host.value.text;
+                          widget.origin.username = username.value.text;
+                          widget.origin.password = password.value.text;
+                          widget.origin.name = name.value.text;
+                          widget.origin.keepConnection = keepConnection;
+                          widget.origin.acceptBatchCommand = acceptBatchCommand;
+                          widget.origin.onUpdate();
                           appState.updated();
                           appState.save();
                           Navigator.pop(context, true);

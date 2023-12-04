@@ -16,6 +16,9 @@ class CreateFormState extends State<CreateForm> {
   final password = TextEditingController();
   final name = TextEditingController();
   final _formKey = GlobalKey<FormState>();
+  bool keepConnection = false;
+  bool acceptBatchCommand = false;
+
   @override
   void dispose() {
     // Clean up the controller when the widget is disposed.
@@ -82,6 +85,28 @@ class CreateFormState extends State<CreateForm> {
                   ),
                   controller: password,
                 ),
+                Row(children: [
+                  Checkbox(
+                    value: keepConnection,
+                    onChanged: (value) {
+                      setState(() {
+                        keepConnection = (value == true);
+                      });
+                    },
+                  ),
+                  const Text('保持长连接，手机端使用会耗费更多电量和流量。'),
+                ]),
+                Row(children: [
+                  Checkbox(
+                    value: acceptBatchCommand,
+                    onChanged: (value) {
+                      setState(() {
+                        acceptBatchCommand = (value == true);
+                      });
+                    },
+                  ),
+                  const Text('接受执行批量命令'),
+                ]),
                 Padding(
                     padding: const EdgeInsets.symmetric(vertical: 16),
                     child: ElevatedButton(
@@ -93,6 +118,8 @@ class CreateFormState extends State<CreateForm> {
                           server.username = username.value.text;
                           server.password = password.value.text;
                           server.name = name.value.text;
+                          server.onUpdate();
+                          server.start();
                           Navigator.pop(context, appState.addServer(server));
                         }
                       },

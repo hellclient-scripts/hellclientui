@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'dart:convert';
 
+import 'package:hellclientui/views/pages/serverlist.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 
@@ -53,6 +54,11 @@ class AppState extends ChangeNotifier {
       await state.saveColors();
     }
     state.renderSettings = state.renderConfig.getSettings();
+
+    for (final server in state.config.servers) {
+      server.onUpdate();
+      server.start();
+    }
     return state;
   }
 
@@ -79,6 +85,7 @@ class AppState extends ChangeNotifier {
 
   Future<bool> removeServer(Server server) {
     if (config.servers.remove(server)) {
+      server.dispose();
       save();
       notifyListeners();
       return Future<bool>.value(true);

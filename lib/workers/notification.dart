@@ -2,6 +2,7 @@ import 'package:tpns_flutter_plugin/tpns_flutter_plugin.dart';
 import "../models/notificationconfig.dart";
 import 'dart:io';
 import 'package:local_notifier/local_notifier.dart';
+import '../models/message.dart' as message;
 
 Notification currentNotification = Notification();
 
@@ -30,7 +31,7 @@ class Notification {
     tpush!.startXg(config.tencentAccessID, config.tencentAccessKey);
   }
 
-  void destopNotify(String title, String body, Function() onOpen) {
+  void desktopNotify(String title, String body, Function() onOpen) {
     if (Platform.isWindows || Platform.isLinux || Platform.isMacOS) {
       LocalNotification notification = LocalNotification(
           title: title,
@@ -41,6 +42,10 @@ class Notification {
       };
       notification.show();
     }
+  }
+
+  void ondesktopNotify(message.DesktopNotification msg) {
+    desktopNotify(msg.title, msg.body, () => null);
   }
 
   void updateConfig(NotificationConfig nconfig) {
