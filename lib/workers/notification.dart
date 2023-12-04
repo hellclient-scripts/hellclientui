@@ -38,8 +38,9 @@ class Notification {
           title: title,
           body: body,
           actions: [LocalNotificationAction(text: '打开')]);
-      notification.onClickAction = (value) {
-        WindowManager.instance.focus();
+      notification.onClickAction = (value) async {
+        await WindowManager.instance.show();
+        await WindowManager.instance.focus();
         onOpen();
       };
       notification.show();

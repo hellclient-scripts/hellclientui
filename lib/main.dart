@@ -12,9 +12,12 @@ import 'workers/notification.dart';
 import 'views/pages/notificationpage.dart';
 import 'package:local_notifier/local_notifier.dart';
 import 'dart:io';
+import 'package:window_manager/window_manager.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await windowManager.ensureInitialized();
+
   // await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
   currentAppState = await AppState.init();
   currentNotification.updateConfig(currentAppState.config.notificationConfig);
