@@ -8,6 +8,7 @@ import 'package:window_manager/window_manager.dart';
 Notification currentNotification = Notification();
 
 class Notification {
+  bool desktopNotificationDisabled = false;
   String tencentToken = "";
   late NotificationConfig config;
   XgFlutterPlugin? tpush;
