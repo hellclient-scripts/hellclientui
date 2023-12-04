@@ -16,13 +16,34 @@ class NotificationPage extends StatelessWidget {
       children.add(buildTpush(context));
     }
     if (Platform.isWindows || Platform.isLinux || Platform.isMacOS) {
-      children.add(TextButton(
-          onPressed: () {
-            currentNotification.desktopNotify('桌面推送测试', '点击测试', () {
-              AppUI.showMsgBox(context, '测试成功', '检测到点击事件', null);
-            });
+      children.add(ListTile(
+        leading: const Icon(Icons.desktop_windows_sharp),
+        title: Text("桌面版通知"),
+        trailing: PopupMenuButton(
+          itemBuilder: (context) => [
+            const PopupMenuItem(
+              value: 'update',
+              child: Text('编辑'),
+            ),
+            const PopupMenuItem(
+              value: 'test',
+              child: Text('测试'),
+            ),
+          ],
+          onSelected: (value) async {
+            switch (value) {
+              case 'update':
+                // Navigator.pushNamed(context, '/update', arguments: server);
+                break;
+              case 'test':
+                currentNotification.desktopNotify('桌面推送测试', '点击测试', () {
+                  AppUI.showMsgBox(context, '测试成功', '检测到点击事件', null);
+                });
+                break;
+            }
           },
-          child: const Text('点击测试')));
+        ),
+      ));
     }
     return Scaffold(
         appBar: AppBar(

@@ -3,6 +3,7 @@ import "../models/notificationconfig.dart";
 import 'dart:io';
 import 'package:local_notifier/local_notifier.dart';
 import '../models/message.dart' as message;
+import 'package:window_manager/window_manager.dart';
 
 Notification currentNotification = Notification();
 
@@ -38,6 +39,7 @@ class Notification {
           body: body,
           actions: [LocalNotificationAction(text: '打开')]);
       notification.onClickAction = (value) {
+        WindowManager.instance.focus();
         onOpen();
       };
       notification.show();
