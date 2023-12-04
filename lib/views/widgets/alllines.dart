@@ -6,7 +6,6 @@ import 'package:hellclientui/states/appstate.dart';
 import 'package:hellclientui/workers/game.dart';
 import '../../models/message.dart';
 import 'dart:async';
-import 'dart:convert';
 import 'package:flutter/services.dart';
 import 'package:toastification/toastification.dart';
 import 'appui.dart';

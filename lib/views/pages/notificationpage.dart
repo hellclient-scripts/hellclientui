@@ -18,7 +18,7 @@ class NotificationPage extends StatelessWidget {
     if (Platform.isWindows || Platform.isLinux || Platform.isMacOS) {
       children.add(ListTile(
         leading: const Icon(Icons.desktop_windows_sharp),
-        title: Text("桌面版通知"),
+        title: const Text("桌面版通知"),
         trailing: PopupMenuButton(
           itemBuilder: (context) => [
             const PopupMenuItem(

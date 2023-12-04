@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:hellclientui/models/message.dart' as message;
 import 'package:hellclientui/workers/notification.dart';
 
-import 'server.dart';
 import 'package:web_socket_channel/io.dart';
 import 'package:synchronized/synchronized.dart';
 

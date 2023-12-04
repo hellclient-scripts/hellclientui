@@ -38,8 +38,8 @@ class CreateGameFormState extends State<CreateGameForm> {
         switch (event.command) {
           case "defaultServer":
             final data = (jsonDecode(event.data) as String).split(':');
-            host!.value = TextEditingValue(text: data[0]);
-            port!.value = TextEditingValue(text: data[1]);
+            host.value = TextEditingValue(text: data[0]);
+            port.value = TextEditingValue(text: data[1]);
             setState(() {});
 
             break;
@@ -112,10 +112,10 @@ class CreateGameFormState extends State<CreateGameForm> {
           currentGame!.handleCmd(
               'createGame',
               message.CreateGameForm(
-                  id: id!.text,
-                  host: host!.text,
-                  port: port!.text,
-                  charset: charset!));
+                  id: id.text,
+                  host: host.text,
+                  port: port.text,
+                  charset: charset));
         }, onCancal: () {
           Navigator.of(context).pop();
         })
