@@ -587,7 +587,7 @@ class GameUI {
                   onCancal: () {
                     Navigator.of(context).pop(false);
                   },
-                  labelSubmit: '授权  ',
+                  labelConfirm: '授权  ',
                 )
               ]),
             ),
@@ -639,7 +639,7 @@ class GameUI {
                           onCancal: () {
                             Navigator.of(context).pop(false);
                           },
-                          labelSubmit: '授权  ',
+                          labelConfirm: '授权  ',
                         )
                       ]),
                     ),

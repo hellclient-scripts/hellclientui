@@ -38,7 +38,9 @@ class SettingsPage extends StatelessWidget {
               title: const Text('指令设置'),
               subtitle: const Text('管理能快速发送到服务器的指令'),
               trailing: const Icon(Icons.arrow_forward_ios),
-              onTap: () {},
+              onTap: () {
+                Navigator.pushNamed(context, "/presetbatchcommands");
+              },
             ),
             ListTile(
               leading: const Icon(Icons.question_answer_outlined),

@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 class Word {
   String text = "";
   String color = "";
@@ -1051,6 +1053,28 @@ class Request {
     id = json['ID'] ?? '';
     type = json['Type'] ?? '';
     data = json['Data'] ?? '';
+  }
+}
+
+class Response {
+  String world = "";
+  String id = "";
+  String type = "";
+  String data = "";
+  int command = 0;
+  Map<String, dynamic> toJson() => {
+        'World': world,
+        'ID': id,
+        'Type': type,
+        'Data': data,
+        'Command': command,
+      };
+  Response.createBatchCommand(String bccommand, List<String> bcscripts) {
+    command = 1;
+    final bc = BatchCommand();
+    bc.command = bccommand;
+    bc.scripts = bcscripts;
+    data = jsonEncode(bc.toJson());
   }
 }
 

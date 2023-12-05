@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:hellclientui/models/batchcommand.dart';
 import 'package:hellclientui/models/message.dart' as message;
 import 'package:hellclientui/workers/notification.dart';
 
@@ -82,13 +83,16 @@ class LongConnection {
     });
   }
 
-  void sendBatchCommand(String cmd) async {
+  void sendBatchCommand(BatchCommand command) async {
     lock.synchronized(() async {
       if (channel == null) {
         await _connect();
       }
+      var msg =
+          message.Response.createBatchCommand(command.command, command.scripts);
       if (channel != null) {
-        channel!.sink.add(cmd);
+        print(jsonEncode(msg.toJson()));
+        channel!.sink.add(jsonEncode(msg.toJson()));
         if (!keep) {
           await _disconnect();
         }

@@ -1,3 +1,5 @@
+import 'package:hellclientui/models/batchcommand.dart';
+
 import 'longconnection.dart';
 
 class Server {
@@ -21,7 +23,7 @@ class Server {
     _longConnection.update(keepConnection, host, username, password);
   }
 
-  void sendBatchCommand(String cmd) {
+  void sendBatchCommand(BatchCommand cmd) {
     _longConnection.sendBatchCommand(cmd);
   }
 

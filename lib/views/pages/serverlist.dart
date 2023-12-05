@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:hellclientui/models/batchcommand.dart';
 import 'package:hellclientui/states/appstate.dart';
 import 'package:provider/provider.dart';
 import '../../models/server.dart';
 import '../../workers/game.dart';
+import '../widgets/appui.dart';
+import '../widgets/choosebatchcommand.dart';
 
 Future<bool?> showConnectError(BuildContext context, String message) async {
   return showDialog<bool>(
@@ -92,6 +95,13 @@ class ServerList extends StatelessWidget {
           trailing: PopupMenuButton(
             itemBuilder: (context) => [
               const PopupMenuItem(
+                value: 'batchcommand',
+                child: Text('发送批量指令'),
+              ),
+              const PopupMenuItem(
+                child: PopupMenuDivider(),
+              ),
+              const PopupMenuItem(
                 value: 'update',
                 child: Text('编辑'),
               ),
@@ -102,6 +112,20 @@ class ServerList extends StatelessWidget {
             ],
             onSelected: (value) async {
               switch (value) {
+                case 'batchcommand':
+                  final result = await showDialog<BatchCommand?>(
+                    context: context,
+                    builder: (context) {
+                      return const NonFullScreenDialog(
+                          title: '选择发送的批量指令',
+                          summary: '批量指令在设置中进行维护',
+                          child: ChooseBatchCommand());
+                    },
+                  );
+                  if (result != null) {
+                    server.sendBatchCommand(result);
+                  }
+                  break;
                 case 'update':
                   Navigator.pushNamed(context, '/update', arguments: server);
                   break;
@@ -154,6 +178,26 @@ class ServerList extends StatelessWidget {
           // Here we take the value from the MyHomePage object that was created by
           // the App.build method, and use it to set our appbar title.
           title: const Text("服务器列表"),
+          actions: [
+            IconButton(
+              onPressed: () async {
+                final result = await showDialog<BatchCommand?>(
+                  context: context,
+                  builder: (context) {
+                    return const NonFullScreenDialog(
+                        title: '选择发送的批量指令',
+                        summary: '批量指令在设置中进行维护',
+                        child: ChooseBatchCommand());
+                  },
+                );
+                if (result != null) {
+                  currentAppState.sendBatchCommand(result);
+                }
+              },
+              icon: const Icon(Icons.construction),
+              tooltip: '向所有服务器发送批量指令',
+            )
+          ],
         ),
         body: body);
   }

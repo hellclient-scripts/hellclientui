@@ -1,4 +1,5 @@
 class BatchCommand {
+  BatchCommand();
   String name = '';
   List<String> scripts = [];
   String command = '';
@@ -15,4 +16,7 @@ class BatchCommand {
         'command': command,
         'scripts': scripts.map((e) => e as dynamic).toList(),
       };
+  BatchCommand clone() {
+    return BatchCommand.fromJson(toJson());
+  }
 }

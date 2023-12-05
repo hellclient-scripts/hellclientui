@@ -13,6 +13,7 @@ import 'views/pages/notificationpage.dart';
 import 'package:local_notifier/local_notifier.dart';
 import 'dart:io';
 import 'package:window_manager/window_manager.dart';
+import 'views/pages/presetbatchcommands.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -78,6 +79,7 @@ class MyApp extends StatelessWidget {
             "/create": (context) => CreatePage(),
             "/update": (context) => UpdatePage(),
             "/game": (context) => const Game(),
+            "/presetbatchcommands": (context) => const PresetBatchCommands(),
             "/notification": (context) => const NotificationPage(),
             "/displaysettings": (context) => const DisplaySettings(),
             "/qa": (context) => const QAPage(),

@@ -54,7 +54,7 @@ Future<bool?> showMassSend(BuildContext context) async {
                     },
                     onCancal: () {},
                     labelCancel: null,
-                    labelSubmit: '发送',
+                    labelConfirm: '发送',
                     autofocus: true,
                   )
                 ],

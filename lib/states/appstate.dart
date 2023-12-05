@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'dart:convert';
 
+import 'package:hellclientui/models/batchcommand.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 
@@ -92,7 +93,7 @@ class AppState extends ChangeNotifier {
     return Future<bool>.value(false);
   }
 
-  sendBatchCommand(String cmd) {
+  sendBatchCommand(BatchCommand cmd) {
     for (final server in config.servers) {
       if (server.acceptBatchCommand) {
         server.sendBatchCommand(cmd);

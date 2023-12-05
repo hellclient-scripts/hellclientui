@@ -546,12 +546,12 @@ TableRow createTableRow(List<Widget> children) {
 class ConfirmOrCancelWidget extends StatelessWidget {
   const ConfirmOrCancelWidget(
       {super.key,
-      this.labelSubmit = '确定',
+      this.labelConfirm = '确定',
       this.labelCancel = '取消',
       this.autofocus = false,
       required this.onConfirm,
       required this.onCancal});
-  final String labelSubmit;
+  final String? labelConfirm;
   final String? labelCancel;
   final bool autofocus;
   final void Function() onConfirm;
@@ -570,15 +570,17 @@ class ConfirmOrCancelWidget extends StatelessWidget {
           child: AppUI.buildTextButton(context, labelCancel!, onCancal, null,
               const Color(0xff333333), const Color(0xffdddddd))));
     }
-    children.add(
-      Container(
-        width: 100,
-        margin: const EdgeInsets.fromLTRB(5, 0, 5, 0),
-        child: AppUI.buildTextButton(context, labelSubmit, onConfirm, null,
-            Colors.white, const Color(0xff409EFF),
-            autofocus: autofocus),
-      ),
-    );
+    if (labelConfirm != null) {
+      children.add(
+        Container(
+          width: 100,
+          margin: const EdgeInsets.fromLTRB(5, 0, 5, 0),
+          child: AppUI.buildTextButton(context, labelConfirm!, onConfirm, null,
+              Colors.white, const Color(0xff409EFF),
+              autofocus: autofocus),
+        ),
+      );
+    }
     return SizedBox(
         height: 50,
         child: Row(
