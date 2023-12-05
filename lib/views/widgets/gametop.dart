@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:hellclientui/models/feature.dart';
 import 'package:hellclientui/states/appstate.dart';
 import 'package:hellclientui/workers/game.dart';
 import 'dart:async';
@@ -82,6 +83,13 @@ class GameTopState extends State<GameTop> {
         currentGame!.handleCmd("about", "");
       }, "关于", const Color(0xff606266), Colors.white,
           borderColor: const Color(0xffDCDFE6)),
+      currentGame!.support(Features.batchcommand)
+          ? AppUI.buildIconButton(
+              context, const Icon(Icons.assignment_outlined), () {
+              currentGame!.handleCmd("batchcommandscripts", "");
+            }, "批量命令", const Color(0xff606266), Colors.white,
+              borderColor: const Color(0xffDCDFE6))
+          : const Center(),
       Expanded(
           child: Padding(
               padding: const EdgeInsets.fromLTRB(30, 0, 30, 0),

@@ -21,6 +21,10 @@ class Server {
     _longConnection.update(keepConnection, host, username, password);
   }
 
+  void sendBatchCommand(String cmd) {
+    _longConnection.sendBatchCommand(cmd);
+  }
+
   Server.fromJson(Map<String, dynamic> json)
       : host = json['host'],
         username = json['username'],

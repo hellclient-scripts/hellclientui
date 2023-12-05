@@ -142,7 +142,8 @@ class OverviewState extends State<Overview> {
       Column(children: [
         SizedBox(
             height: 20,
-            child: Row(children: [
+            child:
+                Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
               SizedBox(
                   width: 310,
                   child: Text.rich(

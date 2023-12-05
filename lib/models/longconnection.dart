@@ -82,6 +82,20 @@ class LongConnection {
     });
   }
 
+  void sendBatchCommand(String cmd) async {
+    lock.synchronized(() async {
+      if (channel == null) {
+        await _connect();
+      }
+      if (channel != null) {
+        channel!.sink.add(cmd);
+        if (!keep) {
+          await _disconnect();
+        }
+      }
+    });
+  }
+
   void _tick() {
     execute();
   }

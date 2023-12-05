@@ -1062,3 +1062,22 @@ class DesktopNotification {
     body = json['Body'] ?? '';
   }
 }
+
+class BatchCommandScripts {
+  List<String> scripts = [];
+  BatchCommandScripts.fromJson(Map<String, dynamic> json) {
+    if (json['Scripts'] != null) {
+      scripts =
+          List<dynamic>.from(json['Scripts']).map((e) => e as String).toList();
+    }
+  }
+}
+
+class BatchCommand {
+  List<String> scripts = [];
+  String command = '';
+  Map<String, dynamic> toJson() => {
+        'Scripts': scripts.map((e) => e as dynamic).toList(),
+        'Command': command,
+      };
+}

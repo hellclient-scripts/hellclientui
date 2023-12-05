@@ -92,6 +92,14 @@ class AppState extends ChangeNotifier {
     return Future<bool>.value(false);
   }
 
+  sendBatchCommand(String cmd) {
+    for (final server in config.servers) {
+      if (server.acceptBatchCommand) {
+        server.sendBatchCommand(cmd);
+      }
+    }
+  }
+
   void updated() {
     notifyListeners();
   }

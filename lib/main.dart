@@ -16,7 +16,9 @@ import 'package:window_manager/window_manager.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await windowManager.ensureInitialized();
+  if (Platform.isWindows || Platform.isLinux || Platform.isMacOS) {
+    await windowManager.ensureInitialized();
+  }
 
   // await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
   currentAppState = await AppState.init();

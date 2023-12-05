@@ -12,6 +12,20 @@ import '../../workers/game.dart' as gameengine;
 import '../../models/message.dart' as message;
 import '../widgets/appui.dart';
 import '../widgets/gameui.dart';
+import '../../forms/sendbatchcommandform.dart';
+
+void showSendBatchCommand(
+    BuildContext context, message.BatchCommandScripts scripts) async {
+  showDialog(
+    context: context,
+    builder: (context) {
+      return DialogOverlay(
+          child: FullScreenDialog(
+              title: '批量发送',
+              child: SendBatchCommandForm(scripts: scripts.scripts)));
+    },
+  );
+}
 
 Future<String?> showNotOpened(
     BuildContext context, message.NotOpened games) async {
@@ -202,6 +216,11 @@ class GameState extends State<Game> {
             final dynamic jsondata = json.decode(event.data);
             final timers = message.Timers.fromJson(jsondata);
             GameUI.showUserTimers(context, timers);
+            break;
+          case 'batchcommandscripts':
+            final dynamic jsondata = json.decode(event.data);
+            final scripts = message.BatchCommandScripts.fromJson(jsondata);
+            showSendBatchCommand(context, scripts);
             break;
         }
       }

@@ -333,6 +333,7 @@ class Game {
       case 'scripttimers':
       case 'usertimers':
       case 'hideall':
+      case 'batchcommandscripts':
         commandStream.add(GameCommand(command: command, data: data));
         break;
     }

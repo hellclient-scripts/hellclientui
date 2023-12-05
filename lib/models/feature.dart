@@ -3,6 +3,8 @@ import 'message.dart';
 abstract final class Features {
   static const Feature autoSave =
       Feature(min: APIVersion(major: 0, year: 2023, month: 11, day: 30));
+  static const Feature batchcommand =
+      Feature(min: APIVersion(major: 0, year: 2023, month: 11, day: 30));
 }
 
 class Feature {
