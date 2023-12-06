@@ -140,6 +140,10 @@ class DisplayState extends State<Display> {
                 case "userinput.datagrid":
                   showGrid(context, input);
                   break;
+                case "userinput.hidedatagrid":
+                case "userinput.hideall":
+                  AppUI.hideUI(context);
+                  break;
               }
             }
         }
