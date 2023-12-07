@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:local_notifier/local_notifier.dart';
 import '../models/message.dart' as message;
 import 'package:window_manager/window_manager.dart';
+import 'package:audioplayers/audioplayers.dart';
 
 Notification currentNotification = Notification();
 
@@ -34,6 +35,11 @@ class Notification {
   }
 
   void desktopNotify(String title, String body, Function() onOpen) {
+    if (config.audio.isNotEmpty) {
+      final player = AudioPlayer();
+      player.play(DeviceFileSource(config.audio));
+    }
+
     if (Platform.isWindows || Platform.isLinux || Platform.isMacOS) {
       LocalNotification notification = LocalNotification(
           title: title,

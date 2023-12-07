@@ -1,10 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:hellclientui/states/appstate.dart';
 import 'package:hellclientui/views/widgets/appui.dart';
 import 'dart:io';
 import '../../workers/notification.dart';
+import 'desktopnotificationpage.dart';
 
-class NotificationPage extends StatelessWidget {
+class NotificationPage extends StatefulWidget {
   const NotificationPage({super.key});
+  @override
+  State<NotificationPage> createState() {
+    return NotificationPageState();
+  }
+}
+
+class NotificationPageState extends State<NotificationPage> {
   Widget buildTpush(BuildContext context) {
     return const Center();
   }
@@ -19,6 +28,19 @@ class NotificationPage extends StatelessWidget {
       children.add(ListTile(
         leading: const Icon(Icons.desktop_windows_sharp),
         title: const Text("桌面版通知"),
+        subtitle: Text.rich(TextSpan(children: [
+          const TextSpan(text: '启用通知：'),
+          TextSpan(
+              text: currentNotification.config.desktopNotificationDisabled
+                  ? '否'
+                  : '是'),
+          const WidgetSpan(
+              child: SizedBox(
+            width: 30,
+          )),
+          const TextSpan(text: '播放提示音：'),
+          TextSpan(text: currentNotification.config.audio.isEmpty ? '否' : '是'),
+        ])),
         trailing: PopupMenuButton(
           itemBuilder: (context) => [
             const PopupMenuItem(
@@ -33,7 +55,13 @@ class NotificationPage extends StatelessWidget {
           onSelected: (value) async {
             switch (value) {
               case 'update':
-                // Navigator.pushNamed(context, '/update', arguments: server);
+                final result = await Navigator.push(context,
+                    MaterialPageRoute<bool>(builder: (context) {
+                  return const DesktopNotificationPage();
+                }));
+                if (result == true) {
+                  setState(() {});
+                }
                 break;
               case 'test':
                 currentNotification.desktopNotify('桌面推送测试', '点击测试', () {

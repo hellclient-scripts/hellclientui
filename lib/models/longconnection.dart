@@ -91,7 +91,6 @@ class LongConnection {
       var msg =
           message.Response.createBatchCommand(command.command, command.scripts);
       if (channel != null) {
-        print(jsonEncode(msg.toJson()));
         channel!.sink.add(jsonEncode(msg.toJson()));
         if (!keep) {
           await _disconnect();

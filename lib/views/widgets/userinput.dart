@@ -486,23 +486,27 @@ class UserInputVisualPromptBase64SlideWidgetState
   void loadImages() async {
     final picturesdata = widget.rawdata.split('|');
     for (final picturedata in picturesdata) {
-      final raw = picturedata.split(',');
-      if (raw.length > 1) {
-        final rawbytes = base64Decode(raw[1].trimLeft());
-        final id = await ui.ImageDescriptor.encoded(
-            await ui.ImmutableBuffer.fromUint8List(rawbytes));
-        if (maxWidth < id.width) {
-          maxWidth = id.width * 1.0;
+      try {
+        final raw = picturedata.split(',');
+        if (raw.length > 1) {
+          final rawbytes = base64Decode(raw[1].trimLeft());
+          final id = await ui.ImageDescriptor.encoded(
+              await ui.ImmutableBuffer.fromUint8List(rawbytes));
+          if (maxWidth < id.width) {
+            maxWidth = id.width * 1.0;
+          }
+          if (maxHeight < id.height) {
+            maxHeight = id.height * 1.0;
+          }
+          children.add(LayoutBuilder(builder: (context, constraints) {
+            return SizedBox(
+                width: constraints.maxWidth,
+                height: constraints.maxHeight,
+                child: FittedBox(child: Image.memory(rawbytes)));
+          }));
         }
-        if (maxHeight < id.height) {
-          maxHeight = id.height * 1.0;
-        }
-        children.add(LayoutBuilder(builder: (context, constraints) {
-          return SizedBox(
-              width: constraints.maxWidth,
-              height: constraints.maxHeight,
-              child: FittedBox(child: Image.memory(rawbytes)));
-        }));
+      } catch (e) {
+        debugPrint(e.toString());
       }
     }
     setState(() {});

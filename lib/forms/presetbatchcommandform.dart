@@ -42,6 +42,7 @@ class PresetBatchCommandFormState extends State<PresetBatchCommandForm> {
                   if (value == null || value.isEmpty) {
                     return '预设名不可为空';
                   }
+                  return null;
                 }),
             Text.rich(TextSpan(children: [
               const TextSpan(text: '发送脚本:', style: _textStyleLabel),
