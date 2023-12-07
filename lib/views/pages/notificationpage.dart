@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:hellclientui/states/appstate.dart';
 import 'package:hellclientui/views/widgets/appui.dart';
 import 'dart:io';
 import '../../workers/notification.dart';

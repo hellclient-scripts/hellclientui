@@ -40,24 +40,19 @@ Future<bool?> showDisconneded(BuildContext context) async {
   return showDialog<bool>(
     context: context,
     builder: (context) {
-      return AlertDialog(
-        title: const Text("连接断开"),
-        content: const Text('你与程序被断开了，可能是通过别的页面打开/程序发生错误/程序死机，需要重连才能继续操作。'),
-        actions: <Widget>[
-          TextButton(
-            child: const Text("退出"),
-            onPressed: () {
+      return NonFullScreenDialog(
+          title: '连接断开',
+          summary: '你与程序被断开了，可能是通过别的页面打开/程序发生错误/程序死机，需要重连才能继续操作。',
+          child: ConfirmOrCancelWidget(
+            labelCancel: '退出',
+            onCancal: () {
               Navigator.of(context).pop();
             },
-          ),
-          TextButton(
-            child: const Text("重新连接"),
-            onPressed: () {
+            labelConfirm: '重新连接',
+            onConfirm: () {
               Navigator.of(context).pop(true);
             },
-          ),
-        ],
-      );
+          ));
     },
   );
 }

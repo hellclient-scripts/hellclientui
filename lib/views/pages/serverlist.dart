@@ -71,13 +71,12 @@ class ServerList extends StatelessWidget {
               child: IconButton(
                 icon: const Icon(Icons.cast_connected_outlined),
                 onPressed: () async {
-                  appState.currentServer = server;
                   try {
                     await appState.connecting.connect(server);
                     currentGame = Game.create(currentAppState.connecting);
 
                     if (context.mounted) {
-                      Navigator.pushNamed(context, "/game");
+                      await Navigator.pushNamed(context, "/game");
                     }
                   } catch (e) {
                     showConnectError(context, e.toString());

@@ -126,7 +126,7 @@ class LongConnection {
               if (req.type == 'desktopnotification') {
                 final noti =
                     message.DesktopNotification.fromJson(jsonDecode(req.data));
-                currentNotification.ondesktopNotify(noti);
+                currentNotification.ondesktopNotify(host, req.world, noti);
               }
             } catch (e) {
               debugPrint(e.toString());

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:hellclientui/models/feature.dart';
-import 'package:hellclientui/models/server.dart';
 import '../models/rendersettings.dart';
 import '../states/appstate.dart';
 
@@ -21,6 +20,7 @@ class GameCommand {
 }
 
 class Game {
+  bool silenceQuit = false;
   String current = "";
   String status = "";
   int historypos = -1;
@@ -29,7 +29,6 @@ class Game {
   APIVersion? apiVersion;
   late RenderSettings renderSettings;
   late Connecting connecting;
-  late Server server;
   late RenderPainter output;
   late RenderPainter prompt;
   late RenderPainter hud;
@@ -53,7 +52,6 @@ class Game {
     var game = Game();
     final appState = currentAppState;
     final settings = appState.renderSettings;
-    game.server = appState.currentServer!;
     game.renderSettings = settings;
     game.output = RenderPainter.create(Renderer(
         renderSettings: settings,

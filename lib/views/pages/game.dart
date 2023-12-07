@@ -65,7 +65,8 @@ class GameState extends State<Game> {
   Future<void> reconnect() async {
     await cancel();
     game.dispose();
-    await currentAppState.connecting.connect(currentAppState.currentServer!);
+    await currentAppState.connecting
+        .connect(currentAppState.connecting.currentServer!);
     gameengine.currentGame = gameengine.Game.create(currentAppState.connecting);
     await listen();
     setState(() {
@@ -90,6 +91,9 @@ class GameState extends State<Game> {
   Future<void> listen() async {
     game = gameengine.currentGame!;
     disconnectSub = game.disconnectStream.stream.listen((data) async {
+      if (game.silenceQuit) {
+        return;
+      }
       if (await showDisconneded(context) == true) {
         try {
           if (context.mounted) {
@@ -236,7 +240,7 @@ class GameState extends State<Game> {
   @override
   Widget build(BuildContext context) {
     var appState = context.watch<AppState>();
-    var server = appState.currentServer!;
+    var server = appState.connecting.currentServer!;
     var focusNode = FocusNode(
       onKey: (node, event) {
         if (event is RawKeyDownEvent && event.repeat == false) {

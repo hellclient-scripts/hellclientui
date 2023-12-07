@@ -1,3 +1,4 @@
+import 'package:hellclientui/states/appstate.dart';
 import 'package:tpns_flutter_plugin/tpns_flutter_plugin.dart';
 import "../models/notificationconfig.dart";
 import 'dart:io';
@@ -54,8 +55,11 @@ class Notification {
     }
   }
 
-  void ondesktopNotify(message.DesktopNotification msg) {
-    desktopNotify(msg.title, msg.body, () => null);
+  void ondesktopNotify(
+      String host, String id, message.DesktopNotification msg) {
+    desktopNotify(msg.title, msg.body, () {
+      currentAppState.enterGame(host, id);
+    });
   }
 
   void updateConfig(NotificationConfig nconfig) {

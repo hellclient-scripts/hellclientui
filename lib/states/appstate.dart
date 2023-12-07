@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'dart:convert';
+import 'dart:async';
 
 import 'package:hellclientui/models/batchcommand.dart';
 import 'package:path/path.dart';
@@ -23,7 +24,7 @@ class AppState extends ChangeNotifier {
   RenderConfig renderConfig = RenderConfig();
   int currentPage = 0;
   bool showMore = true;
-  Server? currentServer;
+  final streamEnterGame = StreamController.broadcast();
   static Future<AppState> init() async {
     var state = AppState();
     String apppath = "";
@@ -97,6 +98,17 @@ class AppState extends ChangeNotifier {
     for (final server in config.servers) {
       if (server.acceptBatchCommand) {
         server.sendBatchCommand(cmd);
+      }
+    }
+  }
+
+  Future<void> enterGame(String serverhost, String gameid) async {
+    for (final server in config.servers) {
+      if (server.host == serverhost) {
+        streamEnterGame.add(() async {
+          await connecting.enterGame(server, gameid);
+        });
+        return;
       }
     }
   }
