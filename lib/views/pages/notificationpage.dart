@@ -4,7 +4,6 @@ import 'dart:io';
 import '../../workers/notification.dart';
 import 'desktopnotificationpage.dart';
 import 'tpushnotificationpage.dart';
-import 'package:uni_links/uni_links.dart';
 
 class NotificationPage extends StatefulWidget {
   const NotificationPage({super.key});

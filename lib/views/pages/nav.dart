@@ -27,7 +27,7 @@ class Nav {
               showAboutDialog(
                   context: context,
                   applicationName: "Hellclient UI",
-                  applicationVersion: "0.0.1");
+                  applicationVersion: "0.0.1 [API 0.23.11.30]");
               return;
           }
           appState.currentPage = index;
