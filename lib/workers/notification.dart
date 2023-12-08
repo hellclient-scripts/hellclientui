@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:tpns_flutter_plugin/tpns_flutter_plugin.dart';
 import "../models/notificationconfig.dart";
 import 'dart:io';
@@ -6,14 +7,18 @@ import '../models/message.dart' as message;
 import 'package:window_manager/window_manager.dart';
 import 'package:audioplayers/audioplayers.dart';
 import "../workers/game.dart";
+import "dart:async";
+import 'package:uni_links/uni_links.dart';
 
 Notification currentNotification = Notification();
+const tpushPrefix = '/notify/';
 
 class Notification {
   bool desktopNotificationDisabled = false;
   String tencentToken = "";
   late NotificationConfig config;
   XgFlutterPlugin? tpush;
+  StreamSubscription? _sub;
   void startTpush() {
     if (config.tencentAccessID == "" ||
         config.tencentAccessKey == "" ||
@@ -67,10 +72,29 @@ class Notification {
     });
   }
 
-  void updateConfig(NotificationConfig nconfig) {
+  void onTPushNofity(String host, String id) {
+    Game.enterGame(host, id);
+  }
+
+  void updateConfig(NotificationConfig nconfig) async {
     config = nconfig;
     if (Platform.isAndroid) {
+      if (tpush != null) {
+        tpush!.stopXg();
+      }
+      if (_sub != null) {
+        await _sub!.cancel();
+      }
       startTpush();
+      _sub = uriLinkStream.listen((Uri? uri) {
+        if (uri != null) {
+          debugPrint(uri.path);
+          if (uri.path.startsWith(tpushPrefix)) {
+            final server = uri.path.replaceFirst(tpushPrefix, '');
+            onTPushNofity(server, uri.fragment);
+          }
+        }
+      });
     }
   }
 }

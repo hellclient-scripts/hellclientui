@@ -320,7 +320,9 @@ class GameState extends State<Game> {
                 currentAppState.renderSettings.forceDesktopMode ? 1200 : 640,
             child: currentAppState.connecting.connected
                 ? const Display()
-                : const Center(),
+                : Container(
+                    color: currentAppState.renderSettings.background,
+                  ),
           ),
         ));
   }

@@ -3,6 +3,8 @@ import 'package:hellclientui/views/widgets/appui.dart';
 import 'dart:io';
 import '../../workers/notification.dart';
 import 'desktopnotificationpage.dart';
+import 'tpushnotificationpage.dart';
+import 'package:uni_links/uni_links.dart';
 
 class NotificationPage extends StatefulWidget {
   const NotificationPage({super.key});
@@ -72,6 +74,63 @@ class NotificationPageState extends State<NotificationPage> {
         ),
       ));
     }
+    if (Platform.isAndroid) {
+      children.add(ListTile(
+        leading: const Icon(Icons.desktop_windows_sharp),
+        title: const Text("腾讯推送通知"),
+        subtitle: Text.rich(TextSpan(children: [
+          const TextSpan(text: '启用：'),
+          TextSpan(text: currentNotification.config.tencentEnabled ? '是' : '否'),
+          const WidgetSpan(
+              child: SizedBox(
+            width: 12,
+          )),
+          const TextSpan(text: 'ID：'),
+          TextSpan(
+              text: currentNotification.config.tencentAccessID.isNotEmpty
+                  ? '有'
+                  : '无'),
+          const WidgetSpan(
+              child: SizedBox(
+            width: 12,
+          )),
+          const TextSpan(text: 'Token'),
+          TextSpan(
+              text: currentNotification.tencentToken.isNotEmpty ? '有' : '无'),
+        ])),
+        trailing: PopupMenuButton(
+          itemBuilder: (context) => [
+            const PopupMenuItem(
+              value: 'update',
+              child: Text('编辑'),
+            ),
+            const PopupMenuItem(
+              value: 'token',
+              child: Text('显示token'),
+            ),
+          ],
+          onSelected: (value) async {
+            switch (value) {
+              case 'update':
+                final result = await Navigator.push(context,
+                    MaterialPageRoute<bool>(builder: (context) {
+                  return const TPushNotificationPage();
+                }));
+                if (result == true) {
+                  setState(() {});
+                }
+                break;
+              case 'token':
+                debugPrint(currentNotification.tencentToken);
+                AppUI.showMsgBox(context, '腾讯推送token',
+                    currentNotification.tencentToken, null);
+                break;
+            }
+          },
+        ),
+      ));
+    }
+
     return Scaffold(
         appBar: AppBar(
           backgroundColor: Theme.of(context).colorScheme.inversePrimary,
