@@ -9,7 +9,7 @@ import '../widgets/choosebatchcommand.dart';
 
 Future<bool?> showConnectError(BuildContext context, String message) async {
   return showDialog<bool>(
-    context: context,
+    context: currentAppState.navigatorKey.currentState!.context,
     builder: (context) {
       return AlertDialog(
         title: const Text("连接失败"),
@@ -29,7 +29,7 @@ Future<bool?> showConnectError(BuildContext context, String message) async {
 
 Future<bool?> showDeleteConfirmDialog(BuildContext context) {
   return showDialog<bool>(
-    context: context,
+    context: currentAppState.navigatorKey.currentState!.context,
     builder: (context) {
       return AlertDialog(
         title: const Text("确认"),
@@ -72,11 +72,12 @@ class ServerList extends StatelessWidget {
                 icon: const Icon(Icons.cast_connected_outlined),
                 onPressed: () async {
                   try {
-                    await appState.connecting.connect(server);
-                    currentGame = Game.create(currentAppState.connecting);
+                    // await appState.connecting.connect(server);
+                    currentGame = Game.create(server);
 
                     if (context.mounted) {
-                      await Navigator.pushNamed(context, "/game");
+                      await Navigator.pushNamed(context, "/game",
+                          arguments: currentGame);
                     }
                   } catch (e) {
                     showConnectError(context, e.toString());
@@ -113,7 +114,7 @@ class ServerList extends StatelessWidget {
               switch (value) {
                 case 'batchcommand':
                   final result = await showDialog<BatchCommand?>(
-                    context: context,
+                    context: currentAppState.navigatorKey.currentState!.context,
                     builder: (context) {
                       return const NonFullScreenDialog(
                           title: '选择发送的批量指令',
@@ -181,7 +182,7 @@ class ServerList extends StatelessWidget {
             IconButton(
               onPressed: () async {
                 final result = await showDialog<BatchCommand?>(
-                  context: context,
+                  context: currentAppState.navigatorKey.currentState!.context,
                   builder: (context) {
                     return const NonFullScreenDialog(
                         title: '选择发送的批量指令',

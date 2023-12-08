@@ -9,7 +9,7 @@ import '../../forms/passwordform.dart';
 
 Future<bool?> showUpdatePassowrd(BuildContext context) async {
   return showDialog<bool>(
-    context: context,
+    context: currentAppState.navigatorKey.currentState!.context,
     builder: (context) {
       return const NonFullScreenDialog(title: '修改客户端密码', child: PasswordForm());
     },

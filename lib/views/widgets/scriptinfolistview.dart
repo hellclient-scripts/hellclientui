@@ -3,10 +3,11 @@ import '../../models/message.dart';
 import 'appui.dart';
 import 'userinput.dart';
 import '../../forms/createscriptform.dart' as createscriptform;
+import '../../states/appstate.dart';
 
 Future<bool?> showCreateScript(BuildContext context) async {
   return showDialog<bool>(
-    context: context,
+    context: currentAppState.navigatorKey.currentState!.context,
     builder: (context) {
       return const NonFullScreenDialog(
           title: '创建脚本', child: createscriptform.CreateScriptForm());

@@ -14,6 +14,7 @@ import 'package:local_notifier/local_notifier.dart';
 import 'dart:io';
 import 'package:window_manager/window_manager.dart';
 import 'views/pages/presetbatchcommands.dart';
+import 'workers/game.dart' as gameengine;
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -40,13 +41,11 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    final navigatorKey = GlobalKey<NavigatorState>();
-
     return ChangeNotifierProvider(
       create: (context) => state,
       child: MaterialApp(
           title: 'Hellclient',
-          navigatorKey: navigatorKey,
+          navigatorKey: state.navigatorKey,
           theme: ThemeData(
             // This is the theme of your application.
             //
@@ -78,7 +77,11 @@ class MyApp extends StatelessWidget {
             "/": (context) => const HomePage(),
             "/create": (context) => CreatePage(),
             "/update": (context) => UpdatePage(),
-            "/game": (context) => const Game(),
+            "/game": (context) {
+              final game =
+                  ModalRoute.of(context)!.settings.arguments as gameengine.Game;
+              return Game(game: game, key: UniqueKey());
+            },
             "/presetbatchcommands": (context) => const PresetBatchCommands(),
             "/notification": (context) => const NotificationPage(),
             "/displaysettings": (context) => const DisplaySettings(),

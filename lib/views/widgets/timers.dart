@@ -4,10 +4,11 @@ import 'appui.dart';
 import 'userinput.dart';
 import '../../forms/timerform.dart';
 import 'package:hellclientui/workers/game.dart';
+import '../../states/appstate.dart';
 
 showCreateTimer(BuildContext context, bool byUser) async {
   showDialog(
-    context: context,
+    context: currentAppState.navigatorKey.currentState!.context,
     builder: (context) {
       return Dialog.fullscreen(
           child: FullScreenDialog(
@@ -27,7 +28,7 @@ showCreateTimer(BuildContext context, bool byUser) async {
 
 showUpdateTimer(BuildContext context, message.Timer timer, bool byUser) async {
   showDialog(
-    context: context,
+    context: currentAppState.navigatorKey.currentState!.context,
     builder: (context) {
       return Dialog.fullscreen(
           child: FullScreenDialog(

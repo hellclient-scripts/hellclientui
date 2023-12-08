@@ -4,10 +4,11 @@ import 'appui.dart';
 import 'userinput.dart';
 import '../../forms/aliasform.dart';
 import 'package:hellclientui/workers/game.dart';
+import '../../states/appstate.dart';
 
 showCreateAlias(BuildContext context, bool byUser) async {
   showDialog(
-    context: context,
+    context: currentAppState.navigatorKey.currentState!.context,
     builder: (context) {
       return Dialog.fullscreen(
           child: FullScreenDialog(
@@ -27,7 +28,7 @@ showCreateAlias(BuildContext context, bool byUser) async {
 
 showUpdateAlias(BuildContext context, message.Alias alias, bool byUser) async {
   showDialog(
-    context: context,
+    context: currentAppState.navigatorKey.currentState!.context,
     builder: (context) {
       return Dialog.fullscreen(
           child: FullScreenDialog(

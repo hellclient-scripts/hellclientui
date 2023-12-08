@@ -15,6 +15,8 @@ import 'package:flutter/material.dart';
 late AppState currentAppState;
 
 class AppState extends ChangeNotifier {
+  bool inGame = false;
+  var navigatorKey = GlobalKey<NavigatorState>();
   Config config = Config();
   String settingsPath = "";
   String colorConfigPath = "";
@@ -24,7 +26,6 @@ class AppState extends ChangeNotifier {
   RenderConfig renderConfig = RenderConfig();
   int currentPage = 0;
   bool showMore = true;
-  final streamEnterGame = StreamController.broadcast();
   static Future<AppState> init() async {
     var state = AppState();
     String apppath = "";
@@ -98,17 +99,6 @@ class AppState extends ChangeNotifier {
     for (final server in config.servers) {
       if (server.acceptBatchCommand) {
         server.sendBatchCommand(cmd);
-      }
-    }
-  }
-
-  Future<void> enterGame(String serverhost, String gameid) async {
-    for (final server in config.servers) {
-      if (server.host == serverhost) {
-        streamEnterGame.add(() async {
-          await connecting.enterGame(server, gameid);
-        });
-        return;
       }
     }
   }

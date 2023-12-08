@@ -5,11 +5,12 @@ import 'userinput.dart';
 import 'package:hellclientui/workers/game.dart';
 import '../../forms/createrequiredparamform.dart';
 import '../../forms/updaterequiredparamform.dart';
+import '../../states/appstate.dart';
 
 Future<message.RequiredParam?> showCreateReqiredParam(
     BuildContext context) async {
   return showDialog<message.RequiredParam?>(
-    context: context,
+    context: currentAppState.navigatorKey.currentState!.context,
     builder: (context) {
       return const NonFullScreenDialog(
           title: '创建脚本', child: CreateRequiredParamForm());
@@ -20,7 +21,7 @@ Future<message.RequiredParam?> showCreateReqiredParam(
 Future<bool?> showUpdateReqiredParam(
     BuildContext context, message.RequiredParam param) async {
   return showDialog<bool?>(
-    context: context,
+    context: currentAppState.navigatorKey.currentState!.context,
     builder: (context) {
       return NonFullScreenDialog(
           title: '创建脚本', child: UpdateRequiredParamForm(param: param));

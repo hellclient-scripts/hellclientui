@@ -8,6 +8,7 @@ import 'dart:async';
 
 import 'renderer.dart';
 import '../models/message.dart';
+import '../models/server.dart';
 import '../models/connecting.dart';
 import 'package:synchronized/synchronized.dart';
 
@@ -20,9 +21,11 @@ class GameCommand {
 }
 
 class Game {
+  GameCommand? entryCommand;
   bool silenceQuit = false;
   String current = "";
   String status = "";
+  late Server server;
   int historypos = -1;
   bool showAllParams = false;
   ClientInfo? currentClient;
@@ -40,47 +43,78 @@ class Game {
   ClientInfos clientinfos = ClientInfos();
   late StreamSubscription subscription;
   late StreamSubscription disconnectSub;
+  late StreamSubscription subConnectError;
   final commandStream = StreamController.broadcast();
   final clientsUpdateStream = StreamController.broadcast();
   final hudUpdateStream = StreamController.broadcast();
-  final disconnectStream = StreamController.broadcast();
+  final streamConnectError = StreamController.broadcast();
+  final disconnectStream = StreamController.broadcast(sync: true);
   final createFailStream = StreamController.broadcast();
   final datagridUpdateStream = StreamController.broadcast();
   final alllinesUpdateStream = StreamController.broadcast();
-  static Game create(Connecting connecting) {
-    connecting = connecting;
+  static Game create(Server connectingserver, {GameCommand? entryCommand}) {
     var game = Game();
+    game.server = connectingserver;
+    game.init();
+    return game;
+  }
+
+  void init() {
     final appState = currentAppState;
     final settings = appState.renderSettings;
-    game.renderSettings = settings;
-    game.output = RenderPainter.create(Renderer(
+
+    renderSettings = settings;
+    entryCommand = entryCommand;
+    output = RenderPainter.create(Renderer(
         renderSettings: settings,
         maxLines: settings.maxLines,
         devicePixelRatio: appState.devicePixelRatio,
         background: settings.background));
-    game.prompt = RenderPainter.create(Renderer(
+    prompt = RenderPainter.create(Renderer(
         renderSettings: settings,
         maxLines: 1,
         devicePixelRatio: appState.devicePixelRatio,
         background: settings.background));
-    game.hud = RenderPainter.create(Renderer(
+    hud = RenderPainter.create(Renderer(
       renderSettings: settings,
       maxLines: 0,
       devicePixelRatio: appState.devicePixelRatio,
       background: settings.hudbackground,
       noSortLines: true,
     ));
-    game.subscription = connecting.messageStream.stream.listen((event) async {
+  }
+
+  void unbind() {
+    subscription.cancel();
+    disconnectSub.cancel();
+    subConnectError.cancel();
+  }
+
+  Future<void> dial(Function() callback) async {
+    connecting = currentAppState.connecting;
+    bind(connecting);
+    callback();
+    await connecting.connect(server);
+    if (entryCommand != null) {
+      handleCmd(entryCommand!.command, entryCommand!.data);
+      entryCommand = null;
+    }
+  }
+
+  void bind(Connecting newconnecting) {
+    connecting = newconnecting;
+    subscription = connecting.messageStream.stream.listen((event) async {
       var msg = event as String;
-      await game.onMessage(msg);
+      await onMessage(msg);
     });
-    game.disconnectSub =
-        connecting.eventDisconnected.stream.listen((event) async {
-      game.disconnectStream.add(event);
+    disconnectSub = connecting.eventDisconnected.stream.listen((event) {
+      disconnectStream.add(event);
     });
-    game.connecting = connecting;
-    game.handleCmd("current", null);
-    return game;
+    subConnectError = connecting.errorStream.stream.listen((event) {
+      streamConnectError.add(event);
+    });
+    connecting = connecting;
+    handleCmd("current", null);
   }
 
   String decodeString(String data) {
@@ -396,6 +430,7 @@ class Game {
   Future<void> dispose() async {
     subscription.cancel();
     disconnectSub.cancel();
+    subConnectError.cancel();
   }
 
   void clientQuick() {
@@ -479,6 +514,29 @@ class Game {
         return KeyEventResult.handled;
     }
     return KeyEventResult.ignored;
+  }
+
+  static enterGame(String serverhost, String gameid) async {
+    for (final server in currentAppState.config.servers) {
+      if (server.host == serverhost) {
+        if (!currentAppState.inGame) {
+          final game = Game.create(server,
+              entryCommand: GameCommand(command: 'change', data: gameid));
+          currentGame = game;
+          final context = currentAppState.navigatorKey.currentState!.context;
+          await Navigator.of(context).pushNamed('/game', arguments: game);
+        } else {
+          if (currentGame != null) {
+            currentGame!.server = server;
+            currentGame!.entryCommand =
+                GameCommand(command: 'change', data: gameid);
+            currentGame!.commandStream
+                .add(const GameCommand(command: '_reconnect'));
+          }
+        }
+        return;
+      }
+    }
   }
 
   void start() {}

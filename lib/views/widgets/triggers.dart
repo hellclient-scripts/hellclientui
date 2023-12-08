@@ -4,10 +4,11 @@ import 'appui.dart';
 import 'userinput.dart';
 import '../../forms/triggerform.dart';
 import 'package:hellclientui/workers/game.dart';
+import '../../states/appstate.dart';
 
 showCreateTrigger(BuildContext context, bool byUser) async {
   showDialog(
-    context: context,
+    context: currentAppState.navigatorKey.currentState!.context,
     builder: (context) {
       return Dialog.fullscreen(
           child: FullScreenDialog(
@@ -28,7 +29,7 @@ showCreateTrigger(BuildContext context, bool byUser) async {
 showUpdateTrigger(
     BuildContext context, message.Trigger trigger, bool byUser) async {
   showDialog(
-    context: context,
+    context: currentAppState.navigatorKey.currentState!.context,
     builder: (context) {
       return Dialog.fullscreen(
           child: FullScreenDialog(

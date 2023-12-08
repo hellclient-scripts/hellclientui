@@ -11,6 +11,7 @@ import 'updaterequiredparams.dart';
 import 'triggers.dart';
 import 'aliases.dart';
 import 'timers.dart';
+import '../../states/appstate.dart';
 
 const textStyleGameUIFieldLabel = TextStyle(
   color: Color(0xff333333),
@@ -52,7 +53,7 @@ class GameUI {
       BuildContext context, message.RequiredParams params) {
     AppUI.hideUI(context);
     showDialog<bool?>(
-        context: context,
+        context: currentAppState.navigatorKey.currentState!.context,
         builder: (context) {
           return UpdateRequiredParams(params: params);
         });
@@ -61,7 +62,7 @@ class GameUI {
   static showScriptTimers(BuildContext context, message.Timers timers) {
     AppUI.hideUI(context);
     showDialog<bool?>(
-        context: context,
+        context: currentAppState.navigatorKey.currentState!.context,
         builder: (context) {
           return Timers(
             timers: timers,
@@ -73,7 +74,7 @@ class GameUI {
   static showUserTimers(BuildContext context, message.Timers timers) {
     AppUI.hideUI(context);
     showDialog<bool?>(
-        context: context,
+        context: currentAppState.navigatorKey.currentState!.context,
         builder: (context) {
           return Timers(timers: timers, byUser: true);
         });
@@ -82,7 +83,7 @@ class GameUI {
   static showScriptTriggers(BuildContext context, message.Triggers triggers) {
     AppUI.hideUI(context);
     showDialog<bool?>(
-        context: context,
+        context: currentAppState.navigatorKey.currentState!.context,
         builder: (context) {
           return Triggers(
             triggers: triggers,
@@ -94,7 +95,7 @@ class GameUI {
   static showUserTriggers(BuildContext context, message.Triggers triggers) {
     AppUI.hideUI(context);
     showDialog<bool?>(
-        context: context,
+        context: currentAppState.navigatorKey.currentState!.context,
         builder: (context) {
           return Triggers(triggers: triggers, byUser: true);
         });
@@ -103,7 +104,7 @@ class GameUI {
   static showScriptAliases(BuildContext context, message.Aliases aliases) {
     AppUI.hideUI(context);
     showDialog<bool?>(
-        context: context,
+        context: currentAppState.navigatorKey.currentState!.context,
         builder: (context) {
           return Aliases(
             aliases: aliases,
@@ -115,7 +116,7 @@ class GameUI {
   static showUserAliases(BuildContext context, message.Aliases aliases) {
     AppUI.hideUI(context);
     showDialog<bool?>(
-        context: context,
+        context: currentAppState.navigatorKey.currentState!.context,
         builder: (context) {
           return Aliases(aliases: aliases, byUser: true);
         });
@@ -124,7 +125,7 @@ class GameUI {
   static showParamsInfo(BuildContext context, message.ParamsInfo paramsInfo) {
     AppUI.hideUI(context);
     showDialog<bool?>(
-        context: context,
+        context: currentAppState.navigatorKey.currentState!.context,
         builder: (context) {
           return ParamsView(info: paramsInfo);
         });
@@ -133,7 +134,7 @@ class GameUI {
   static showScript(BuildContext context, message.ScriptInfo scriptinfo) {
     AppUI.hideUI(context);
     showDialog<bool?>(
-        context: context,
+        context: currentAppState.navigatorKey.currentState!.context,
         builder: (context) {
           return Dialog.fullscreen(
               child: FullScreenDialog(
@@ -202,7 +203,7 @@ class GameUI {
   static updateWorldSettings(
       BuildContext context, message.WorldSettings worldSettings) {
     showDialog<bool?>(
-        context: context,
+        context: currentAppState.navigatorKey.currentState!.context,
         builder: (context) {
           return Dialog.fullscreen(
               child: FullScreenDialog(
@@ -228,7 +229,7 @@ class GameUI {
       BuildContext context, message.WorldSettings worldSettings) {
     AppUI.hideUI(context);
     showDialog<bool?>(
-        context: context,
+        context: currentAppState.navigatorKey.currentState!.context,
         builder: (context) {
           return Dialog.fullscreen(
             child: Stack(children: [
@@ -325,7 +326,7 @@ class GameUI {
   static updateScriptSettings(
       BuildContext context, message.ScriptSettings scriptSettings) {
     showDialog<bool?>(
-        context: context,
+        context: currentAppState.navigatorKey.currentState!.context,
         builder: (context) {
           return Dialog.fullscreen(
               child: FullScreenDialog(
@@ -352,7 +353,7 @@ class GameUI {
       BuildContext context, message.ScriptSettings scriptSettings) {
     AppUI.hideUI(context);
     showDialog<bool?>(
-        context: context,
+        context: currentAppState.navigatorKey.currentState!.context,
         builder: (context) {
           return Dialog.fullscreen(
               child: Stack(children: [
@@ -474,7 +475,7 @@ class GameUI {
   static showAuthorized(BuildContext context, message.Authorized authorized) {
     AppUI.hideUI(context);
     showDialog<bool?>(
-      context: context,
+      context: currentAppState.navigatorKey.currentState!.context,
       builder: (context) {
         return DialogOverlay(
             child: SizedBox(
@@ -552,7 +553,7 @@ class GameUI {
       BuildContext context, message.RequestTrust request) async {
     AppUI.hideUI(context);
     final result = await showDialog<bool?>(
-        context: context,
+        context: currentAppState.navigatorKey.currentState!.context,
         builder: (context) {
           return DialogOverlay(
               child: FullScreenDialog(
@@ -602,7 +603,7 @@ class GameUI {
       BuildContext context, message.RequestTrust request) async {
     AppUI.hideUI(context);
     final result = await showDialog<bool?>(
-        context: context,
+        context: currentAppState.navigatorKey.currentState!.context,
         builder: (context) {
           return DialogOverlay(
               child: FullScreenDialog(

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:hellclientui/views/widgets/scriptinfolistview.dart';
-import 'package:provider/provider.dart';
 import 'package:hellclientui/states/appstate.dart';
 import '..//widgets/fullscreen.dart';
 import 'dart:async';
@@ -30,7 +29,7 @@ void showSendBatchCommand(
 Future<String?> showNotOpened(
     BuildContext context, message.NotOpened games) async {
   return showDialog<String>(
-    context: context,
+    context: currentAppState.navigatorKey.currentState!.context,
     builder: (context) {
       return Dialog.fullscreen(
         child: NotOpened(games: games.games),
@@ -42,7 +41,7 @@ Future<String?> showNotOpened(
 Future<String?> showScriptInfoList(
     BuildContext context, message.ScriptInfoList list) async {
   return showDialog<String>(
-    context: context,
+    context: currentAppState.navigatorKey.currentState!.context,
     builder: (context) {
       return Dialog.fullscreen(
         child: ScriptInfoListView(list: list.list),
@@ -52,23 +51,28 @@ Future<String?> showScriptInfoList(
 }
 
 class Game extends StatefulWidget {
-  const Game({super.key});
+  const Game({super.key, required this.game});
   @override
   State<Game> createState() => GameState();
+  final gameengine.Game game;
 }
 
 class GameState extends State<Game> {
   late StreamSubscription disconnectSub;
   late StreamSubscription subCommand;
-  late gameengine.Game game;
+  late StreamSubscription subConnectError;
   var _refreshKey = UniqueKey();
-  Future<void> reconnect() async {
+  Future<void> reconnect(bool closeFirst) async {
     await cancel();
-    game.dispose();
-    await currentAppState.connecting
-        .connect(currentAppState.connecting.currentServer!);
-    gameengine.currentGame = gameengine.Game.create(currentAppState.connecting);
-    await listen();
+    widget.game.unbind();
+    if (closeFirst) {
+      await currentAppState.connecting.close();
+    }
+    widget.game.init();
+    await widget.game.dial(listen);
+    if (context.mounted) {
+      AppUI.hideUI(context);
+    }
     setState(() {
       _refreshKey = UniqueKey();
     });
@@ -77,8 +81,9 @@ class GameState extends State<Game> {
   @override
   void dispose() {
     cancel();
-    game.dispose();
-    game.close();
+    currentAppState.inGame = false;
+    widget.game.dispose();
+    widget.game.close();
 
     super.dispose();
   }
@@ -86,41 +91,64 @@ class GameState extends State<Game> {
   Future<void> cancel() async {
     await disconnectSub.cancel();
     await subCommand.cancel();
+    await subConnectError.cancel();
   }
 
   Future<void> listen() async {
-    game = gameengine.currentGame!;
-    disconnectSub = game.disconnectStream.stream.listen((data) async {
-      if (game.silenceQuit) {
-        return;
-      }
-      if (await showDisconneded(context) == true) {
-        try {
+    subConnectError =
+        widget.game.streamConnectError.stream.listen((data) async {
+      if (data is Exception) {
+        if (await showConnectError(context, data.toString()) == true) {
           if (context.mounted) {
-            AppUI.hideUI(context);
+            Navigator.of(context).pop();
           }
-          await (reconnect());
-        } catch (e) {
-          if (context.mounted) {
-            showConnectError(context, e.toString());
-          }
-        }
-      } else {
-        if (context.mounted) {
-          var nav = Navigator.of(context);
-          nav.pop();
         }
       }
     });
-    subCommand = game.commandStream.stream.listen((event) async {
+    disconnectSub = widget.game.disconnectStream.stream.listen((data) async {
+      if (!mounted) {
+        return;
+      }
+      if (widget.game.silenceQuit) {
+        widget.game.silenceQuit = false;
+        return;
+      }
+      if (currentAppState.navigatorKey.currentState != null) {
+        final result = await showDisconneted(
+            currentAppState.navigatorKey.currentState!.context);
+        if (result == true) {
+          try {
+            if (context.mounted) {
+              AppUI.hideUI(context);
+            }
+            await (reconnect(false));
+          } catch (e) {
+            if (context.mounted) {
+              showConnectError(
+                  currentAppState.navigatorKey.currentState!.context,
+                  e.toString());
+            }
+          }
+        } else if (result == false) {
+          if (context.mounted) {
+            var nav = Navigator.of(context);
+            nav.pop();
+          }
+        }
+      }
+    });
+    subCommand = widget.game.commandStream.stream.listen((event) async {
       if (event is gameengine.GameCommand) {
         switch (event.command) {
+          case '_reconnect':
+            reconnect(true);
+            break;
           case 'notopened':
             final dynamic jsondata = json.decode(event.data);
             final notOpened = message.NotOpened.fromJson(jsondata);
             final id = await showNotOpened(context, notOpened);
             if (id != null) {
-              game.handleCmd('open', id);
+              widget.game.handleCmd('open', id);
             }
             break;
           case 'scriptinfoList':
@@ -128,7 +156,8 @@ class GameState extends State<Game> {
             final list = message.ScriptInfoList.fromJson(jsondata);
             final id = await showScriptInfoList(context, list);
             if (id != null) {
-              game.handleCmd('usescript', <dynamic>[game.current, id]);
+              widget.game
+                  .handleCmd('usescript', <dynamic>[widget.game.current, id]);
             }
             break;
 
@@ -233,18 +262,18 @@ class GameState extends State<Game> {
 
   @override
   void initState() {
-    listen();
+    currentAppState.inGame = true;
+    widget.game.dial(listen);
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    var appState = context.watch<AppState>();
-    var server = appState.connecting.currentServer!;
+    var server = widget.game.server;
     var focusNode = FocusNode(
       onKey: (node, event) {
         if (event is RawKeyDownEvent && event.repeat == false) {
-          return game.onKey(event);
+          return widget.game.onKey(event);
         }
         return KeyEventResult.ignored;
       },

@@ -19,7 +19,7 @@ class AppUI {
   static Future<String?> promptText(BuildContext context, String title,
       String summary, String hint, String value) async {
     return await showDialog<String?>(
-      context: context,
+      context: currentAppState.navigatorKey.currentState!.context,
       builder: (context) {
         final controller = TextEditingController.fromValue(TextEditingValue(
             text: value,
@@ -57,7 +57,7 @@ class AppUI {
   static Future<String?> promptTextArea(BuildContext context, String title,
       String summary, String hint, String value) async {
     return await showDialog<String?>(
-      context: context,
+      context: currentAppState.navigatorKey.currentState!.context,
       builder: (context) {
         final controller = TextEditingController.fromValue(TextEditingValue(
             text: value,
@@ -98,7 +98,7 @@ class AppUI {
   static showMsgBox(
       BuildContext context, String title, String summary, Widget? child) {
     showDialog(
-        context: context,
+        context: currentAppState.navigatorKey.currentState!.context,
         builder: (context) {
           return NonFullScreenDialog(
             title: title,
@@ -124,7 +124,7 @@ class AppUI {
   static Future<bool?> showConfirmBox(
       BuildContext context, String title, String summary, Widget? child) {
     return showDialog<bool>(
-        context: context,
+        context: currentAppState.navigatorKey.currentState!.context,
         builder: (context) {
           return NonFullScreenDialog(
             title: title,

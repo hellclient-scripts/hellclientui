@@ -1,4 +1,3 @@
-import 'package:hellclientui/states/appstate.dart';
 import 'package:tpns_flutter_plugin/tpns_flutter_plugin.dart';
 import "../models/notificationconfig.dart";
 import 'dart:io';
@@ -6,6 +5,7 @@ import 'package:local_notifier/local_notifier.dart';
 import '../models/message.dart' as message;
 import 'package:window_manager/window_manager.dart';
 import 'package:audioplayers/audioplayers.dart';
+import "../workers/game.dart";
 
 Notification currentNotification = Notification();
 
@@ -51,6 +51,11 @@ class Notification {
         await WindowManager.instance.focus();
         onOpen();
       };
+      notification.onClick = () async {
+        await WindowManager.instance.show();
+        await WindowManager.instance.focus();
+        onOpen();
+      };
       notification.show();
     }
   }
@@ -58,7 +63,7 @@ class Notification {
   void ondesktopNotify(
       String host, String id, message.DesktopNotification msg) {
     desktopNotify(msg.title, msg.body, () {
-      currentAppState.enterGame(host, id);
+      Game.enterGame(host, id);
     });
   }
 

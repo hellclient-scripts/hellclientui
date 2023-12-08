@@ -13,6 +13,8 @@ import 'appui.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
 
+import '../../states/appstate.dart';
+
 const textStyleUserInputNote = TextStyle(
   color: Colors.white,
   fontSize: 14,
@@ -54,7 +56,7 @@ class UserInputHelper {
   static list(BuildContext context, UserInput input) {
     final data = UserInputList.fromJson(input.data);
     showDialog<bool?>(
-      context: context,
+      context: currentAppState.navigatorKey.currentState!.context,
       builder: (context) {
         return DialogOverlay(
             child: FullScreenDialog(
@@ -74,7 +76,7 @@ class UserInputHelper {
     final controller =
         TextEditingController.fromValue(TextEditingValue(text: data.value));
     final result = await showDialog<bool?>(
-      context: context,
+      context: currentAppState.navigatorKey.currentState!.context,
       builder: (context) {
         return NonFullScreenDialog(
           title: data.title,
@@ -113,7 +115,7 @@ class UserInputHelper {
   static alert(BuildContext context, UserInput input) async {
     final data = UserInputTitleIntro.fromJson(input.data);
     final result = await showDialog<bool?>(
-      context: context,
+      context: currentAppState.navigatorKey.currentState!.context,
       builder: (context) {
         return NonFullScreenDialog(
             title: data.title,
@@ -136,7 +138,7 @@ class UserInputHelper {
   static confirm(BuildContext context, UserInput input) async {
     final data = UserInputTitleIntro.fromJson(input.data);
     final result = await showDialog<bool?>(
-      context: context,
+      context: currentAppState.navigatorKey.currentState!.context,
       builder: (context) {
         return NonFullScreenDialog(
             title: data.title,
@@ -160,7 +162,7 @@ class UserInputHelper {
   static visualPrompt(BuildContext context, UserInput input) async {
     final data = VisualPrompt.fromJson(input.data);
     final result = await showDialog<bool?>(
-        context: context,
+        context: currentAppState.navigatorKey.currentState!.context,
         builder: (context) {
           return UserInputVisualPromptWidget(input: input, visualPrompt: data);
         });
@@ -230,7 +232,7 @@ class UserInputHelper {
             controller: controller,
             child: body));
     final result = await showDialog<bool?>(
-      context: context,
+      context: currentAppState.navigatorKey.currentState!.context,
       builder: (context) {
         return DialogOverlay(
             child: FullScreenDialog(

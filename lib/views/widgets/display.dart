@@ -18,7 +18,7 @@ import 'dart:convert';
 
 Future<bool?> showConnectError(BuildContext context, String message) async {
   return showDialog<bool>(
-    context: context,
+    context: currentAppState.navigatorKey.currentState!.context,
     builder: (context) {
       return AlertDialog(
         title: const Text("连接失败"),
@@ -36,9 +36,9 @@ Future<bool?> showConnectError(BuildContext context, String message) async {
   );
 }
 
-Future<bool?> showDisconneded(BuildContext context) async {
+Future<bool?> showDisconneted(BuildContext context) async {
   return showDialog<bool>(
-    context: context,
+    context: currentAppState.navigatorKey.currentState!.context,
     builder: (context) {
       return NonFullScreenDialog(
           title: '连接断开',
@@ -46,11 +46,15 @@ Future<bool?> showDisconneded(BuildContext context) async {
           child: ConfirmOrCancelWidget(
             labelCancel: '退出',
             onCancal: () {
-              Navigator.of(context).pop();
+              if (context.mounted) {
+                Navigator.of(context).pop(false);
+              }
             },
             labelConfirm: '重新连接',
             onConfirm: () {
-              Navigator.of(context).pop(true);
+              if (context.mounted) {
+                Navigator.of(context).pop(true);
+              }
             },
           ));
     },
@@ -81,7 +85,7 @@ class DisplayState extends State<Display> {
     if (!gridDisplayed) {
       gridDisplayed = true;
       await showDialog(
-          context: context,
+          context: currentAppState.navigatorKey.currentState!.context,
           builder: (context) {
             return const DatagridView();
           });
