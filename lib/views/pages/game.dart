@@ -257,6 +257,7 @@ class GameState extends State<Game> {
             break;
         }
       }
+      setState(() {});
     });
   }
 
@@ -317,7 +318,9 @@ class GameState extends State<Game> {
           body: Fullscreen(
             minWidth:
                 currentAppState.renderSettings.forceDesktopMode ? 1200 : 640,
-            child: const Display(),
+            child: currentAppState.connecting.connected
+                ? const Display()
+                : const Center(),
           ),
         ));
   }
