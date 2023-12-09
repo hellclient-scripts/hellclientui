@@ -87,7 +87,11 @@ class OverviewState extends State<Overview> {
     }
     final List<Widget> list = [];
     final renderer = currentGame!.output.renderer;
-    for (final line in info.summary.sublist(0, 2)) {
+    var summary = info.summary;
+    if (summary.length > 2) {
+      summary = summary.sublist(0, 2);
+    }
+    for (final line in summary) {
       List<InlineSpan> linedata = [];
       for (final word in line.words) {
         final style = renderer.getWordStyle(

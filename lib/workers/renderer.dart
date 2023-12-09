@@ -263,6 +263,7 @@ class Renderer {
 
   Future<void> _renderline(RenderSettings settings, Line line, bool withouticon,
       bool nocr, Color? bcolor) async {
+    var newline = true;
     bcolor ??= background;
     var linestyle = getLineStyle(line);
     var rendering =
@@ -279,6 +280,7 @@ class Renderer {
               withouticon ? renderSettings.color : linestyle.color, bcolor)
           .toTextStyle(settings);
       for (final char in word.text.characters) {
+        newline = false;
         if (char == "\n" || rendering.addText(char, textStyle)) {
           if (nocr) {
             break;
@@ -288,10 +290,11 @@ class Renderer {
           rendering = RenderingLine.create(
               line, settings, devicePixelRatio, background);
           rendering.index = index;
+          newline = true;
         }
       }
     }
-    if (rendering.position > 0) {
+    if (newline || rendering.position > 0) {
       rows.add(await rendering.toRow());
     }
   }
