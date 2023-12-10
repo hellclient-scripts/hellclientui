@@ -15,6 +15,7 @@ import 'dart:io';
 import 'package:window_manager/window_manager.dart';
 import 'views/pages/presetbatchcommands.dart';
 import 'workers/game.dart' as gameengine;
+import 'views/pages/exportpage.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -82,6 +83,7 @@ class MyApp extends StatelessWidget {
                   ModalRoute.of(context)!.settings.arguments as gameengine.Game;
               return Game(game: game, key: UniqueKey());
             },
+            "/export": (context) => const ExportPage(),
             "/presetbatchcommands": (context) => const PresetBatchCommands(),
             "/notification": (context) => const NotificationPage(),
             "/displaysettings": (context) => const DisplaySettings(),

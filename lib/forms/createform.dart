@@ -118,6 +118,8 @@ class CreateFormState extends State<CreateForm> {
                           server.username = username.value.text;
                           server.password = password.value.text;
                           server.name = name.value.text;
+                          server.keepConnection = keepConnection;
+                          server.acceptBatchCommand = acceptBatchCommand;
                           server.onUpdate();
                           server.start();
                           Navigator.pop(context, appState.addServer(server));

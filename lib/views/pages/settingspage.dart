@@ -50,6 +50,15 @@ class SettingsPage extends StatelessWidget {
               onTap: () {
                 Navigator.pushNamed(context, "/qa");
               },
+            ),
+            ListTile(
+              leading: const Icon(Icons.import_export),
+              title: const Text('导入导出'),
+              subtitle: const Text('导入导出设置数据'),
+              trailing: const Icon(Icons.arrow_forward_ios),
+              onTap: () {
+                Navigator.pushNamed(context, "/export");
+              },
             )
           ],
         ));

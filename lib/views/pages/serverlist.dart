@@ -63,6 +63,31 @@ class ServerList extends StatelessWidget {
 
     final List<Widget> list = [];
     for (final server in appState.config.servers) {
+      var titlespan = <InlineSpan>[
+        TextSpan(text: server.name.isNotEmpty ? server.name : "<未命名>"),
+        const WidgetSpan(
+            child: SizedBox(
+          width: 10,
+        ))
+      ];
+      if (server.acceptBatchCommand) {
+        titlespan.add(const WidgetSpan(
+            alignment: PlaceholderAlignment.middle,
+            child: Icon(
+              Icons.construction,
+              size: 16,
+              color: Color(0xff67C23A),
+            )));
+      }
+      if (server.keepConnection) {
+        titlespan.add(const WidgetSpan(
+            alignment: PlaceholderAlignment.middle,
+            child: Icon(
+              Icons.mail,
+              size: 16,
+              color: Color(0xff67C23A),
+            )));
+      }
       list.add(Card(
         key: Key(server.host),
         child: ListTile(
@@ -85,7 +110,7 @@ class ServerList extends StatelessWidget {
                   // appState.connect(server);
                 },
               )),
-          title: Text(server.name.isNotEmpty ? server.name : "<未命名>"),
+          title: Text.rich(TextSpan(children: titlespan)),
           subtitle: Text(
             server.host,
             softWrap: false,
