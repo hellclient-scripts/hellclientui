@@ -122,51 +122,6 @@ class DisplaySettiingsFormState extends State<DisplaySettiingsForm> {
                   });
                 },
                 icon: const Icon(Icons.restore)),
-            PopupMenuButton(
-              itemBuilder: (context) => [
-                const PopupMenuItem(
-                  value: 'import',
-                  child: Text('导入'),
-                ),
-                const PopupMenuItem(
-                  value: 'export',
-                  child: Text('导出'),
-                ),
-              ],
-              onSelected: (value) async {
-                switch (value) {
-                  case 'import':
-                    final input = await AppUI.promptTextArea(
-                        context, '导入显示设置', '请导入hcui-config:开头的设置输出', '', '');
-                    if (input != null) {
-                      if (input.startsWith('hcui-config:')) {
-                        try {
-                          final import = RenderConfig.fromJson(jsonDecode(
-                              utf8.decode(base64Decode(
-                                  input.replaceFirst('hcui-config:', '')))));
-                          config = import;
-                          setState(() {});
-                          return;
-                        } catch (e) {
-                          debugPrint(e.toString());
-                        }
-                      }
-                      if (context.mounted) {
-                        AppUI.showMsgBox(context, '导入数据失败', '导入的数据格式错误',
-                            SelectableText(input));
-                      }
-                    }
-                    break;
-                  case 'export':
-                    final String export =
-                        base64Encode(utf8.encode(jsonEncode(config.toJson())));
-                    AppUI.showMsgBox(context, '导出当前设置', '',
-                        SelectableText('hcui-config:$export'));
-
-                    break;
-                }
-              },
-            )
           ]),
       body: ListView(scrollDirection: Axis.vertical, children: [
         Padding(

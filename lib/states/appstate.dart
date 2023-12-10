@@ -64,6 +64,19 @@ class AppState extends ChangeNotifier {
     return state;
   }
 
+  Future unbind() async {
+    for (final server in config.servers) {
+      server.dispose();
+    }
+  }
+
+  Future bind() async {
+    for (final server in config.servers) {
+      server.onUpdate();
+      server.start();
+    }
+  }
+
   Future save() async {
     var data = jsonEncode(config);
     final file = File(settingsPath);

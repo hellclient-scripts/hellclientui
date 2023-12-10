@@ -150,8 +150,10 @@ class ExportPage extends StatelessWidget {
                         final import = Config.fromJson(jsonDecode(utf8.decode(
                             base64Decode(input.replaceFirst(
                                 'hcsystem-config-include-PASSWORD!:', '')))));
+                        await currentAppState.unbind();
                         currentAppState.config = import;
                         currentAppState.save();
+                        await currentAppState.bind();
                         currentAppState.updated();
                         return;
                       } catch (e) {
