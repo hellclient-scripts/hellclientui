@@ -315,6 +315,7 @@ class OverviewState extends State<Overview> {
         child: RawScrollbar(
             controller: scrollController,
             thumbColor: Colors.white,
+            thumbVisibility: true,
             child: Padding(
                 padding: const EdgeInsets.fromLTRB(5, 20, 5, 20),
                 child: Align(
