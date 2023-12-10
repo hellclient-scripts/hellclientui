@@ -1,7 +1,5 @@
-import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:hellclientui/states/appstate.dart';
-import 'package:hellclientui/views/widgets/appui.dart';
 import 'package:flex_color_picker/flex_color_picker.dart';
 
 import '../models/rendersettings.dart';
