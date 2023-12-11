@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import 'package:hellclientui/models/feature.dart';
-import 'package:hellclientui/models/macros.dart';
 import '../models/rendersettings.dart';
 import '../states/appstate.dart';
 
