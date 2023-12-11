@@ -279,6 +279,7 @@ class TimerFormState extends State<TimerForm> {
           timer.script = script.text;
           timer.group = group.text;
           timer.atTime = atTime;
+          timer.enabled = enabled;
           timer.oneShot = oneShot;
           timer.actionWhenDisconnectd = actionWhenDisconnectd;
           timer.temporary = temporary;

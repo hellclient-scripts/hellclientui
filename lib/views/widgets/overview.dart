@@ -78,7 +78,8 @@ class OverviewState extends State<Overview> {
             borderRadius: BorderRadius.all(Radius.circular(4))),
         padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
         child: const Text(
-            "按数字键进入游戏。按Ctrl+`或ScrollLock快速进入游戏。按Ctrl+Esc或 Pause返回本页。"));
+            "按数字键进入游戏。按Ctrl+`或ScrollLock快速进入游戏。按Ctrl+退格或 Pause返回本页。\n按Ctrl + W 退出服务器。",
+            textAlign: TextAlign.center));
   }
 
   Widget buildSummary(BuildContext context, ClientInfo info) {

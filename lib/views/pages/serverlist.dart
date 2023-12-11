@@ -6,6 +6,16 @@ import '../../models/server.dart';
 import '../../workers/game.dart';
 import '../widgets/appui.dart';
 import '../widgets/choosebatchcommand.dart';
+import 'package:flutter/services.dart';
+
+class ServerList extends StatefulWidget {
+  const ServerList({super.key, required this.servers});
+  final List<Server> servers;
+  @override
+  State<ServerList> createState() {
+    return ServerListState();
+  }
+}
 
 Future<bool?> showConnectError(BuildContext context, String message) async {
   return showDialog<bool>(
@@ -25,6 +35,19 @@ Future<bool?> showConnectError(BuildContext context, String message) async {
       );
     },
   );
+}
+
+void connectServer(Server server, BuildContext context) async {
+  try {
+    // await appState.connecting.connect(server);
+    currentGame = Game.create(server);
+
+    if (context.mounted) {
+      await Navigator.pushNamed(context, "/game", arguments: currentGame);
+    }
+  } catch (e) {
+    showConnectError(context, e.toString());
+  }
 }
 
 Future<bool?> showDeleteConfirmDialog(BuildContext context) {
@@ -52,9 +75,7 @@ Future<bool?> showDeleteConfirmDialog(BuildContext context) {
   );
 }
 
-class ServerList extends StatelessWidget {
-  const ServerList({super.key, required this.servers});
-  final List<Server> servers;
+class ServerListState extends State<ServerList> {
   Widget buildList(BuildContext context) {
     var appState = context.watch<AppState>();
     appState.devicePixelRatio = appState.renderSettings.hidpi
@@ -62,9 +83,14 @@ class ServerList extends StatelessWidget {
         : 1.0;
 
     final List<Widget> list = [];
-    for (final server in appState.config.servers) {
+    for (var index = 0; index < appState.config.servers.length; index++) {
+      final server = appState.config.servers[index];
+      var servername = server.name.isNotEmpty ? server.name : "<未命名>";
+      if (index < 9) {
+        servername = '${index + 1}.$servername';
+      }
       var titlespan = <InlineSpan>[
-        TextSpan(text: server.name.isNotEmpty ? server.name : "<未命名>"),
+        TextSpan(text: servername),
         const WidgetSpan(
             child: SizedBox(
           width: 10,
@@ -96,18 +122,7 @@ class ServerList extends StatelessWidget {
               child: IconButton(
                 icon: const Icon(Icons.cast_connected_outlined),
                 onPressed: () async {
-                  try {
-                    // await appState.connecting.connect(server);
-                    currentGame = Game.create(server);
-
-                    if (context.mounted) {
-                      await Navigator.pushNamed(context, "/game",
-                          arguments: currentGame);
-                    }
-                  } catch (e) {
-                    showConnectError(context, e.toString());
-                  }
-                  // appState.connect(server);
+                  connectServer(server, context);
                 },
               )),
           title: Text.rich(TextSpan(children: titlespan)),
@@ -178,10 +193,62 @@ class ServerList extends StatelessWidget {
         });
   }
 
+  KeyEventResult onKey(RawKeyEvent key, BuildContext context) {
+    switch (key.logicalKey.keyLabel) {
+      case '1':
+      case '2':
+      case '3':
+      case '4':
+      case '5':
+      case '6':
+      case '7':
+      case '8':
+      case '9':
+        final index = int.parse(key.logicalKey.keyLabel) - 1;
+        if (index < currentAppState.config.servers.length) {
+          connectServer(currentAppState.config.servers[index], context);
+        }
+        break;
+      case 'B':
+        if (key.isControlPressed) {
+          showBatchCommand();
+        }
+        break;
+    }
+    return KeyEventResult.ignored;
+  }
+
+  final listnode = FocusNode();
+  @override
+  initState() {
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    listnode.dispose();
+    super.dispose();
+  }
+
+  void showBatchCommand() async {
+    final result = await showDialog<BatchCommand?>(
+      context: currentAppState.navigatorKey.currentState!.context,
+      builder: (context) {
+        return const NonFullScreenDialog(
+            title: '选择发送的批量指令',
+            summary: '批量指令在设置中进行维护',
+            child: ChooseBatchCommand());
+      },
+    );
+    if (result != null) {
+      currentAppState.sendBatchCommand(result);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     Widget body;
-    if (servers.isEmpty) {
+    if (widget.servers.isEmpty) {
       body = const Center(child: Text("还未添加服务器信息。"));
     } else {
       body = buildList(context);
@@ -205,25 +272,20 @@ class ServerList extends StatelessWidget {
           title: const Text("服务器列表"),
           actions: [
             IconButton(
-              onPressed: () async {
-                final result = await showDialog<BatchCommand?>(
-                  context: currentAppState.navigatorKey.currentState!.context,
-                  builder: (context) {
-                    return const NonFullScreenDialog(
-                        title: '选择发送的批量指令',
-                        summary: '批量指令在设置中进行维护',
-                        child: ChooseBatchCommand());
-                  },
-                );
-                if (result != null) {
-                  currentAppState.sendBatchCommand(result);
-                }
-              },
+              onPressed: showBatchCommand,
               icon: const Icon(Icons.construction),
-              tooltip: '向所有服务器发送批量指令',
+              tooltip: '向所有服务器发送批量指令\n快捷键:Ctrl + b',
             )
           ],
         ),
-        body: body);
+        body: RawKeyboardListener(
+            focusNode: listnode,
+            autofocus: true,
+            onKey: (value) {
+              if (value is RawKeyDownEvent && value.repeat == false) {
+                onKey(value, context);
+              }
+            },
+            child: body));
   }
 }

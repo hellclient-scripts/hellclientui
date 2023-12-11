@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:async';
+import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:hellclientui/models/batchcommand.dart';
@@ -73,6 +74,10 @@ class LongConnection {
 
   void execute() async {
     lock.synchronized(() async {
+      if (Platform.isAndroid || Platform.isIOS) {
+        return;
+      }
+
       if ((updated || keep == false) && channel != null) {
         await _disconnect();
       }

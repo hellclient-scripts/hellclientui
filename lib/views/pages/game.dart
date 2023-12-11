@@ -143,6 +143,9 @@ class GameState extends State<Game> {
           case '_reconnect':
             reconnect(true);
             break;
+          case '_quit':
+            Navigator.of(context).popUntil(ModalRoute.withName('/'));
+            break;
           case 'notopened':
             final dynamic jsondata = json.decode(event.data);
             final notOpened = message.NotOpened.fromJson(jsondata);
@@ -271,18 +274,9 @@ class GameState extends State<Game> {
   @override
   Widget build(BuildContext context) {
     var server = widget.game.server;
-    var focusNode = FocusNode(
-      onKey: (node, event) {
-        if (event is RawKeyDownEvent && event.repeat == false) {
-          return widget.game.onKey(event);
-        }
-        return KeyEventResult.ignored;
-      },
-    );
-
     return RawKeyboardListener(
         key: _refreshKey,
-        focusNode: focusNode,
+        focusNode: gameengine.currentGame!.focusNode,
         autofocus: true,
         child: Scaffold(
           appBar: AppBar(

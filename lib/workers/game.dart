@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+
 import 'package:hellclientui/models/feature.dart';
 import '../models/rendersettings.dart';
 import '../states/appstate.dart';
@@ -52,9 +54,18 @@ class Game {
   final createFailStream = StreamController.broadcast();
   final datagridUpdateStream = StreamController.broadcast();
   final alllinesUpdateStream = StreamController.broadcast();
+  late FocusNode focusNode;
   static Game create(Server connectingserver, {GameCommand? entryCommand}) {
     var game = Game();
     game.server = connectingserver;
+    game.focusNode = FocusNode(
+      onKey: (node, event) {
+        if (event is RawKeyDownEvent && event.repeat == false) {
+          return game.onKey(event);
+        }
+        return KeyEventResult.ignored;
+      },
+    );
     game.init();
     return game;
   }
@@ -449,7 +460,7 @@ class Game {
 
   KeyEventResult onKey(RawKeyEvent key) {
     switch (key.logicalKey.keyLabel) {
-      case 'Escape':
+      case 'Backspace':
         if (!key.isControlPressed) {
           break;
         }
@@ -469,6 +480,11 @@ class Game {
               handleCmd("connect", currentGame?.current);
             }
           }
+        }
+        break;
+      case "W":
+        if (key.isControlPressed) {
+          commandStream.add(const GameCommand(command: '_quit'));
         }
         break;
       case "1":
