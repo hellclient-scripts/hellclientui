@@ -1,5 +1,5 @@
 import 'dart:ui' as ui;
-
+import 'package:flutter/services.dart';
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
@@ -370,6 +370,8 @@ class UserInputVisualPromptWidget extends StatefulWidget {
 
 class UserInputVisualPromptWidgetState
     extends State<UserInputVisualPromptWidget> {
+  final next = Event();
+  final prev = Event();
   @override
   Widget build(BuildContext context) {
     TextEditingController controller = TextEditingController.fromValue(
@@ -398,6 +400,8 @@ class UserInputVisualPromptWidgetState
       case "base64slide":
         visual = UserInputVisualPromptBase64SlideWidget(
           rawdata: widget.visualPrompt.source,
+          next: next,
+          prev: prev,
         );
       case "output":
         final lines = Lines.fromJson(jsonDecode(widget.visualPrompt.source));
@@ -425,6 +429,19 @@ class UserInputVisualPromptWidgetState
           currentGame!.handleUserInputCallback(widget.input, 0, value);
           Navigator.pop(context, true);
         },
+        focusNode: FocusNode(onKey: (node, event) {
+          if (event is RawKeyDownEvent && event.repeat == false) {
+            switch (event.logicalKey.keyLabel) {
+              case 'Page Down':
+                next.raise();
+                return KeyEventResult.handled;
+              case 'Page Up':
+                prev.raise();
+                return KeyEventResult.handled;
+            }
+          }
+          return KeyEventResult.ignored;
+        }),
         decoration: const InputDecoration(
           filled: true,
           fillColor: Color(0xffeeeeee),
@@ -470,11 +487,23 @@ class UserInputVisualPromptWidgetState
   }
 }
 
+class Event extends ChangeNotifier {
+  void raise() {
+    notifyListeners();
+  }
+}
+
 class UserInputVisualPromptBase64SlideWidget extends StatefulWidget {
   const UserInputVisualPromptBase64SlideWidget(
-      {super.key, required this.rawdata, this.height = 250});
+      {super.key,
+      required this.rawdata,
+      this.height = 250,
+      required this.next,
+      required this.prev});
   final String rawdata;
   final double height;
+  final Event next;
+  final Event prev;
   @override
   State<UserInputVisualPromptBase64SlideWidget> createState() =>
       UserInputVisualPromptBase64SlideWidgetState();
@@ -514,12 +543,34 @@ class UserInputVisualPromptBase64SlideWidgetState
     setState(() {});
   }
 
+  onNext() {
+    carouselController.nextPage();
+  }
+
+  onPrev() {
+    carouselController.previousPage();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    widget.next.removeListener(onNext);
+    widget.prev.removeListener(onPrev);
+  }
+
   @override
   void initState() {
     super.initState();
+    widget.prev.addListener(
+      onPrev,
+    );
+    widget.next.addListener(
+      onNext,
+    );
     loadImages();
   }
 
+  int page = 0;
   CarouselController carouselController = CarouselController();
 
   @override
@@ -532,8 +583,15 @@ class UserInputVisualPromptBase64SlideWidgetState
         CarouselSlider(
           carouselController: carouselController,
           options: CarouselOptions(
-              height: widget.height > maxHeight ? widget.height : maxHeight,
-              aspectRatio: maxWidth / maxHeight),
+            initialPage: page,
+            height: widget.height > maxHeight ? widget.height : maxHeight,
+            aspectRatio: maxWidth / maxHeight,
+            onPageChanged: (index, reason) {
+              setState(() {
+                page = index;
+              });
+            },
+          ),
           items: children,
         ),
         Padding(
@@ -545,7 +603,10 @@ class UserInputVisualPromptBase64SlideWidgetState
               },
               icon: const Icon(Icons.arrow_left),
             ),
-            const Expanded(child: Center()),
+            Expanded(
+                child: Center(
+                    child: Text(
+                        '${(page + 1).toString()}/${children.length.toString()}'))),
             IconButton(
               onPressed: () {
                 carouselController.nextPage();
