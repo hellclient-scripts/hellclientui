@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import 'package:hellclientui/models/feature.dart';
+import 'package:hellclientui/models/macros.dart';
 import '../models/rendersettings.dart';
 import '../states/appstate.dart';
 
@@ -511,22 +512,222 @@ class Game {
       case "Scroll Lock":
         clientQuick();
         break;
+      case "F1":
+        final macro = currentAppState.config.macros.f1;
+        if (macro.isNotEmpty) {
+          handleSend(macro);
+        } else {
+          handleCmd('keyup', 'F1');
+        }
+        return KeyEventResult.handled;
+      case "F2":
+        final macro = currentAppState.config.macros.f2;
+        if (macro.isNotEmpty) {
+          handleSend(macro);
+        } else {
+          handleCmd('keyup', 'F2');
+        }
+        return KeyEventResult.handled;
+      case "F3":
+        final macro = currentAppState.config.macros.f3;
+        if (macro.isNotEmpty) {
+          handleSend(macro);
+        } else {
+          handleCmd('keyup', 'F3');
+        }
+        return KeyEventResult.handled;
+      case "F4":
+        final macro = currentAppState.config.macros.f4;
+        if (macro.isNotEmpty) {
+          handleSend(macro);
+        } else {
+          handleCmd('keyup', 'F4');
+        }
+        return KeyEventResult.handled;
+      case "F5":
+        final macro = currentAppState.config.macros.f5;
+        if (macro.isNotEmpty) {
+          handleSend(macro);
+        } else {
+          handleCmd('keyup', 'F5');
+        }
+        return KeyEventResult.handled;
+      case "F6":
+        final macro = currentAppState.config.macros.f6;
+        if (macro.isNotEmpty) {
+          handleSend(macro);
+        } else {
+          handleCmd('keyup', 'F6');
+        }
+        return KeyEventResult.handled;
+      case "F7":
+        final macro = currentAppState.config.macros.f7;
+        if (macro.isNotEmpty) {
+          handleSend(macro);
+        } else {
+          handleCmd('keyup', 'F7');
+        }
+        return KeyEventResult.handled;
+      case "F8":
+        final macro = currentAppState.config.macros.f8;
+        if (macro.isNotEmpty) {
+          handleSend(macro);
+        } else {
+          handleCmd('keyup', 'F8');
+        }
+        return KeyEventResult.handled;
+      case "F9":
+        final macro = currentAppState.config.macros.f9;
+        if (macro.isNotEmpty) {
+          handleSend(macro);
+        } else {
+          handleCmd('keyup', 'F9');
+        }
+        return KeyEventResult.handled;
+      case "F10":
+        final macro = currentAppState.config.macros.f10;
+        if (macro.isNotEmpty) {
+          handleSend(macro);
+        } else {
+          handleCmd('keyup', 'F10');
+        }
+        return KeyEventResult.handled;
+      case "F11":
+        final macro = currentAppState.config.macros.f11;
+        if (macro.isNotEmpty) {
+          handleSend(macro);
+        } else {
+          handleCmd('keyup', 'F11');
+        }
+        return KeyEventResult.handled;
+      case "F12":
+        final macro = currentAppState.config.macros.f12;
+        if (macro.isNotEmpty) {
+          handleSend(macro);
+        } else {
+          handleCmd('keyup', 'F12');
+        }
+        return KeyEventResult.handled;
       case "Numpad 0":
+        final macro = currentAppState.config.macros.numpad0;
+        if (macro.isNotEmpty) {
+          handleSend(macro);
+        } else {
+          handleCmd('keyup', 'Numpad0');
+        }
+        return KeyEventResult.handled;
       case "Numpad 1":
+        final macro = currentAppState.config.macros.numpad1;
+        if (macro.isNotEmpty) {
+          handleSend(macro);
+        } else {
+          handleCmd('keyup', 'Numpad1');
+        }
+        return KeyEventResult.handled;
       case "Numpad 2":
+        final macro = currentAppState.config.macros.numpad2;
+        if (macro.isNotEmpty) {
+          handleSend(macro);
+        } else {
+          handleCmd('keyup', 'Numpad2');
+        }
+        return KeyEventResult.handled;
       case "Numpad 3":
+        final macro = currentAppState.config.macros.numpad3;
+        if (macro.isNotEmpty) {
+          handleSend(macro);
+        } else {
+          handleCmd('keyup', 'Numpad3');
+        }
+        return KeyEventResult.handled;
       case "Numpad 4":
+        final macro = currentAppState.config.macros.numpad4;
+        if (macro.isNotEmpty) {
+          handleSend(macro);
+        } else {
+          handleCmd('keyup', 'Numpad4');
+        }
+        return KeyEventResult.handled;
       case "Numpad 5":
+        final macro = currentAppState.config.macros.numpad5;
+        if (macro.isNotEmpty) {
+          handleSend(macro);
+        } else {
+          handleCmd('keyup', 'Numpad5');
+        }
+        return KeyEventResult.handled;
       case "Numpad 6":
+        final macro = currentAppState.config.macros.numpad6;
+        if (macro.isNotEmpty) {
+          handleSend(macro);
+        } else {
+          handleCmd('keyup', 'Numpad6');
+        }
+        return KeyEventResult.handled;
+
       case "Numpad 7":
+        final macro = currentAppState.config.macros.numpad7;
+        if (macro.isNotEmpty) {
+          handleSend(macro);
+        } else {
+          handleCmd('keyup', 'Numpad7');
+        }
+        return KeyEventResult.handled;
       case "Numpad 8":
+        final macro = currentAppState.config.macros.numpad8;
+        if (macro.isNotEmpty) {
+          handleSend(macro);
+        } else {
+          handleCmd('keyup', 'Numpad8');
+        }
+        return KeyEventResult.handled;
       case "Numpad 9":
+        final macro = currentAppState.config.macros.numpad9;
+        if (macro.isNotEmpty) {
+          handleSend(macro);
+        } else {
+          handleCmd('keyup', 'Numpad9');
+        }
+        return KeyEventResult.handled;
       case "Numpad Divide":
+        final macro = currentAppState.config.macros.numpadDivide;
+        if (macro.isNotEmpty) {
+          handleSend(macro);
+        } else {
+          handleCmd('keyup', 'NumpadDivide');
+        }
+        return KeyEventResult.handled;
       case "Numpad Multiply":
+        final macro = currentAppState.config.macros.numpadMultiply;
+        if (macro.isNotEmpty) {
+          handleSend(macro);
+        } else {
+          handleCmd('keyup', 'NumpadMultiply');
+        }
+        return KeyEventResult.handled;
       case "Numpad Subtract":
+        final macro = currentAppState.config.macros.numpadSubtract;
+        if (macro.isNotEmpty) {
+          handleSend(macro);
+        } else {
+          handleCmd('keyup', 'NumpadSubtract');
+        }
+        return KeyEventResult.handled;
       case "Numpad Add":
+        final macro = currentAppState.config.macros.numpadAdd;
+        if (macro.isNotEmpty) {
+          handleSend(macro);
+        } else {
+          handleCmd('keyup', 'NumpadAdd');
+        }
+        return KeyEventResult.handled;
       case "Numpad Decimal":
-        handleCmd('keyup', key.logicalKey.keyLabel.replaceFirst(" ", ""));
+        final macro = currentAppState.config.macros.numpadDecimal;
+        if (macro.isNotEmpty) {
+          handleSend(macro);
+        } else {
+          handleCmd('keyup', 'NumpadDecimal');
+        }
         return KeyEventResult.handled;
     }
     return KeyEventResult.ignored;

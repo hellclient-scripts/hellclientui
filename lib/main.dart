@@ -16,6 +16,7 @@ import 'package:window_manager/window_manager.dart';
 import 'views/pages/presetbatchcommands.dart';
 import 'workers/game.dart' as gameengine;
 import 'views/pages/exportpage.dart';
+import 'views/pages/macrospage.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -84,6 +85,7 @@ class MyApp extends StatelessWidget {
               return Game(game: game, key: UniqueKey());
             },
             "/export": (context) => const ExportPage(),
+            "/macros": (context) => const MacrosPage(),
             "/presetbatchcommands": (context) => const PresetBatchCommands(),
             "/notification": (context) => const NotificationPage(),
             "/displaysettings": (context) => const DisplaySettings(),
