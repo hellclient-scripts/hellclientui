@@ -199,17 +199,17 @@ class OverviewState extends State<Overview> {
 
   Widget buildButton(BuildContext context, Color bgcolor, Widget child,
       void Function() onTap, double opacity, bool large) {
-    return MouseRegion(
-        cursor: SystemMouseCursors.click,
-        child: Opacity(
-            opacity: opacity,
-            child: SizedBox(
-                width: 600,
-                height: large ? 136 : 91,
-                child: GestureDetector(
-                    onTap: onTap,
-                    child: Align(
-                      alignment: Alignment.topCenter,
+    return Opacity(
+        opacity: opacity,
+        child: SizedBox(
+            width: 600,
+            height: large ? 136 : 91,
+            child: Align(
+                alignment: Alignment.topCenter,
+                child: MouseRegion(
+                    cursor: SystemMouseCursors.click,
+                    child: GestureDetector(
+                      onTap: onTap,
                       child: Container(
                         padding: EdgeInsets.all(large ? 20 : 10),
                         color: bgcolor,

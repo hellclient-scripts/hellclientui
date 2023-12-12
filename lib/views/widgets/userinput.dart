@@ -296,7 +296,7 @@ class UserInputListWidgetState extends State<UserInputListWidget> {
       ]));
     }
     for (final row in data.items) {
-      if (filter.text.isEmpty || row.key.contains(filter.text)) {
+      if (filter.text.isEmpty || row.value.contains(filter.text)) {
         if (widget.list.mutli) {
           children.add(createTableRow([
             TCell(Checkbox(
