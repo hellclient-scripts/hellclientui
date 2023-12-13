@@ -440,6 +440,7 @@ class WorldSettings {
     required this.name,
     required this.scriptPrefix,
     required this.commandStackCharacter,
+    required this.ignoreBatchCommand,
     required this.showBroadcast,
     required this.showSubneg,
     required this.modEnabled,
@@ -455,6 +456,7 @@ class WorldSettings {
   String commandStackCharacter = "";
   bool showBroadcast = false;
   bool showSubneg = false;
+  bool ignoreBatchCommand = false;
   bool modEnabled = false;
   bool autoSave = false;
   WorldSettings.fromJson(Map<String, dynamic> json) {
@@ -466,6 +468,7 @@ class WorldSettings {
     name = json['Name'] ?? '';
     scriptPrefix = json['ScriptPrefix'] ?? '';
     commandStackCharacter = json['CommandStackCharacter'] ?? '';
+    ignoreBatchCommand = json['IgnoreBatchCommand'] ?? false;
     showBroadcast = json['ShowBroadcast'] ?? false;
     showSubneg = json['ShowSubneg'] ?? false;
     modEnabled = json['ModEnabled'] ?? false;
@@ -480,6 +483,7 @@ class WorldSettings {
         'Name': name,
         'ScriptPrefix': scriptPrefix,
         'CommandStackCharacter': commandStackCharacter,
+        'IgnoreBatchCommand': ignoreBatchCommand,
         'ShowBroadcast': showBroadcast,
         'ShowSubneg': showSubneg,
         'ModEnabled': modEnabled,

@@ -295,6 +295,17 @@ class GameUI {
                               style: textStyleGameUIFieldLabel,
                             ),
                             Text(worldSettings.modEnabled ? "是" : "否"),
+                            currentGame!.support(Features.batchcommand)
+                                ? const Text(
+                                    '跳过批量指令',
+                                    style: textStyleGameUIFieldLabel,
+                                  )
+                                : const Center(),
+                            currentGame!.support(Features.batchcommand)
+                                ? Text(worldSettings.ignoreBatchCommand
+                                    ? "是"
+                                    : "否")
+                                : const Center(),
                             currentGame!.support(Features.autoSave)
                                 ? const Text(
                                     '自动保存',

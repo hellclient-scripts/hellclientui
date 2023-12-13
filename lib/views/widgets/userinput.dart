@@ -267,6 +267,7 @@ class UserInputListWidgetState extends State<UserInputListWidget> {
   UserInputListWidgetState();
   TextEditingValue filter = const TextEditingValue();
   Map<String, bool> selected = {};
+  bool? allSelected;
   @override
   void initState() {
     for (final value in widget.list.values) {
@@ -293,6 +294,39 @@ class UserInputListWidgetState extends State<UserInputListWidget> {
             });
           },
         ))
+      ]));
+    }
+    if (widget.list.mutli) {
+      bool hasTrue = false;
+      bool hasFalse = false;
+      for (final row in data.items) {
+        if (selected[row.key] == true) {
+          hasTrue = true;
+        } else {
+          hasFalse = true;
+        }
+      }
+      if (hasTrue != hasFalse) {
+        allSelected = hasTrue;
+      } else {
+        allSelected = null;
+      }
+      children.add(createTableRow([
+        TCell(Checkbox(
+            tristate: true,
+            value: allSelected,
+            onChanged: (value) {
+              setState(() {
+                if (value == true) {
+                  for (final row in data.items) {
+                    selected[row.key] = true;
+                  }
+                  return;
+                }
+                selected.clear();
+              });
+            })),
+        const TCell(Center()),
       ]));
     }
     for (final row in data.items) {

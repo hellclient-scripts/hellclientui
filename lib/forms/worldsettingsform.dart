@@ -26,6 +26,7 @@ class WorldSettingsFormState extends State<WorldSettingsForm> {
   late bool showSubneg;
   late bool modEnabled;
   late bool autoSave;
+  late bool ignoreBatchCommand;
   message.CreateFail? fail;
 
   late StreamSubscription sub;
@@ -49,6 +50,7 @@ class WorldSettingsFormState extends State<WorldSettingsForm> {
     showSubneg = widget.settings.showSubneg;
     modEnabled = widget.settings.modEnabled;
     autoSave = widget.settings.autoSave;
+    ignoreBatchCommand = widget.settings.ignoreBatchCommand;
     sub = currentGame!.createFailStream.stream.listen((event) {
       final newfail = message.CreateFail.fromJson(jsonDecode(event));
       setState(() {
@@ -154,13 +156,25 @@ class WorldSettingsFormState extends State<WorldSettingsForm> {
               }),
           const Text('脚本模组(Mod)')
         ]),
+        currentGame!.support(Features.batchcommand)
+            ? Row(children: [
+                Checkbox(
+                    value: ignoreBatchCommand,
+                    onChanged: (value) {
+                      setState(() {
+                        ignoreBatchCommand = (value == true);
+                      });
+                    }),
+                const Text('跳过批量指令')
+              ])
+            : const Center(),
         currentGame!.support(Features.autoSave)
             ? Row(children: [
                 Checkbox(
-                    value: modEnabled,
+                    value: autoSave,
                     onChanged: (value) {
                       setState(() {
-                        modEnabled = (value == true);
+                        autoSave = (value == true);
                       });
                     }),
                 const Text('自动保存')
@@ -177,6 +191,7 @@ class WorldSettingsFormState extends State<WorldSettingsForm> {
             scriptPrefix: scriptPrefix.text,
             commandStackCharacter: commandStackCharacter.text,
             showBroadcast: showBroadcast,
+            ignoreBatchCommand: ignoreBatchCommand,
             showSubneg: showSubneg,
             modEnabled: modEnabled,
             autoSave: autoSave,
