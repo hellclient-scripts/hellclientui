@@ -10,7 +10,7 @@ import 'package:hellclientui/workers/notification.dart';
 import 'package:web_socket_channel/io.dart';
 import 'package:synchronized/synchronized.dart';
 
-const timerDuration = Duration(minutes: 1);
+const timerDuration = Duration(seconds: 10);
 
 class LongConnection {
   String host = "";
