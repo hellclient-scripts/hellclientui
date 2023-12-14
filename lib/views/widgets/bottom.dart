@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:hellclientui/models/message.dart';
+import 'package:hellclientui/models/rendersettings.dart';
 import '../../workers/game.dart';
 import '../../states/appstate.dart';
 import 'appui.dart';
@@ -106,9 +107,23 @@ class DisplayBottomState extends State<DisplayBottom> {
     focusNode.requestFocus();
     inputController.selection = TextSelection(
         baseOffset: 0, extentOffset: inputController.value.text.length);
-
+    late double height;
+    late double iconsize;
+    late double fontsize;
+    switch (currentAppState.renderSettings.commandDisplayMode) {
+      case CommandDisplayMode.larger:
+        height = 45;
+        iconsize = 24;
+        fontsize = currentAppState.renderSettings.fontSize * 1.5;
+        break;
+      default:
+        height = 30;
+        iconsize = 16;
+        fontsize = currentAppState.renderSettings.fontSize;
+        break;
+    }
     return SizedBox(
-      height: 30,
+      height: height,
       child: Row(
         children: [
           SizedBox(
@@ -130,17 +145,17 @@ class DisplayBottomState extends State<DisplayBottom> {
                       message: '助理',
                       child: SizedBox(
                         width: 54,
-                        height: 30,
+                        height: height,
                         child: Container(
                           decoration: BoxDecoration(
                               border: Border.all(
                                   color: const Color(0xffDCDFE6), width: 1)),
-                          child: const Icon(
+                          child: Icon(
                             Icons.person_2_outlined,
-                            color: Color(
+                            color: const Color(
                               0xff909399,
                             ),
-                            size: 16,
+                            size: iconsize,
                           ),
                         ),
                       )))),
@@ -177,7 +192,7 @@ class DisplayBottomState extends State<DisplayBottom> {
                         autofocus: true,
                         style: TextStyle(
                           color: Colors.white,
-                          fontSize: currentAppState.renderSettings.fontSize,
+                          fontSize: fontsize,
                         ),
                         decoration: (const InputDecoration(
                             isDense: true, // Added this
@@ -205,17 +220,17 @@ class DisplayBottomState extends State<DisplayBottom> {
                       message: '批量输入',
                       child: SizedBox(
                         width: 54,
-                        height: 30,
+                        height: height,
                         child: Container(
                           decoration: BoxDecoration(
                               border: Border.all(
                                   color: const Color(0xffDCDFE6), width: 1)),
-                          child: const Icon(
+                          child: Icon(
                             Icons.archive_outlined,
-                            color: Color(
+                            color: const Color(
                               0xff909399,
                             ),
-                            size: 16,
+                            size: iconsize,
                           ),
                         ),
                       )))),

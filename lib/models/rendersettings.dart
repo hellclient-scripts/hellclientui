@@ -22,7 +22,7 @@ class RenderConfig {
   Color? brightWhite;
   bool? disableHidpi;
   bool? forceDesktopMode;
-
+  int commandDisplayMode = CommandDisplayMode.normal;
   RenderConfig.fromJson(Map<String, dynamic> json)
       : color = json['color'] != null ? Color(json['color']) : null,
         background =
@@ -51,7 +51,9 @@ class RenderConfig {
         brightWhite =
             json['brightWhite'] != null ? Color(json['brightWhite']) : null,
         disableHidpi = json['disableHidpi'] ?? false,
-        forceDesktopMode = json['forceDesktopMode'] ?? false;
+        forceDesktopMode = json['forceDesktopMode'] ?? false,
+        commandDisplayMode =
+            json['commandDisplayMode'] ?? CommandDisplayMode.normal;
   Map<String, dynamic> toJson() => {
         'color': color?.value,
         'background': background?.value,
@@ -73,6 +75,7 @@ class RenderConfig {
         'brightWhite': brightWhite?.value,
         'forceDesktopMode': forceDesktopMode == true,
         'disableHidpi': disableHidpi == true,
+        'commandDisplayMode': commandDisplayMode,
       };
 
   RenderSettings getSettings() {
@@ -133,6 +136,7 @@ class RenderConfig {
     }
     settings.hidpi = disableHidpi != true;
     settings.forceDesktopMode = forceDesktopMode == true;
+    settings.commandDisplayMode = commandDisplayMode;
     return settings;
   }
 
@@ -192,6 +196,12 @@ class RenderSettings {
   var fontFamily = "monospace";
   bool hidpi = true;
   bool forceDesktopMode = false;
+  var commandDisplayMode = 0;
 }
 
 final defaultRenderSettings = RenderSettings();
+
+class CommandDisplayMode {
+  static const normal = 0;
+  static const larger = 1;
+}

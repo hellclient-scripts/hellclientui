@@ -398,6 +398,28 @@ class DisplaySettiingsFormState extends State<DisplaySettiingsForm> {
                         });
                       }),
                 ]),
+                DropdownButtonFormField(
+                  value: config.commandDisplayMode,
+                  decoration: const InputDecoration(
+                    label: Text("命令框样式"),
+                  ),
+                  items: const <DropdownMenuItem>[
+                    DropdownMenuItem(
+                      value: '',
+                      enabled: false,
+                      child: Text('<未选择>'),
+                    ),
+                    DropdownMenuItem(
+                        value: CommandDisplayMode.normal, child: Text('默认')),
+                    DropdownMenuItem(
+                        value: CommandDisplayMode.larger, child: Text('略大')),
+                  ],
+                  onChanged: (value) {
+                    setState(() {
+                      config.commandDisplayMode = value;
+                    });
+                  },
+                ),
                 Row(
                   children: [
                     Checkbox(
