@@ -62,7 +62,6 @@ class TriggerFormState extends State<TriggerForm> {
     omitFromOutput = widget.trigger.omitFromOutput;
     omitFromLog = widget.trigger.omitFromLog;
     variable.text = widget.trigger.variable;
-    sequence.text = '100';
     sub = currentGame!.createFailStream.stream.listen((event) {
       final newfail = message.CreateFail.fromJson(jsonDecode(event));
       setState(() {
@@ -206,6 +205,17 @@ class TriggerFormState extends State<TriggerForm> {
         ]),
         Row(children: [
           Checkbox(
+            value: regexp,
+            onChanged: (value) {
+              setState(() {
+                regexp = (value == true);
+              });
+            },
+          ),
+          const Text('正则表达式'),
+        ]),
+        Row(children: [
+          Checkbox(
             value: keepEvaluating,
             onChanged: (value) {
               setState(() {
@@ -308,11 +318,13 @@ class TriggerFormState extends State<TriggerForm> {
           trigger.match = match.text;
           trigger.name = name.text;
           trigger.send = send.text;
+          trigger.sendTo = sendTo;
           trigger.sequence = int.tryParse(sequence.text) ?? 0;
           trigger.script = script.text;
           trigger.group = group.text;
           trigger.linesToMatch = int.tryParse(linesToMatch.text) ?? 0;
           trigger.ignoreCase = ignoreCase;
+          trigger.enabled = enabled;
           trigger.regexp = regexp;
           trigger.keepEvaluating = keepEvaluating;
           trigger.repeat = repeat;
@@ -322,6 +334,8 @@ class TriggerFormState extends State<TriggerForm> {
           trigger.multiLine = multiLine;
           trigger.wildcardLowerCase = wildcardLowerCase;
           trigger.variable = variable.text;
+          trigger.omitFromLog = omitFromLog;
+          trigger.omitFromOutput = omitFromOutput;
           widget.onSubmit(trigger);
         }, onCancal: () {
           Navigator.of(context).pop();

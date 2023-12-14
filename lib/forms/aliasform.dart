@@ -54,7 +54,6 @@ class AliasFormState extends State<AliasForm> {
     omitFromLog = widget.alias.omitFromLog;
     omitFromCommandHistory = widget.alias.omitFromCommandHistory;
     variable.text = widget.alias.variable;
-    sequence.text = '100';
     sub = currentGame!.createFailStream.stream.listen((event) {
       final newfail = message.CreateFail.fromJson(jsonDecode(event));
       setState(() {
@@ -185,6 +184,17 @@ class AliasFormState extends State<AliasForm> {
         ]),
         Row(children: [
           Checkbox(
+            value: regexp,
+            onChanged: (value) {
+              setState(() {
+                regexp = (value == true);
+              });
+            },
+          ),
+          const Text('正则表达式'),
+        ]),
+        Row(children: [
+          Checkbox(
             value: keepEvaluating,
             onChanged: (value) {
               setState(() {
@@ -269,11 +279,14 @@ class AliasFormState extends State<AliasForm> {
           alias.script = script.text;
           alias.group = group.text;
           alias.ignoreCase = ignoreCase;
+          alias.enabled = enabled;
           alias.regexp = regexp;
           alias.keepEvaluating = keepEvaluating;
           alias.expandVariables = expandVariables;
           alias.oneShot = oneShot;
           alias.temporary = temporary;
+          alias.omitFromLog = omitFromLog;
+          alias.omitFromOutput = omitFromOutput;
           alias.omitFromCommandHistory = omitFromCommandHistory;
           alias.variable = variable.text;
           widget.onSubmit(alias);
