@@ -94,7 +94,7 @@ class CreateFormState extends State<CreateForm> {
                       });
                     },
                   ),
-                  const Text('保持长连接，手机端使用会耗费更多电量和流量。'),
+                  const Text('保持长连接，手机端不起效。'),
                 ]),
                 Row(children: [
                   Checkbox(
