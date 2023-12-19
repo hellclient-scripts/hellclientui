@@ -371,7 +371,9 @@ class UserInputListWidgetState extends State<UserInputListWidget> {
           onConfirm: () {
             final List<String> data = [];
             for (var item in selected.keys) {
-              data.add(item);
+              if (selected[item] == true) {
+                data.add(item);
+              }
             }
             currentGame!
                 .handleUserInputCallback(widget.input, 0, jsonEncode(data));
