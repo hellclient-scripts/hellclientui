@@ -194,6 +194,9 @@ class RenderSettings {
   var bccolor = const Color.fromARGB(255, 127, 127, 127);
   var triggersColor = const Color.fromARGB(255, 0, 255, 255);
   var fontFamily = "monospace";
+  Color searchForeground = const Color(0xFF333333);
+  Color searchBackground = const Color(0xFFF6DBDB);
+  Color searchCurrentBackground = const Color(0xFFFFF3CF);
   bool hidpi = true;
   bool forceDesktopMode = false;
   var commandDisplayMode = 0;

@@ -44,11 +44,12 @@ class WordStyle {
   bool underlined = false;
   bool blinking = false;
   double fontSize = 0;
-  TextStyle toTextStyle(RenderSettings settings) {
+  TextStyle toTextStyle(RenderSettings settings,
+      {Color? forceColor, Color? forceBackground}) {
     var style = TextStyle(
       fontFamily: settings.fontFamily,
-      color: color,
-      backgroundColor: background,
+      color: forceColor ?? color,
+      backgroundColor: forceBackground ?? background,
       fontSize: fontSize,
       height: settings.lineheight / fontSize,
       fontWeight: bold ? FontWeight.bold : FontWeight.normal,

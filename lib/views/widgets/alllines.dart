@@ -9,6 +9,7 @@ import 'dart:async';
 import 'package:flutter/services.dart';
 import 'package:toastification/toastification.dart';
 import 'appui.dart';
+import 'dart:async' as async;
 
 Future<bool?> showAllLines(BuildContext context) async {
   if (!context.mounted) {
@@ -47,6 +48,28 @@ class AllLinesState extends State<AllLines> {
   // initialized to FocusNode()
   final focusNode = FocusNode();
   late StreamSubscription subCommand;
+  final search = TextEditingController();
+  late List<InlineSpan> linedata = [];
+  int current = 0;
+  int found = 0;
+  bool scrollCurrent = false;
+  async.Timer? _debounce;
+  final ScrollController scrollController = ScrollController();
+  final ScrollController scrollController2 = ScrollController();
+
+  void _onSearchChange(String value) {
+    if (_debounce?.isActive ?? false) _debounce!.cancel();
+    _debounce = async.Timer(const Duration(milliseconds: 500), () {
+      _onSearch(value);
+    });
+  }
+
+  void _onSearch(String value) {
+    setState(() {
+      current = 0;
+    });
+  }
+
   @override
   void initState() {
     lines = currentGame!.alllines;
@@ -62,6 +85,7 @@ class AllLinesState extends State<AllLines> {
   @override
   void dispose() {
     subCommand.cancel();
+    _debounce?.cancel();
     super.dispose();
   }
 
@@ -71,9 +95,12 @@ class AllLinesState extends State<AllLines> {
       return const Center(child: Text('Loading...'));
     }
     List<Widget> list = [];
+    found = 0;
+    GlobalKey? currentkey;
     final renderer = currentGame!.output.renderer;
     if (lines != null) {
       for (final line in lines!.lines) {
+        bool isCurrentLine = false;
         List<InlineSpan> linedata = [];
         var plain = "";
         final linestyle = renderer.getLineStyle(line);
@@ -86,11 +113,48 @@ class AllLinesState extends State<AllLines> {
         }
         for (final word in line.words) {
           plain += word.text;
-          final style = renderer.getWordStyle(
-              word, linestyle.color, currentAppState.renderSettings.background);
-          linedata.add(TextSpan(
-              text: word.text,
-              style: style.toTextStyle(currentAppState.renderSettings)));
+          var text = word.text;
+          late TextStyle style;
+          if (search.text.isNotEmpty) {
+            var pos = text.indexOf(search.text);
+            while (pos > -1) {
+              found++;
+              if (pos > 0) {
+                style = renderer
+                    .getWordStyle(word, linestyle.color,
+                        currentAppState.renderSettings.background)
+                    .toTextStyle(currentAppState.renderSettings);
+                linedata
+                    .add(TextSpan(text: text.substring(0, pos), style: style));
+              }
+              style = renderer
+                  .getWordStyle(word, linestyle.color,
+                      currentAppState.renderSettings.background)
+                  .toTextStyle(currentAppState.renderSettings,
+                      forceColor:
+                          currentAppState.renderSettings.searchForeground,
+                      forceBackground: current == found
+                          ? currentAppState
+                              .renderSettings.searchCurrentBackground
+                          : currentAppState.renderSettings.searchBackground);
+              if (current == found) {
+                currentkey = GlobalKey();
+                isCurrentLine = true;
+              }
+              linedata.add(TextSpan(
+                  text: text.substring(pos, pos + search.text.length),
+                  style: style));
+              text = text.substring(pos + search.text.length);
+              pos = text.indexOf(search.text);
+            }
+          }
+          if (text.isNotEmpty) {
+            style = renderer
+                .getWordStyle(word, linestyle.color,
+                    currentAppState.renderSettings.background)
+                .toTextStyle(currentAppState.renderSettings);
+            linedata.add(TextSpan(text: text, style: style));
+          }
         }
         if (line.triggers.isNotEmpty) {
           linedata.add(WidgetSpan(
@@ -112,41 +176,55 @@ class AllLinesState extends State<AllLines> {
             tooltip += '$trigger\n';
           }
         }
-        children.add(Tooltip(
-            message: tooltip,
-            child: SizedBox(
-                width: renderer.renderSettings.width,
-                child: GestureDetector(
-                    onDoubleTap: () async {
-                      String summary = plain.trimLeft();
+        children.add(Row(children: [
+          Center(
+            key: isCurrentLine ? currentkey : null,
+          ),
+          Tooltip(
+              message: tooltip,
+              child: SizedBox(
+                  width: renderer.renderSettings.width,
+                  child: GestureDetector(
+                      onDoubleTap: () async {
+                        String summary = plain.trimLeft();
 
-                      if (summary.length > 8) {
-                        summary = '${summary.substring(0, 8)}...';
-                      }
+                        if (summary.length > 8) {
+                          summary = '${summary.substring(0, 8)}...';
+                        }
 
-                      await Clipboard.setData(ClipboardData(text: plain));
-                      if (context.mounted) {
-                        toastification.show(
-                            context: context,
-                            autoCloseDuration: const Duration(seconds: 3),
-                            title: '双击复制成功',
-                            type: ToastificationType.success,
-                            style: ToastificationStyle.flat,
-                            showProgressBar: false,
-                            description: '文字“$summary”已经复制到剪贴板。');
-                      }
-                    },
-                    child: Text.rich(
-                      TextSpan(children: linedata),
-                      softWrap: true,
-                    )))));
+                        await Clipboard.setData(ClipboardData(text: plain));
+                        if (context.mounted) {
+                          toastification.show(
+                              context: context,
+                              autoCloseDuration: const Duration(seconds: 3),
+                              title: '双击复制成功',
+                              type: ToastificationType.success,
+                              style: ToastificationStyle.flat,
+                              showProgressBar: false,
+                              description: '文字“$summary”已经复制到剪贴板。');
+                        }
+                      },
+                      child: Text.rich(
+                        TextSpan(children: linedata),
+                        softWrap: true,
+                      ))))
+        ]));
 
         list.add(Flex(direction: Axis.horizontal, children: children));
       }
     }
-
-    final ScrollController scrollController = ScrollController();
-    final ScrollController scrollController2 = ScrollController();
+    if (current > 0 && scrollCurrent && currentkey != null) {
+      scrollCurrent = false;
+      WidgetsBinding.instance.addPostFrameCallback(
+        (timeStamp) {
+          if (currentkey!.currentContext != null &&
+              currentkey.currentContext!.mounted) {
+            Scrollable.ensureVisible(currentkey.currentContext!,
+                alignment: 0.5);
+          }
+        },
+      );
+    }
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -157,6 +235,48 @@ class AllLinesState extends State<AllLines> {
             children: [H1('历史输出'), Summary('双击复制一行文字')],
           ),
         ),
+        Row(children: [
+          Expanded(
+              child: TextFormField(
+            controller: search,
+            onChanged: (value) {
+              _onSearchChange(value);
+            },
+            decoration: const InputDecoration(
+              label: Text("搜索"),
+            ),
+          )),
+          search.text.isEmpty ? const Center() : Text('$current / $found'),
+          IconButton(
+              onPressed: () {
+                if (search.text.isNotEmpty && found > 0) {
+                  setState(() {
+                    current--;
+                    scrollCurrent = true;
+                    if (current < 1) {
+                      current = found;
+                    }
+                  });
+                }
+              },
+              tooltip: '上一个',
+              icon: const Icon(Icons.arrow_drop_up)),
+          IconButton(
+              onPressed: () {
+                if (search.text.isNotEmpty && found > 0) {
+                  setState(() {
+                    current++;
+                    scrollCurrent = true;
+                    if (current > found) {
+                      current = 1;
+                      scrollCurrent = true;
+                    }
+                  });
+                }
+              },
+              tooltip: '下一个',
+              icon: const Icon(Icons.arrow_drop_down))
+        ]),
         Expanded(
             child: Container(
                 decoration: BoxDecoration(
