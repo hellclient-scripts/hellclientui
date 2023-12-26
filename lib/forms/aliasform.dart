@@ -43,6 +43,7 @@ class AliasFormState extends State<AliasForm> {
     sequence.text = widget.alias.sequence.toString();
     script.text = widget.alias.script;
     group.text = widget.alias.group;
+    send.text = widget.alias.send;
     ignoreCase = widget.alias.ignoreCase;
     enabled = widget.alias.enabled;
     regexp = widget.alias.regexp;
@@ -275,6 +276,7 @@ class AliasFormState extends State<AliasForm> {
           alias.match = match.text;
           alias.name = name.text;
           alias.send = send.text;
+          alias.sendTo = sendTo;
           alias.sequence = int.tryParse(sequence.text) ?? 0;
           alias.script = script.text;
           alias.group = group.text;

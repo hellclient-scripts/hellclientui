@@ -55,10 +55,15 @@ class LongConnection {
       if (auth.isNotEmpty) {
         headers['Authorization'] = 'Basic ${base64.encode(utf8.encode(auth))}';
       }
-      final wschannel = IOWebSocketChannel.connect(serveruri, headers: headers);
-      await wschannel.ready;
-      channel = wschannel;
-      _listen();
+      try {
+        final wschannel =
+            IOWebSocketChannel.connect(serveruri, headers: headers);
+        await wschannel.ready;
+        channel = wschannel;
+        _listen();
+      } catch (e) {
+        debugPrint(e.toString());
+      }
     }
   }
 

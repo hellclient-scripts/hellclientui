@@ -21,13 +21,12 @@ class ParamsViewState extends State<ParamsView> {
         child: Stack(children: [
       FullScreenDialog(
         title: currentGame!.showAllParams ? '变量设置-全部变量' : '变量设置-可设置变量',
+        withScroll: false,
         child: Column(
+          mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            body,
-            const SizedBox(
-              height: 150,
-            )
+            Flexible(child: body),
           ],
         ),
       ),
@@ -78,6 +77,7 @@ class RequiredParams extends StatefulWidget {
 
 class RequiredParamsState extends State<RequiredParams> {
   final TextEditingController filter = TextEditingController();
+  final _scrollconrtoller = ScrollController();
   @override
   Widget build(BuildContext context) {
     final List<TableRow> children = [
@@ -160,10 +160,23 @@ class RequiredParamsState extends State<RequiredParams> {
                       setState(() {});
                     }))),
       ]),
-      Table(
-        columnWidths: const {0: FixedColumnWidth(180), 3: FixedColumnWidth(80)},
-        children: children,
-      )
+      Flexible(
+          child: SingleChildScrollView(
+              controller: _scrollconrtoller,
+              child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Table(
+                      columnWidths: const {
+                        0: FixedColumnWidth(180),
+                        3: FixedColumnWidth(80)
+                      },
+                      children: children,
+                    ),
+                    const SizedBox(
+                      height: 150,
+                    )
+                  ]))),
     ]);
   }
 }
@@ -177,6 +190,7 @@ class AllParams extends StatefulWidget {
 
 class AllParamsState extends State<AllParams> {
   final TextEditingController filter = TextEditingController();
+  final _scrollconrtoller = ScrollController();
   @override
   Widget build(BuildContext context) {
     final List<TableRow> children = [
@@ -258,13 +272,23 @@ class AllParamsState extends State<AllParams> {
                       setState(() {});
                     }))),
       ]),
-      Table(
-        columnWidths: const {
-          0: FixedColumnWidth(180),
-          2: FixedColumnWidth(180)
-        },
-        children: children,
-      )
+      Flexible(
+          child: SingleChildScrollView(
+              controller: _scrollconrtoller,
+              child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Table(
+                      columnWidths: const {
+                        0: FixedColumnWidth(180),
+                        2: FixedColumnWidth(180)
+                      },
+                      children: children,
+                    ),
+                    const SizedBox(
+                      height: 150,
+                    )
+                  ])))
     ]);
   }
 }
