@@ -5,6 +5,7 @@ import 'userinput.dart';
 import '../../forms/triggerform.dart';
 import 'package:hellclientui/workers/game.dart';
 import '../../states/appstate.dart';
+import 'dart:async';
 
 showCreateTrigger(BuildContext context, bool byUser) async {
   showDialog(
@@ -48,8 +49,7 @@ showUpdateTrigger(
 }
 
 class Triggers extends StatefulWidget {
-  const Triggers({super.key, required this.triggers, required this.byUser});
-  final message.Triggers triggers;
+  const Triggers({super.key, required this.byUser});
   final bool byUser;
   @override
   State<StatefulWidget> createState() => TriggersState();
@@ -57,9 +57,33 @@ class Triggers extends StatefulWidget {
 
 class TriggersState extends State<Triggers> {
   final TextEditingController filter = TextEditingController();
+  final _scrollconrtoller = ScrollController();
+
+  message.Triggers? triggers;
+  late StreamSubscription subCommand;
+  @override
+  void initState() {
+    super.initState();
+    triggers = currentGame!.triggers;
+    subCommand = currentGame!.dataUpdateStream.stream.listen((event) {
+      if (event is message.Triggers?) {
+        triggers = event;
+        setState(() {});
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    subCommand.cancel();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
+    if (triggers == null) {
+      return const Center(child: Text('正在加载中……'));
+    }
     final List<TableRow> children = [
       createTableRow([
         const TableHead(
@@ -74,7 +98,7 @@ class TriggersState extends State<Triggers> {
         const TableHead('操作', textAlign: TextAlign.end),
       ])
     ];
-    for (final trigger in widget.triggers.list) {
+    for (final trigger in triggers!.list) {
       if (filter.text.isEmpty ||
           trigger.match.contains(filter.text) ||
           trigger.group.contains(filter.text) ||
@@ -134,6 +158,7 @@ class TriggersState extends State<Triggers> {
     return Dialog.fullscreen(
         child: Stack(children: [
       FullScreenDialog(
+          withScroll: false,
           title: widget.byUser ? '用户触发器' : '脚本触发器',
           child:
               Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
@@ -150,16 +175,23 @@ class TriggersState extends State<Triggers> {
                             setState(() {});
                           }))),
             ]),
-            Table(
-              columnWidths: const {
-                0: FixedColumnWidth(180),
-                6: FixedColumnWidth(180)
-              },
-              children: children,
-            ),
-            const SizedBox(
-              height: 150,
-            )
+            Flexible(
+                child: SingleChildScrollView(
+                    controller: _scrollconrtoller,
+                    child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Table(
+                            columnWidths: const {
+                              0: FixedColumnWidth(180),
+                              6: FixedColumnWidth(180)
+                            },
+                            children: children,
+                          ),
+                          const SizedBox(
+                            height: 150,
+                          )
+                        ]))),
           ])),
       Positioned(
           right: 30,

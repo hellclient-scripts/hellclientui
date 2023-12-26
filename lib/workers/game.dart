@@ -43,6 +43,10 @@ class Game {
   UserInput? datagrid;
   Lines? alllines;
   ParamsInfo? paramsInfos;
+  Triggers? triggers;
+  Aliases? aliases;
+  Timers? timers;
+
   var hudLock = Lock();
   List<Line> hudContent = [];
   ClientInfos clientinfos = ClientInfos();

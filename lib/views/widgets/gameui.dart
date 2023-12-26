@@ -59,66 +59,63 @@ class GameUI {
         });
   }
 
-  static showScriptTimers(BuildContext context, message.Timers timers) {
+  static showScriptTimers(BuildContext context) {
     AppUI.hideUI(context);
     showDialog<bool?>(
         context: currentAppState.navigatorKey.currentState!.context,
         builder: (context) {
-          return Timers(
-            timers: timers,
+          return const Timers(
             byUser: false,
           );
         });
   }
 
-  static showUserTimers(BuildContext context, message.Timers timers) {
+  static showUserTimers(BuildContext context) {
     AppUI.hideUI(context);
     showDialog<bool?>(
         context: currentAppState.navigatorKey.currentState!.context,
         builder: (context) {
-          return Timers(timers: timers, byUser: true);
+          return const Timers(byUser: true);
         });
   }
 
-  static showScriptTriggers(BuildContext context, message.Triggers triggers) {
+  static showScriptTriggers(BuildContext context) {
     AppUI.hideUI(context);
     showDialog<bool?>(
         context: currentAppState.navigatorKey.currentState!.context,
         builder: (context) {
-          return Triggers(
-            triggers: triggers,
+          return const Triggers(
             byUser: false,
           );
         });
   }
 
-  static showUserTriggers(BuildContext context, message.Triggers triggers) {
+  static showUserTriggers(BuildContext context) {
     AppUI.hideUI(context);
     showDialog<bool?>(
         context: currentAppState.navigatorKey.currentState!.context,
         builder: (context) {
-          return Triggers(triggers: triggers, byUser: true);
+          return const Triggers(byUser: true);
         });
   }
 
-  static showScriptAliases(BuildContext context, message.Aliases aliases) {
+  static showScriptAliases(BuildContext context) {
     AppUI.hideUI(context);
     showDialog<bool?>(
         context: currentAppState.navigatorKey.currentState!.context,
         builder: (context) {
-          return Aliases(
-            aliases: aliases,
+          return const Aliases(
             byUser: false,
           );
         });
   }
 
-  static showUserAliases(BuildContext context, message.Aliases aliases) {
+  static showUserAliases(BuildContext context) {
     AppUI.hideUI(context);
     showDialog<bool?>(
         context: currentAppState.navigatorKey.currentState!.context,
         builder: (context) {
-          return Aliases(aliases: aliases, byUser: true);
+          return const Aliases(byUser: true);
         });
   }
 

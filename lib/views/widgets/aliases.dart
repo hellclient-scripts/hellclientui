@@ -5,6 +5,7 @@ import 'userinput.dart';
 import '../../forms/aliasform.dart';
 import 'package:hellclientui/workers/game.dart';
 import '../../states/appstate.dart';
+import 'dart:async';
 
 showCreateAlias(BuildContext context, bool byUser) async {
   showDialog(
@@ -47,8 +48,7 @@ showUpdateAlias(BuildContext context, message.Alias alias, bool byUser) async {
 }
 
 class Aliases extends StatefulWidget {
-  const Aliases({super.key, required this.aliases, required this.byUser});
-  final message.Aliases aliases;
+  const Aliases({super.key, required this.byUser});
   final bool byUser;
   @override
   State<StatefulWidget> createState() => AliasesState();
@@ -56,9 +56,34 @@ class Aliases extends StatefulWidget {
 
 class AliasesState extends State<Aliases> {
   final TextEditingController filter = TextEditingController();
+  final _scrollconrtoller = ScrollController();
+  late StreamSubscription subCommand;
+  message.Aliases? aliases;
+  @override
+  void initState() {
+    super.initState();
+    aliases = currentGame!.aliases;
+    subCommand = currentGame!.dataUpdateStream.stream.listen((event) {
+      if (event is message.Aliases?) {
+        aliases = event;
+        setState(() {});
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    subCommand.cancel();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
+    if (aliases == null) {
+      return const Center(
+        child: Text('正在加载中……'),
+      );
+    }
     final List<TableRow> children = [
       createTableRow([
         const TableHead(
@@ -73,7 +98,7 @@ class AliasesState extends State<Aliases> {
         const TableHead('操作', textAlign: TextAlign.end),
       ])
     ];
-    for (final alias in widget.aliases.list) {
+    for (final alias in aliases!.list) {
       if (filter.text.isEmpty ||
           alias.match.contains(filter.text) ||
           alias.group.contains(filter.text) ||
@@ -133,6 +158,7 @@ class AliasesState extends State<Aliases> {
     return Dialog.fullscreen(
         child: Stack(children: [
       FullScreenDialog(
+          withScroll: false,
           title: widget.byUser ? '用户别名' : '脚本别名',
           child:
               Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
@@ -149,16 +175,23 @@ class AliasesState extends State<Aliases> {
                             setState(() {});
                           }))),
             ]),
-            Table(
-              columnWidths: const {
-                0: FixedColumnWidth(180),
-                6: FixedColumnWidth(180)
-              },
-              children: children,
-            ),
-            const SizedBox(
-              height: 150,
-            )
+            Flexible(
+                child: SingleChildScrollView(
+                    controller: _scrollconrtoller,
+                    child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Table(
+                            columnWidths: const {
+                              0: FixedColumnWidth(180),
+                              6: FixedColumnWidth(180)
+                            },
+                            children: children,
+                          ),
+                          const SizedBox(
+                            height: 150,
+                          )
+                        ])))
           ])),
       Positioned(
           right: 30,

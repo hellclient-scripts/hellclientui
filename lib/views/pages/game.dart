@@ -226,32 +226,39 @@ class GameState extends State<Game> {
           case 'scripttriggers':
             final dynamic jsondata = json.decode(event.data);
             final triggers = message.Triggers.fromJson(jsondata);
-            GameUI.showScriptTriggers(context, triggers);
+            gameengine.currentGame!.triggers = triggers;
+            gameengine.currentGame!.dataUpdateStream.add(triggers);
             break;
           case 'usertriggers':
             final dynamic jsondata = json.decode(event.data);
             final triggers = message.Triggers.fromJson(jsondata);
-            GameUI.showUserTriggers(context, triggers);
+            gameengine.currentGame!.triggers = triggers;
+            gameengine.currentGame!.dataUpdateStream.add(triggers);
             break;
           case 'scriptaliases':
             final dynamic jsondata = json.decode(event.data);
             final aliases = message.Aliases.fromJson(jsondata);
-            GameUI.showScriptAliases(context, aliases);
+            gameengine.currentGame!.aliases = aliases;
+            gameengine.currentGame!.dataUpdateStream.add(aliases);
             break;
           case 'useraliases':
             final dynamic jsondata = json.decode(event.data);
             final aliases = message.Aliases.fromJson(jsondata);
-            GameUI.showUserAliases(context, aliases);
+            gameengine.currentGame!.aliases = aliases;
+            gameengine.currentGame!.dataUpdateStream.add(aliases);
+
             break;
           case 'scripttimers':
             final dynamic jsondata = json.decode(event.data);
             final timers = message.Timers.fromJson(jsondata);
-            GameUI.showScriptTimers(context, timers);
+            gameengine.currentGame!.timers = timers;
+            gameengine.currentGame!.dataUpdateStream.add(timers);
             break;
           case 'usertimers':
             final dynamic jsondata = json.decode(event.data);
             final timers = message.Timers.fromJson(jsondata);
-            GameUI.showUserTimers(context, timers);
+            gameengine.currentGame!.timers = timers;
+            gameengine.currentGame!.dataUpdateStream.add(timers);
             break;
           case 'batchcommandscripts':
             final dynamic jsondata = json.decode(event.data);

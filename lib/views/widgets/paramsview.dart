@@ -233,6 +233,10 @@ class AllParamsState extends State<AllParams> {
 
   @override
   Widget build(BuildContext context) {
+    if (paramsInfo == null) {
+      return const Center(child: Text('加载中……'));
+    }
+
     final List<TableRow> children = [
       createTableRow([
         const TableHead(

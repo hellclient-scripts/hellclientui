@@ -5,6 +5,7 @@ import 'userinput.dart';
 import '../../forms/timerform.dart';
 import 'package:hellclientui/workers/game.dart';
 import '../../states/appstate.dart';
+import 'dart:async';
 
 showCreateTimer(BuildContext context, bool byUser) async {
   showDialog(
@@ -47,8 +48,7 @@ showUpdateTimer(BuildContext context, message.Timer timer, bool byUser) async {
 }
 
 class Timers extends StatefulWidget {
-  const Timers({super.key, required this.timers, required this.byUser});
-  final message.Timers timers;
+  const Timers({super.key, required this.byUser});
   final bool byUser;
   @override
   State<StatefulWidget> createState() => TimersState();
@@ -56,9 +56,32 @@ class Timers extends StatefulWidget {
 
 class TimersState extends State<Timers> {
   final TextEditingController filter = TextEditingController();
+  final _scrollconrtoller = ScrollController();
+  late StreamSubscription subCommand;
+  message.Timers? timers;
+  @override
+  void initState() {
+    super.initState();
+    timers = currentGame!.timers;
+    subCommand = currentGame!.dataUpdateStream.stream.listen((event) {
+      if (event is message.Timers?) {
+        timers = event;
+        setState(() {});
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    subCommand.cancel();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
+    if (timers == null) {
+      return const Center(child: Text('正在加载中……'));
+    }
     final List<TableRow> children = [
       createTableRow([
         const TableHead('时间', textAlign: TextAlign.start),
@@ -71,7 +94,7 @@ class TimersState extends State<Timers> {
         const TableHead('操作', textAlign: TextAlign.end),
       ])
     ];
-    for (final timer in widget.timers.list) {
+    for (final timer in timers!.list) {
       if (filter.text.isEmpty ||
           timer.group.contains(filter.text) ||
           timer.send.contains(filter.text) ||
@@ -131,6 +154,7 @@ class TimersState extends State<Timers> {
     return Dialog.fullscreen(
         child: Stack(children: [
       FullScreenDialog(
+          withScroll: false,
           title: widget.byUser ? '用户计时器' : '脚本计时器',
           child:
               Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
@@ -147,16 +171,23 @@ class TimersState extends State<Timers> {
                             setState(() {});
                           }))),
             ]),
-            Table(
-              columnWidths: const {
-                0: FixedColumnWidth(180),
-                7: FixedColumnWidth(180)
-              },
-              children: children,
-            ),
-            const SizedBox(
-              height: 150,
-            )
+            Flexible(
+                child: SingleChildScrollView(
+                    controller: _scrollconrtoller,
+                    child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Table(
+                            columnWidths: const {
+                              0: FixedColumnWidth(180),
+                              7: FixedColumnWidth(180)
+                            },
+                            children: children,
+                          ),
+                          const SizedBox(
+                            height: 150,
+                          )
+                        ])))
           ])),
       Positioned(
           right: 30,
