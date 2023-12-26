@@ -73,7 +73,7 @@ class AllLinesState extends State<AllLines> {
   @override
   void initState() {
     lines = currentGame!.alllines;
-    subCommand = currentGame!.alllinesUpdateStream.stream.listen((event) {
+    subCommand = currentGame!.dataUpdateStream.stream.listen((event) {
       if (event is Lines?) {
         lines = event;
         setState(() {});

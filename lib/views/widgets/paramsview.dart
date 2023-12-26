@@ -3,10 +3,10 @@ import '../../models/message.dart' as message;
 import 'appui.dart';
 import 'userinput.dart';
 import 'package:hellclientui/workers/game.dart';
+import 'dart:async';
 
 class ParamsView extends StatefulWidget {
-  const ParamsView({super.key, required this.info});
-  final message.ParamsInfo info;
+  const ParamsView({super.key});
   @override
   State<ParamsView> createState() => ParamsViewState();
 }
@@ -14,9 +14,8 @@ class ParamsView extends StatefulWidget {
 class ParamsViewState extends State<ParamsView> {
   @override
   Widget build(BuildContext context) {
-    final Widget body = currentGame!.showAllParams
-        ? AllParams(info: widget.info)
-        : RequiredParams(info: widget.info);
+    final Widget body =
+        currentGame!.showAllParams ? AllParams() : RequiredParams();
     return Dialog.fullscreen(
         child: Stack(children: [
       FullScreenDialog(
@@ -69,8 +68,7 @@ class ParamsViewState extends State<ParamsView> {
 }
 
 class RequiredParams extends StatefulWidget {
-  const RequiredParams({super.key, required this.info});
-  final message.ParamsInfo info;
+  const RequiredParams({super.key});
   @override
   State<RequiredParams> createState() => RequiredParamsState();
 }
@@ -78,8 +76,31 @@ class RequiredParams extends StatefulWidget {
 class RequiredParamsState extends State<RequiredParams> {
   final TextEditingController filter = TextEditingController();
   final _scrollconrtoller = ScrollController();
+  message.ParamsInfo? paramsInfo;
+  late StreamSubscription subCommand;
+  @override
+  void initState() {
+    super.initState();
+    paramsInfo = currentGame!.paramsInfos;
+    subCommand = currentGame!.dataUpdateStream.stream.listen((event) {
+      if (event is message.ParamsInfo?) {
+        paramsInfo = event;
+        setState(() {});
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    subCommand.cancel();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
+    if (paramsInfo == null) {
+      return const Center(child: Text('加载中……'));
+    }
     final List<TableRow> children = [
       createTableRow([
         const TableHead(
@@ -91,15 +112,15 @@ class RequiredParamsState extends State<RequiredParams> {
         const TableHead('操作', textAlign: TextAlign.end),
       ])
     ];
-    for (final info in widget.info.requiredParams) {
+    for (final info in paramsInfo!.requiredParams) {
       if (filter.text.isEmpty ||
-          widget.info.params[info.name] != null &&
-              widget.info.params[info.name]!.contains(filter.text) ||
+          paramsInfo!.params[info.name] != null &&
+              paramsInfo!.params[info.name]!.contains(filter.text) ||
           info.name.contains(filter.text) ||
           info.desc.contains(filter.text)) {
         void update() async {
           final result = await AppUI.promptTextArea(context, '设置变量${info.name}',
-              info.desc, info.intro, widget.info.params[info.name] ?? '');
+              info.desc, info.intro, paramsInfo!.params[info.name] ?? '');
           if (result != null) {
             currentGame!.handleCmd(
                 'updateParam', [currentGame!.current, info.name, result]);
@@ -108,7 +129,7 @@ class RequiredParamsState extends State<RequiredParams> {
 
         children.add(createTableRow([
           TCell(TextButton(onPressed: update, child: Text(info.name))),
-          TCell(Text(widget.info.params[info.name] ?? '')),
+          TCell(Text(paramsInfo!.params[info.name] ?? '')),
           TCell(Text.rich(TextSpan(children: [
             TextSpan(text: info.desc),
             WidgetSpan(
@@ -119,7 +140,7 @@ class RequiredParamsState extends State<RequiredParams> {
                     Icons.chat,
                     size: 12,
                   ),
-                  color: ((widget.info.paramComments[info.name] ?? '') != '')
+                  color: ((paramsInfo!.paramComments[info.name] ?? '') != '')
                       ? const Color(0xff67C23A)
                       : null,
                   onPressed: () async {
@@ -128,7 +149,7 @@ class RequiredParamsState extends State<RequiredParams> {
                         '变量备注',
                         '可用于放被用变量值',
                         '',
-                        widget.info.paramComments[info.name] ?? '');
+                        paramsInfo!.paramComments[info.name] ?? '');
                     if (result != null) {
                       currentGame!.handleCmd('updateParamComment',
                           [currentGame!.current, info.name, result]);
@@ -182,8 +203,7 @@ class RequiredParamsState extends State<RequiredParams> {
 }
 
 class AllParams extends StatefulWidget {
-  const AllParams({super.key, required this.info});
-  final message.ParamsInfo info;
+  const AllParams({super.key});
   @override
   State<AllParams> createState() => AllParamsState();
 }
@@ -191,6 +211,26 @@ class AllParams extends StatefulWidget {
 class AllParamsState extends State<AllParams> {
   final TextEditingController filter = TextEditingController();
   final _scrollconrtoller = ScrollController();
+  message.ParamsInfo? paramsInfo;
+  late StreamSubscription subCommand;
+  @override
+  void initState() {
+    super.initState();
+    paramsInfo = currentGame!.paramsInfos;
+    subCommand = currentGame!.dataUpdateStream.stream.listen((event) {
+      if (event is message.ParamsInfo?) {
+        paramsInfo = event;
+        setState(() {});
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    subCommand.cancel();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     final List<TableRow> children = [
@@ -203,13 +243,13 @@ class AllParamsState extends State<AllParams> {
         const TableHead('操作', textAlign: TextAlign.end),
       ])
     ];
-    for (final key in widget.info.params.keys) {
+    for (final key in paramsInfo!.params.keys) {
       if (filter.text.isEmpty ||
           key.contains(filter.text) ||
-          widget.info.params[key]!.contains(filter.text)) {
+          paramsInfo!.params[key]!.contains(filter.text)) {
         void update() async {
           final result = await AppUI.promptTextArea(
-              context, '设置变量$key', '', '', widget.info.params[key] ?? '');
+              context, '设置变量$key', '', '', paramsInfo!.params[key] ?? '');
           if (result != null) {
             currentGame!
                 .handleCmd('updateParam', [currentGame!.current, key, result]);
@@ -218,7 +258,7 @@ class AllParamsState extends State<AllParams> {
 
         children.add(createTableRow([
           TCell(TextButton(onPressed: update, child: Text(key))),
-          TCell(Text(widget.info.params[key] ?? '')),
+          TCell(Text(paramsInfo!.params[key] ?? '')),
           TCell(
             Row(
               crossAxisAlignment: CrossAxisAlignment.center,

@@ -5,6 +5,7 @@ import 'package:hellclientui/workers/game.dart';
 import 'dart:async';
 import 'appui.dart';
 import 'alllines.dart';
+import 'gameui.dart';
 import '../../forms/passwordform.dart';
 
 Future<bool?> showUpdatePassowrd(BuildContext context) async {
@@ -184,6 +185,7 @@ class GameTopState extends State<GameTop> {
     ));
     children.add(AppUI.buildIconButton(context, const Icon(Icons.bar_chart),
         () async {
+      GameUI.showParamsInfo(context);
       currentGame!.handleCmd("params", currentGame!.current);
     }, '变量', const Color(0xff606266), Colors.white,
         borderColor: const Color(0xffDCDFE6)));

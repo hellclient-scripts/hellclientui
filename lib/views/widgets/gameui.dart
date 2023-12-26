@@ -122,12 +122,12 @@ class GameUI {
         });
   }
 
-  static showParamsInfo(BuildContext context, message.ParamsInfo paramsInfo) {
+  static showParamsInfo(BuildContext context) {
     AppUI.hideUI(context);
     showDialog<bool?>(
         context: currentAppState.navigatorKey.currentState!.context,
         builder: (context) {
-          return ParamsView(info: paramsInfo);
+          return const ParamsView();
         });
   }
 

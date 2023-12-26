@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import 'package:hellclientui/models/feature.dart';
+import 'package:hellclientui/views/widgets/appui.dart';
+import 'package:hellclientui/views/widgets/gameui.dart';
 import '../models/rendersettings.dart';
 import '../states/appstate.dart';
 
@@ -40,6 +42,7 @@ class Game {
   int switchStatus = 0;
   UserInput? datagrid;
   Lines? alllines;
+  ParamsInfo? paramsInfos;
   var hudLock = Lock();
   List<Line> hudContent = [];
   ClientInfos clientinfos = ClientInfos();
@@ -53,7 +56,7 @@ class Game {
   final disconnectStream = StreamController.broadcast(sync: true);
   final createFailStream = StreamController.broadcast();
   final datagridUpdateStream = StreamController.broadcast();
-  final alllinesUpdateStream = StreamController.broadcast();
+  final dataUpdateStream = StreamController.broadcast();
   late FocusNode focusNode;
   static Game create(Server connectingserver, {GameCommand? entryCommand}) {
     var game = Game();
@@ -181,7 +184,7 @@ class Game {
 
   void updateAlllines(Lines? lines) {
     alllines = lines;
-    alllinesUpdateStream.add(lines);
+    dataUpdateStream.add(lines);
   }
 
   Future<void> onCmdHudContent(String data) async {

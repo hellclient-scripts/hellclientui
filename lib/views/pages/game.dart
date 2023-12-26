@@ -215,7 +215,8 @@ class GameState extends State<Game> {
           case 'paramsinfo':
             final dynamic jsondata = json.decode(event.data);
             final paramsinfo = message.ParamsInfo.fromJson(jsondata);
-            GameUI.showParamsInfo(context, paramsinfo);
+            gameengine.currentGame!.paramsInfos = paramsinfo;
+            gameengine.currentGame!.dataUpdateStream.add(paramsinfo);
             break;
           case 'requiredParams':
             final dynamic jsondata = json.decode(event.data);

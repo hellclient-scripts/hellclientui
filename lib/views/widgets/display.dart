@@ -106,6 +106,7 @@ class DisplayState extends State<Display> {
       if (event is GameCommand) {
         switch (event.command) {
           case "current":
+            AppUI.hideUI(context);
             setState(() {});
             break;
           case "scriptMessage":
