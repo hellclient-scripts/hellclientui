@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import 'package:hellclientui/models/feature.dart';
-import 'package:hellclientui/views/widgets/appui.dart';
-import 'package:hellclientui/views/widgets/gameui.dart';
 import '../models/rendersettings.dart';
 import '../states/appstate.dart';
 

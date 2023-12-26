@@ -15,7 +15,7 @@ class ParamsViewState extends State<ParamsView> {
   @override
   Widget build(BuildContext context) {
     final Widget body =
-        currentGame!.showAllParams ? AllParams() : RequiredParams();
+        currentGame!.showAllParams ? const AllParams() : const RequiredParams();
     return Dialog.fullscreen(
         child: Stack(children: [
       FullScreenDialog(
