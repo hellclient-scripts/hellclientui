@@ -185,6 +185,7 @@ class GameTopState extends State<GameTop> {
     ));
     children.add(AppUI.buildIconButton(context, const Icon(Icons.bar_chart),
         () async {
+      currentGame!.paramsInfos = null;
       GameUI.showParamsInfo(context);
       currentGame!.handleCmd("params", currentGame!.current);
     }, '变量', const Color(0xff606266), Colors.white,
