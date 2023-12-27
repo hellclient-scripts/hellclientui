@@ -21,6 +21,7 @@ showCreateTimer(BuildContext context, bool byUser) async {
                   createtirgger.byUser = byUser;
                   createtirgger.world = currentGame!.current;
                   currentGame!.handleCmd('createTimer', createtirgger);
+                  Navigator.of(context).pop();
                 },
               )));
     },
@@ -41,6 +42,7 @@ showUpdateTimer(BuildContext context, message.Timer timer, bool byUser) async {
                   updatetimer.byUser = false;
                   updatetimer.world = currentGame!.current;
                   currentGame!.handleCmd('updateTimer', updatetimer);
+                  Navigator.of(context).pop();
                 },
               )));
     },

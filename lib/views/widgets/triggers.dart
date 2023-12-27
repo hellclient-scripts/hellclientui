@@ -21,6 +21,7 @@ showCreateTrigger(BuildContext context, bool byUser) async {
                   createtirgger.byUser = byUser;
                   createtirgger.world = currentGame!.current;
                   currentGame!.handleCmd('createTrigger', createtirgger);
+                  Navigator.of(context).pop();
                 },
               )));
     },
@@ -42,6 +43,7 @@ showUpdateTrigger(
                   updatetrigger.byUser = false;
                   updatetrigger.world = currentGame!.current;
                   currentGame!.handleCmd('updateTrigger', updatetrigger);
+                  Navigator.of(context).pop();
                 },
               )));
     },

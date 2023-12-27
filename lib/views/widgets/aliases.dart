@@ -21,6 +21,7 @@ showCreateAlias(BuildContext context, bool byUser) async {
                   createtirgger.byUser = byUser;
                   createtirgger.world = currentGame!.current;
                   currentGame!.handleCmd('createAlias', createtirgger);
+                  Navigator.of(context).pop();
                 },
               )));
     },
@@ -41,6 +42,7 @@ showUpdateAlias(BuildContext context, message.Alias alias, bool byUser) async {
                   updatealias.byUser = false;
                   updatealias.world = currentGame!.current;
                   currentGame!.handleCmd('updateAlias', updatealias);
+                  Navigator.of(context).pop();
                 },
               )));
     },
