@@ -41,7 +41,11 @@ class NotOpenedState extends State<NotOpened> {
     for (final game in widget.games) {
       if (filter!.text.isEmpty || game.id.contains(filter!.text)) {
         children.add(createTableRow([
-          TCell(Text(game.id)),
+          TCell(TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(game.id);
+              },
+              child: Text(game.id))),
           TCell(Text(game.lastUpdated)),
           TCell(
             TextButton(

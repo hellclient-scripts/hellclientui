@@ -56,6 +56,9 @@ class WordStyle {
       decoration: underlined ? TextDecoration.underline : TextDecoration.none,
       fontStyle: blinking ? FontStyle.italic : FontStyle.normal,
       fontFeatures: const [ui.FontFeature.tabularFigures()],
+      leadingDistribution: TextLeadingDistribution.even,
+      letterSpacing: 0,
+      wordSpacing: 0,
     );
     return style;
   }

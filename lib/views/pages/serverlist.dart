@@ -79,7 +79,7 @@ class ServerListState extends State<ServerList> {
   Widget buildList(BuildContext context) {
     var appState = context.watch<AppState>();
     appState.devicePixelRatio = appState.renderSettings.hidpi
-        ? MediaQuery.of(context).devicePixelRatio
+        ? MediaQuery.of(context).devicePixelRatio.roundToDouble()
         : 1.0;
 
     final List<Widget> list = [];

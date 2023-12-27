@@ -205,6 +205,10 @@ class AllLinesState extends State<AllLines> {
                         }
                       },
                       child: Text.rich(
+                        textHeightBehavior: const TextHeightBehavior(
+                          applyHeightToFirstAscent: false,
+                          applyHeightToLastDescent: false,
+                        ),
                         TextSpan(children: linedata),
                         softWrap: true,
                       ))))
