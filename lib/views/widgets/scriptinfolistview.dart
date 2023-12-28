@@ -45,7 +45,11 @@ class ScriptInfoListViewState extends State<ScriptInfoListView> {
           info.desc.contains(filter!.text) ||
           info.intro.contains(filter!.text)) {
         children.add(createTableRow([
-          TCell(Text(info.id)),
+          TCell(TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(info.id);
+              },
+              child: Text(info.id))),
           TCell(Text(info.desc)),
           TCell(Text(info.intro)),
           TCell(
