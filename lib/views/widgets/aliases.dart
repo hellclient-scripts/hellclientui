@@ -82,9 +82,7 @@ class AliasesState extends State<Aliases> {
   @override
   Widget build(BuildContext context) {
     if (aliases == null) {
-      return const Center(
-        child: Text('正在加载中……'),
-      );
+      return AppUI.loading;
     }
     final List<TableRow> children = [
       createTableRow([
