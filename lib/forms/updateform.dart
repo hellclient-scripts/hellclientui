@@ -57,23 +57,23 @@ class UpdateFormState extends State<UpdateForm> {
                 ),
                 TextFormField(
                   decoration: const InputDecoration(
-                    label: Text("服务器地址"),
+                    label: Text("服务器网址"),
                     hintText: "请输入http/https开头带端口的网址。比如http://127.0.0.1:4355",
                   ),
                   validator: (value) {
                     if (value == null || value.isEmpty) {
-                      return '服务器不可为空';
+                      return '服务器网址不可为空';
                     }
                     if (!value.startsWith("http://") &&
                         !value.startsWith("https://")) {
-                      return '服务器地址必须以http://或https://开头';
+                      return '服务器网址必须以http://或https://开头';
                     }
                     if (value.endsWith("/")) {
-                      return '服务器地址不应该以/结尾';
+                      return '服务器网址不应该以/结尾';
                     }
                     if (value != widget.origin.host &&
                         appState.config.hasServer(value)) {
-                      return '服务器已存在';
+                      return '服务器网址已存在';
                     }
                     return null;
                   },
@@ -81,16 +81,16 @@ class UpdateFormState extends State<UpdateForm> {
                 ),
                 TextFormField(
                   decoration: const InputDecoration(
-                    label: Text("用户名"),
-                    hintText: "输入用户名，未加密请留空",
+                    label: Text("网页用户名"),
+                    hintText: "输入网页版的用户名，如不需要输入请留空",
                   ),
                   controller: username,
                 ),
                 TextFormField(
                   obscureText: true,
                   decoration: const InputDecoration(
-                    label: Text("密码"),
-                    hintText: "输入密码，未加密请留空",
+                    label: Text("网页密码"),
+                    hintText: "输入网页版的密码，如不需要输入请留空",
                   ),
                   controller: password,
                 ),
