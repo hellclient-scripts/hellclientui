@@ -84,7 +84,7 @@ class TriggersState extends State<Triggers> {
   @override
   Widget build(BuildContext context) {
     if (triggers == null) {
-      return const Center(child: Text('正在加载中……'));
+      return AppUI.loading;
     }
     final List<TableRow> children = [
       createTableRow([

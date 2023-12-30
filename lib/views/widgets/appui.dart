@@ -12,6 +12,16 @@ const BorderRadiusGeometry _radiusRight =
     BorderRadius.horizontal(right: Radius.circular(4));
 
 class AppUI {
+  static Widget loading = const Center(
+    child: Text(
+      '正在加载中…',
+      style: TextStyle(
+        inherit: false,
+        color: Colors.white,
+        fontSize: 20,
+      ),
+    ),
+  );
   static hideUI(BuildContext context) {
     Navigator.of(context).popUntil(ModalRoute.withName('/game'));
   }

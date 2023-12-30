@@ -82,7 +82,7 @@ class TimersState extends State<Timers> {
   @override
   Widget build(BuildContext context) {
     if (timers == null) {
-      return const Center(child: Text('正在加载中……'));
+      return AppUI.loading;
     }
     final List<TableRow> children = [
       createTableRow([
