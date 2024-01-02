@@ -741,10 +741,17 @@ class Game {
     for (final server in currentAppState.config.servers) {
       if (server.host == serverhost) {
         if (!currentAppState.inGame) {
+          final context = currentAppState.navigatorKey.currentState!.context;
+          var dpr = currentAppState.renderSettings.hidpi
+              ? MediaQuery.of(context).devicePixelRatio
+              : 1.0;
+          if (currentAppState.renderSettings.roundDpi) {
+            dpr = dpr.roundToDouble();
+          }
+          currentAppState.devicePixelRatio = dpr;
           final game = Game.create(server,
               entryCommand: GameCommand(command: 'change', data: gameid));
           currentGame = game;
-          final context = currentAppState.navigatorKey.currentState!.context;
           await Navigator.of(context).pushNamed('/game', arguments: game);
         } else {
           if (currentGame != null) {

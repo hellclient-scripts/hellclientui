@@ -435,6 +435,18 @@ class DisplaySettiingsFormState extends State<DisplaySettiingsForm> {
                 Row(
                   children: [
                     Checkbox(
+                        value: config.roundDpi == true,
+                        onChanged: (value) {
+                          setState(() {
+                            config.roundDpi = (value == true);
+                          });
+                        }),
+                    const Text('缩放比例取整，取消可改善非整数缩倍放效果', softWrap: true)
+                  ],
+                ),
+                Row(
+                  children: [
+                    Checkbox(
                         value: config.forceDesktopMode == true,
                         onChanged: (value) {
                           setState(() {

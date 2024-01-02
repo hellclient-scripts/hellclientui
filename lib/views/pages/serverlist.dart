@@ -39,7 +39,15 @@ Future<bool?> showConnectError(BuildContext context, String message) async {
 
 void connectServer(Server server, BuildContext context) async {
   try {
-    // await appState.connecting.connect(server);
+    // await appState.connecting.connect(ser
+    // ver);
+    var dpr = currentAppState.renderSettings.hidpi
+        ? MediaQuery.of(context).devicePixelRatio
+        : 1.0;
+    if (currentAppState.renderSettings.roundDpi) {
+      dpr = dpr.roundToDouble();
+    }
+    currentAppState.devicePixelRatio = dpr;
     currentGame = Game.create(server);
 
     if (context.mounted) {
@@ -78,9 +86,6 @@ Future<bool?> showDeleteConfirmDialog(BuildContext context) {
 class ServerListState extends State<ServerList> {
   Widget buildList(BuildContext context) {
     var appState = context.watch<AppState>();
-    appState.devicePixelRatio = appState.renderSettings.hidpi
-        ? MediaQuery.of(context).devicePixelRatio.roundToDouble()
-        : 1.0;
 
     final List<Widget> list = [];
     for (var index = 0; index < appState.config.servers.length; index++) {

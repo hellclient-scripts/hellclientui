@@ -21,6 +21,7 @@ class RenderConfig {
   Color? brightCyan;
   Color? brightWhite;
   bool? disableHidpi;
+  bool? roundDpi;
   bool? forceDesktopMode;
   int commandDisplayMode = CommandDisplayMode.normal;
   RenderConfig.fromJson(Map<String, dynamic> json)
@@ -52,6 +53,7 @@ class RenderConfig {
             json['brightWhite'] != null ? Color(json['brightWhite']) : null,
         disableHidpi = json['disableHidpi'] ?? false,
         forceDesktopMode = json['forceDesktopMode'] ?? false,
+        roundDpi = json['roundDpi'] ?? false,
         commandDisplayMode =
             json['commandDisplayMode'] ?? CommandDisplayMode.normal;
   Map<String, dynamic> toJson() => {
@@ -76,6 +78,7 @@ class RenderConfig {
         'forceDesktopMode': forceDesktopMode == true,
         'disableHidpi': disableHidpi == true,
         'commandDisplayMode': commandDisplayMode,
+        'roundDpi': roundDpi,
       };
 
   RenderSettings getSettings() {
@@ -135,6 +138,7 @@ class RenderConfig {
       settings.brightWhite = brightWhite!;
     }
     settings.hidpi = disableHidpi != true;
+    settings.roundDpi = roundDpi == true;
     settings.forceDesktopMode = forceDesktopMode == true;
     settings.commandDisplayMode = commandDisplayMode;
     return settings;
@@ -198,6 +202,7 @@ class RenderSettings {
   Color searchBackground = const Color(0xFFF6DBDB);
   Color searchCurrentBackground = const Color(0xFFFFF3CF);
   bool hidpi = true;
+  bool roundDpi = false;
   bool forceDesktopMode = false;
   var commandDisplayMode = 0;
 }
