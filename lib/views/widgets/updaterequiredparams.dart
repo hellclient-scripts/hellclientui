@@ -212,7 +212,7 @@ class UpdateRequiredParamsState extends State<UpdateRequiredParams> {
                             )),
                             TextSpan(
                                 text:
-                                    '是否要交换变量[${widget.params.list[oldIndex].name}]和[${widget.params.list[newIndex].name}]]的位置?'),
+                                    '是否要改变变量[${widget.params.list[oldIndex].name}]的位置?'),
                           ]),
                         )) ==
                     true) {

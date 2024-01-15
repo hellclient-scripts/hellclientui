@@ -27,6 +27,11 @@ class AppState extends ChangeNotifier {
   RenderConfig renderConfig = RenderConfig();
   int currentPage = 0;
   bool showMore = true;
+  Map<String, bool> hiddenFields = {
+    'password': true,
+    'passwd': true,
+    'passw': true
+  };
   static Future<AppState> init() async {
     var state = AppState();
     String apppath = "";

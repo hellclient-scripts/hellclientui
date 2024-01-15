@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:hellclientui/states/appstate.dart';
 import '../../models/message.dart' as message;
 import 'appui.dart';
 import 'userinput.dart';
@@ -129,7 +130,9 @@ class RequiredParamsState extends State<RequiredParams> {
 
         children.add(createTableRow([
           TCell(TextButton(onPressed: update, child: Text(info.name))),
-          TCell(Text(paramsInfo!.params[info.name] ?? '')),
+          TCell(Text(currentAppState.hiddenFields[info.name] == true
+              ? '******'
+              : (paramsInfo!.params[info.name] ?? ''))),
           TCell(Text.rich(TextSpan(children: [
             TextSpan(text: info.desc),
             WidgetSpan(
