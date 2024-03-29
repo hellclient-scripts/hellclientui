@@ -40,7 +40,7 @@ showUpdateTrigger(
                 trigger: trigger,
                 onSubmit: (trigger) {
                   final updatetrigger = message.UpdateTrigger(trigger);
-                  updatetrigger.byUser = false;
+                  updatetrigger.byUser = byUser;
                   updatetrigger.world = currentGame!.current;
                   currentGame!.handleCmd('updateTrigger', updatetrigger);
                   Navigator.of(context).pop();

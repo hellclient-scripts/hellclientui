@@ -39,7 +39,7 @@ showUpdateTimer(BuildContext context, message.Timer timer, bool byUser) async {
                 timer: timer,
                 onSubmit: (timer) {
                   final updatetimer = message.UpdateTimer(timer);
-                  updatetimer.byUser = false;
+                  updatetimer.byUser = byUser;
                   updatetimer.world = currentGame!.current;
                   currentGame!.handleCmd('updateTimer', updatetimer);
                   Navigator.of(context).pop();

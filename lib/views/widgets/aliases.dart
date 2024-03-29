@@ -39,7 +39,7 @@ showUpdateAlias(BuildContext context, message.Alias alias, bool byUser) async {
                 alias: alias,
                 onSubmit: (alias) {
                   final updatealias = message.UpdateAlias(alias);
-                  updatealias.byUser = false;
+                  updatealias.byUser = byUser;
                   updatealias.world = currentGame!.current;
                   currentGame!.handleCmd('updateAlias', updatealias);
                   Navigator.of(context).pop();
