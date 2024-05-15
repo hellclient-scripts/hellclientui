@@ -13,7 +13,7 @@ showCreateAlias(BuildContext context, bool byUser) async {
     builder: (context) {
       return Dialog.fullscreen(
           child: FullScreenDialog(
-              title: byUser ? '创建用户别名' : '创建脚本别名',
+              title: byUser ? '创建游戏别名' : '创建脚本别名',
               child: AliasForm(
                 alias: message.Alias(),
                 onSubmit: (alias) {
@@ -34,7 +34,7 @@ showUpdateAlias(BuildContext context, message.Alias alias, bool byUser) async {
     builder: (context) {
       return Dialog.fullscreen(
           child: FullScreenDialog(
-              title: byUser ? '修改用户别名' : '修改脚本别名',
+              title: byUser ? '修改游戏别名' : '修改脚本别名',
               child: AliasForm(
                 alias: alias,
                 onSubmit: (alias) {
@@ -159,7 +159,7 @@ class AliasesState extends State<Aliases> {
         child: Stack(children: [
       FullScreenDialog(
           withScroll: false,
-          title: widget.byUser ? '用户别名' : '脚本别名',
+          title: widget.byUser ? '游戏别名' : '脚本别名',
           child:
               Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
             Row(children: [
@@ -200,7 +200,7 @@ class AliasesState extends State<Aliases> {
             onPressed: () async {
               await showCreateAlias(context, widget.byUser);
             },
-            tooltip: widget.byUser ? '新建用户变量' : '新建脚本变量',
+            tooltip: widget.byUser ? '新建游戏变量' : '新建脚本变量',
             child: const Icon(Icons.add),
           ))
     ]));

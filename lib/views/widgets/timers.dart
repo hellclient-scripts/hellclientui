@@ -13,7 +13,7 @@ showCreateTimer(BuildContext context, bool byUser) async {
     builder: (context) {
       return Dialog.fullscreen(
           child: FullScreenDialog(
-              title: byUser ? '创建用户计时器' : '创建脚本计时器',
+              title: byUser ? '创建游戏计时器' : '创建脚本计时器',
               child: TimerForm(
                 timer: message.Timer(),
                 onSubmit: (timer) {
@@ -34,7 +34,7 @@ showUpdateTimer(BuildContext context, message.Timer timer, bool byUser) async {
     builder: (context) {
       return Dialog.fullscreen(
           child: FullScreenDialog(
-              title: byUser ? '修改用户计时器' : '修改脚本计时器',
+              title: byUser ? '修改游戏计时器' : '修改脚本计时器',
               child: TimerForm(
                 timer: timer,
                 onSubmit: (timer) {
@@ -157,7 +157,7 @@ class TimersState extends State<Timers> {
         child: Stack(children: [
       FullScreenDialog(
           withScroll: false,
-          title: widget.byUser ? '用户计时器' : '脚本计时器',
+          title: widget.byUser ? '游戏计时器' : '脚本计时器',
           child:
               Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
             Row(children: [
@@ -198,7 +198,7 @@ class TimersState extends State<Timers> {
             onPressed: () async {
               await showCreateTimer(context, widget.byUser);
             },
-            tooltip: widget.byUser ? '新建用户变量' : '新建脚本变量',
+            tooltip: widget.byUser ? '新建游戏变量' : '新建脚本变量',
             child: const Icon(Icons.add),
           ))
     ]));

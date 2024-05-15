@@ -90,6 +90,7 @@ class DisplayBottomState extends State<DisplayBottom> {
             break;
           case "current":
             focusNode.requestFocus();
+            setState(() {});
             break;
         }
       }

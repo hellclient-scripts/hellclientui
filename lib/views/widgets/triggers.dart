@@ -13,7 +13,7 @@ showCreateTrigger(BuildContext context, bool byUser) async {
     builder: (context) {
       return Dialog.fullscreen(
           child: FullScreenDialog(
-              title: byUser ? '创建用户触发器' : '创建脚本触发器',
+              title: byUser ? '创建游戏触发器' : '创建脚本触发器',
               child: TriggerForm(
                 trigger: message.Trigger(),
                 onSubmit: (trigger) {
@@ -35,7 +35,7 @@ showUpdateTrigger(
     builder: (context) {
       return Dialog.fullscreen(
           child: FullScreenDialog(
-              title: byUser ? '修改用户触发器' : '修改脚本触发器',
+              title: byUser ? '修改游戏触发器' : '修改脚本触发器',
               child: TriggerForm(
                 trigger: trigger,
                 onSubmit: (trigger) {
@@ -161,7 +161,7 @@ class TriggersState extends State<Triggers> {
         child: Stack(children: [
       FullScreenDialog(
           withScroll: false,
-          title: widget.byUser ? '用户触发器' : '脚本触发器',
+          title: widget.byUser ? '游戏触发器' : '脚本触发器',
           child:
               Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
             Row(children: [
@@ -202,7 +202,7 @@ class TriggersState extends State<Triggers> {
             onPressed: () async {
               await showCreateTrigger(context, widget.byUser);
             },
-            tooltip: widget.byUser ? '新建用户触发器' : '新建脚本触发器',
+            tooltip: widget.byUser ? '新建游戏触发器' : '新建脚本触发器',
             child: const Icon(Icons.add),
           ))
     ]));
