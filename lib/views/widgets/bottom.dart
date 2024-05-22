@@ -74,10 +74,32 @@ class DisplayBottomState extends State<DisplayBottom> {
   DisplayBottomState();
   late StreamSubscription subCommand;
   late TextEditingController inputController;
-  var focusNode = FocusNode();
+  late FocusNode focusNode;
   @override
   void initState() {
     inputController = TextEditingController();
+    focusNode = FocusNode(
+      onKeyEvent: (node, value) {
+        if (value is KeyDownEvent) {
+          switch (value.logicalKey.keyLabel) {
+            case 'Arrow Up':
+              currentGame!
+                  .handleCmd("findhistory", currentGame!.historypos + 1);
+              return KeyEventResult.handled;
+            case 'Arrow Down':
+              if (currentGame!.historypos <= 0) {
+                currentGame!.historypos = -1;
+                inputController.text = "";
+                return KeyEventResult.handled;
+              }
+              currentGame!
+                  .handleCmd("findhistory", currentGame!.historypos - 1);
+              return KeyEventResult.handled;
+          }
+        }
+        return KeyEventResult.ignored;
+      },
+    );
     subCommand = currentGame!.commandStream.stream.listen((event) async {
       if (event is GameCommand) {
         switch (event.command) {
@@ -163,54 +185,32 @@ class DisplayBottomState extends State<DisplayBottom> {
           Expanded(
               child: SingleChildScrollView(
                   scrollDirection: Axis.vertical,
-                  child: KeyboardListener(
-                      focusNode: FocusNode(),
-                      onKeyEvent: (value) {
-                        if (value is KeyUpEvent) {
-                          switch (value.logicalKey.keyLabel) {
-                            case 'Arrow Up':
-                              currentGame!.handleCmd(
-                                  "findhistory", currentGame!.historypos + 1);
-                              break;
-                            case 'Arrow Down':
-                              if (currentGame!.historypos <= 0) {
-                                currentGame!.historypos = -1;
-                                inputController.text = "";
-                                return;
-                              }
-                              currentGame!.handleCmd(
-                                  "findhistory", currentGame!.historypos - 1);
-
-                              break;
-                          }
-                        }
-                      },
-                      child: TextField(
-                        controller: inputController,
-                        textInputAction: TextInputAction.next,
-                        focusNode: focusNode,
-                        maxLines: 1,
-                        autofocus: true,
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: fontsize,
-                        ),
-                        decoration: (const InputDecoration(
-                            isDense: true, // Added this
-                            contentPadding: EdgeInsets.all(8), // Added this
-                            hintText: "输入指令",
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.zero,
-                              gapPadding: 0,
-                            ))),
-                        onSubmitted: (value) {
-                          currentGame?.handleSend(value);
-                          focusNode.requestFocus();
-                          inputController.selection = TextSelection(
-                              baseOffset: 0,
-                              extentOffset: inputController.value.text.length);
-                        },
-                      )))),
+                  child: TextField(
+                    controller: inputController,
+                    textInputAction: TextInputAction.next,
+                    focusNode: focusNode,
+                    maxLines: 1,
+                    autofocus: true,
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: fontsize,
+                    ),
+                    decoration: (const InputDecoration(
+                        isDense: true, // Added this
+                        contentPadding: EdgeInsets.all(8), // Added this
+                        hintText: "输入指令",
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.zero,
+                          gapPadding: 0,
+                        ))),
+                    onSubmitted: (value) {
+                      currentGame?.handleSend(value);
+                      focusNode.requestFocus();
+                      inputController.selection = TextSelection(
+                          baseOffset: 0,
+                          extentOffset: inputController.value.text.length);
+                    },
+                  ))),
           MouseRegion(
               cursor: SystemMouseCursors.click,
               child: GestureDetector(

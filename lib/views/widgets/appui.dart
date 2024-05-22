@@ -197,13 +197,13 @@ class AppUI {
         child: TextButton(
             style: ButtonStyle(
               padding:
-                  const MaterialStatePropertyAll<EdgeInsets>(EdgeInsets.all(0)),
+                  const WidgetStatePropertyAll<EdgeInsets>(EdgeInsets.all(0)),
               // fixedSize: MaterialStatePropertyAll<Size>(Size(32, 32)),
-              shape: MaterialStatePropertyAll<OutlinedBorder>(
+              shape: WidgetStatePropertyAll<OutlinedBorder>(
                   RoundedRectangleBorder(
                       borderRadius: radius, side: BorderSide.none)),
-              backgroundColor: MaterialStatePropertyAll<Color>(background),
-              iconColor: MaterialStatePropertyAll<Color>(color),
+              backgroundColor: WidgetStatePropertyAll<Color>(background),
+              iconColor: WidgetStatePropertyAll<Color>(color),
             ),
             autofocus: autofocus,
             onPressed: onPressed,
@@ -239,18 +239,18 @@ class AppUI {
         child: IconButton(
             style: ButtonStyle(
               padding:
-                  const MaterialStatePropertyAll<EdgeInsets>(EdgeInsets.all(0)),
+                  const WidgetStatePropertyAll<EdgeInsets>(EdgeInsets.all(0)),
               // fixedSize: MaterialStatePropertyAll<Size>(Size(32, 32)),
-              shape: MaterialStatePropertyAll<OutlinedBorder>(
-                  RoundedRectangleBorder(
+              shape:
+                  WidgetStatePropertyAll<OutlinedBorder>(RoundedRectangleBorder(
                       borderRadius: radius,
                       side: borderColor == null
                           ? BorderSide.none
                           : BorderSide(
                               color: borderColor,
                             ))),
-              backgroundColor: MaterialStatePropertyAll<Color>(background),
-              iconColor: MaterialStatePropertyAll<Color>(color),
+              backgroundColor: WidgetStatePropertyAll<Color>(background),
+              iconColor: WidgetStatePropertyAll<Color>(color),
             ),
             iconSize: 16,
             splashRadius: 3,

@@ -198,7 +198,7 @@ class ServerListState extends State<ServerList> {
         });
   }
 
-  KeyEventResult onKey(RawKeyEvent key, BuildContext context) {
+  KeyEventResult onKey(KeyEvent key, BuildContext context) {
     switch (key.logicalKey.keyLabel) {
       case '1':
       case '2':
@@ -215,7 +215,7 @@ class ServerListState extends State<ServerList> {
         }
         break;
       case 'B':
-        if (key.isControlPressed) {
+        if (HardwareKeyboard.instance.isControlPressed) {
           showBatchCommand();
         }
         break;
@@ -283,11 +283,11 @@ class ServerListState extends State<ServerList> {
             )
           ],
         ),
-        body: RawKeyboardListener(
+        body: KeyboardListener(
             focusNode: listnode,
             autofocus: true,
-            onKey: (value) {
-              if (value is RawKeyDownEvent && value.repeat == false) {
+            onKeyEvent: (value) {
+              if (value is KeyDownEvent) {
                 onKey(value, context);
               }
             },

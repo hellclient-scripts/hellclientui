@@ -332,7 +332,7 @@ class GameTopState extends State<GameTop> {
       bool isCurrent = currentGame!.current == clientinfo.id;
       games.add(TextButton(
           style: ButtonStyle(
-            backgroundColor: MaterialStatePropertyAll<Color>(
+            backgroundColor: WidgetStatePropertyAll<Color>(
                 isCurrent ? const Color(0xff409EFF) : Colors.white),
           ),
           onPressed: () {

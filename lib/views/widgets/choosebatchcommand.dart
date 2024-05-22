@@ -13,10 +13,10 @@ class ChooseBatchCommand extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final focusNode = FocusNode();
-    return RawKeyboardListener(
+    return KeyboardListener(
         autofocus: true,
-        onKey: (value) {
-          if (value is RawKeyDownEvent && value.repeat == false) {
+        onKeyEvent: (value) {
+          if (value is KeyDownEvent) {
             switch (value.logicalKey.keyLabel) {
               case '1':
               case '2':

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:hellclientui/views/widgets/scriptinfolistview.dart';
 import 'package:hellclientui/states/appstate.dart';
 import '..//widgets/fullscreen.dart';
@@ -281,7 +282,13 @@ class GameState extends State<Game> {
   @override
   Widget build(BuildContext context) {
     var server = widget.game.server;
-    return RawKeyboardListener(
+    return Focus(
+        onKeyEvent: (node, event) {
+          if (event is KeyDownEvent) {
+            return widget.game.onKey(event);
+          }
+          return KeyEventResult.ignored;
+        },
         key: _refreshKey,
         focusNode: gameengine.currentGame!.focusNode,
         autofocus: true,

@@ -94,7 +94,7 @@ class RenderingLine {
     final painter = TextPainter(
         text: span,
         textDirection: TextDirection.ltr,
-        textScaleFactor: devicePixelRatio);
+        textScaler: TextScaler.linear(devicePixelRatio));
     painter.layout(minWidth: 0, maxWidth: settings.width * devicePixelRatio);
     final offset = Offset(position,
         (devicePixelRatio * settings.lineheight - painter.size.height) / 2);
@@ -107,7 +107,7 @@ class RenderingLine {
     final painter = TextPainter(
         text: span,
         textDirection: TextDirection.ltr,
-        textScaleFactor: devicePixelRatio);
+        textScaler: TextScaler.linear(devicePixelRatio));
     painter.layout(
         minWidth: 0, maxWidth: settings.linewidth * devicePixelRatio);
     final offset = Offset(position,
@@ -132,7 +132,6 @@ class RenderingLine {
     row.image = await recorder.endRecording().toImage(
         (devicePixelRatio * settings.width).floor(),
         (devicePixelRatio * settings.lineheight).floor());
-
     return row;
   }
 }
@@ -190,7 +189,7 @@ class Renderer {
     rows = [];
   }
 
-  void draw() async {
+  Future<void> draw() async {
     await lock.synchronized(() async {
       if (!updated) {
         return;

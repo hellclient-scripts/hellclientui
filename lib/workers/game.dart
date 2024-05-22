@@ -64,8 +64,8 @@ class Game {
     var game = Game();
     game.server = connectingserver;
     game.focusNode = FocusNode(
-      onKey: (node, event) {
-        if (event is RawKeyDownEvent && event.repeat == false) {
+      onKeyEvent: (node, event) {
+        if (event is KeyDownEvent) {
           return game.onKey(event);
         }
         return KeyEventResult.ignored;
@@ -147,7 +147,7 @@ class Game {
     final Map<String, dynamic> jsondata = json.decode(data);
     final line = Line.fromJson(jsondata);
     await output.renderer.drawLine(line);
-    output.renderer.draw();
+    await output.renderer.draw();
   }
 
   Future<void> onCmdPrompt(String data) async {
@@ -157,10 +157,10 @@ class Game {
       prompt.renderer.reset();
       await prompt.renderer.renderline(
           renderSettings, line, true, true, renderSettings.background);
-      prompt.renderer.draw();
+      await prompt.renderer.draw();
     } else {
       prompt.renderer.reset();
-      prompt.renderer.draw();
+      await prompt.renderer.draw();
     }
   }
 
@@ -463,10 +463,10 @@ class Game {
     handleCmd('notopened', null);
   }
 
-  KeyEventResult onKey(RawKeyEvent key) {
+  KeyEventResult onKey(KeyEvent key) {
     switch (key.logicalKey.keyLabel) {
       case 'Backspace':
-        if (!key.isControlPressed) {
+        if (!HardwareKeyboard.instance.isControlPressed) {
           break;
         }
         handleCmd("change", "");
@@ -475,20 +475,21 @@ class Game {
         handleCmd("change", "");
         break;
       case "K":
-        if (currentClient != null && key.isControlPressed) {
+        if (currentClient != null &&
+            HardwareKeyboard.instance.isControlPressed) {
           if (currentClient!.running) {
-            if (key.isShiftPressed) {
+            if (HardwareKeyboard.instance.isShiftPressed) {
               handleCmd("disconnect", currentGame?.current);
             }
           } else {
-            if (!key.isShiftPressed) {
+            if (!HardwareKeyboard.instance.isShiftPressed) {
               handleCmd("connect", currentGame?.current);
             }
           }
         }
         break;
       case "W":
-        if (key.isControlPressed) {
+        if (HardwareKeyboard.instance.isControlPressed) {
           commandStream.add(const GameCommand(command: '_quit'));
         }
         break;
@@ -501,7 +502,7 @@ class Game {
       case "7":
       case "8":
       case "9":
-        if (current == "" || key.isControlPressed) {
+        if (current == "" || HardwareKeyboard.instance.isControlPressed) {
           final index = int.parse(key.logicalKey.keyLabel) - 1;
           if (index >= 0 && index < clientinfos.clientInfos.length) {
             handleCmd('change', clientinfos.clientInfos[index].id);
@@ -509,7 +510,7 @@ class Game {
         }
         break;
       case "`":
-        if (current == "" || key.isControlPressed) {
+        if (current == "" || HardwareKeyboard.instance.isControlPressed) {
           clientQuick();
         }
         break;

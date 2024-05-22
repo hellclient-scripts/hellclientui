@@ -465,8 +465,8 @@ class UserInputVisualPromptWidgetState
           currentGame!.handleUserInputCallback(widget.input, 0, value);
           Navigator.pop(context, true);
         },
-        focusNode: FocusNode(onKey: (node, event) {
-          if (event is RawKeyDownEvent && event.repeat == false) {
+        focusNode: FocusNode(onKeyEvent: (node, event) {
+          if (event is KeyDownEvent) {
             switch (event.logicalKey.keyLabel) {
               case 'Page Down':
                 next.raise();

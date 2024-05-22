@@ -279,7 +279,8 @@ class OverviewState extends State<Overview> {
             child: button,
           );
         },
-        onAccept: (data) {
+        onAcceptWithDetails: (detail) {
+          var data = detail as int;
           if (data >= 0 && data < currentGame!.clientinfos.clientInfos.length) {
             final info = currentGame!.clientinfos.clientInfos[data];
             currentGame!.clientinfos.clientInfos[data] =
