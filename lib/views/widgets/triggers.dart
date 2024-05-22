@@ -9,7 +9,8 @@ import 'dart:async';
 
 showCreateTrigger(BuildContext context, bool byUser) async {
   showDialog(
-    context: currentAppState.navigatorKey.currentState!.context,
+    useRootNavigator: false,
+    context: currentGame!.navigatorKey.currentState!.context,
     builder: (context) {
       return Dialog.fullscreen(
           child: FullScreenDialog(
@@ -31,7 +32,8 @@ showCreateTrigger(BuildContext context, bool byUser) async {
 showUpdateTrigger(
     BuildContext context, message.Trigger trigger, bool byUser) async {
   showDialog(
-    context: currentAppState.navigatorKey.currentState!.context,
+    useRootNavigator: false,
+    context: currentGame!.navigatorKey.currentState!.context,
     builder: (context) {
       return Dialog.fullscreen(
           child: FullScreenDialog(

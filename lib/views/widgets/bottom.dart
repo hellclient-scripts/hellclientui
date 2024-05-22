@@ -27,7 +27,8 @@ const textStyleBottomMasSend = TextStyle(
 Future<bool?> showMassSend(BuildContext context) async {
   final controller = TextEditingController();
   return showDialog<bool>(
-    context: currentAppState.navigatorKey.currentState!.context,
+    useRootNavigator: false,
+    context: currentGame!.navigatorKey.currentState!.context,
     builder: (context) {
       return DialogOverlay(
           child: FullScreenDialog(

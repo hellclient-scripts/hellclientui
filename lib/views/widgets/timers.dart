@@ -9,7 +9,8 @@ import 'dart:async';
 
 showCreateTimer(BuildContext context, bool byUser) async {
   showDialog(
-    context: currentAppState.navigatorKey.currentState!.context,
+    useRootNavigator: false,
+    context: currentGame!.navigatorKey.currentState!.context,
     builder: (context) {
       return Dialog.fullscreen(
           child: FullScreenDialog(
@@ -30,7 +31,8 @@ showCreateTimer(BuildContext context, bool byUser) async {
 
 showUpdateTimer(BuildContext context, message.Timer timer, bool byUser) async {
   showDialog(
-    context: currentAppState.navigatorKey.currentState!.context,
+    useRootNavigator: false,
+    context: currentGame!.navigatorKey.currentState!.context,
     builder: (context) {
       return Dialog.fullscreen(
           child: FullScreenDialog(

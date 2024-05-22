@@ -9,7 +9,8 @@ import 'dart:async';
 
 showCreateAlias(BuildContext context, bool byUser) async {
   showDialog(
-    context: currentAppState.navigatorKey.currentState!.context,
+    useRootNavigator: false,
+    context: currentGame!.navigatorKey.currentState!.context,
     builder: (context) {
       return Dialog.fullscreen(
           child: FullScreenDialog(
@@ -30,7 +31,8 @@ showCreateAlias(BuildContext context, bool byUser) async {
 
 showUpdateAlias(BuildContext context, message.Alias alias, bool byUser) async {
   showDialog(
-    context: currentAppState.navigatorKey.currentState!.context,
+    useRootNavigator: false,
+    context: currentGame!.navigatorKey.currentState!.context,
     builder: (context) {
       return Dialog.fullscreen(
           child: FullScreenDialog(

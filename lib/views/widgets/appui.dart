@@ -3,6 +3,7 @@ import 'fullscreen.dart';
 import '../../models/message.dart';
 import '../../states/appstate.dart';
 import 'dart:async';
+import '../../workers/game.dart';
 
 const BorderRadiusGeometry _radiusBoth = BorderRadius.all(Radius.circular(4));
 const BorderRadiusGeometry _radiusNone = BorderRadius.zero;
@@ -23,13 +24,15 @@ class AppUI {
     ),
   );
   static hideUI(BuildContext context) {
-    Navigator.of(context).popUntil(ModalRoute.withName('/game'));
+    Navigator.of(currentGame!.navigatorKey.currentState!.context)
+        .popUntil(ModalRoute.withName('/'));
   }
 
   static Future<String?> promptText(BuildContext context, String title,
       String summary, String hint, String value) async {
     return await showDialog<String?>(
-      context: currentAppState.navigatorKey.currentState!.context,
+      useRootNavigator: false,
+      context: currentGame!.navigatorKey.currentState!.context,
       builder: (context) {
         final controller = TextEditingController.fromValue(TextEditingValue(
             text: value,
@@ -67,7 +70,8 @@ class AppUI {
   static Future<String?> promptTextArea(BuildContext context, String title,
       String summary, String hint, String value) async {
     return await showDialog<String?>(
-      context: currentAppState.navigatorKey.currentState!.context,
+      useRootNavigator: false,
+      context: currentGame!.navigatorKey.currentState!.context,
       builder: (context) {
         final controller = TextEditingController.fromValue(TextEditingValue(
             text: value,
@@ -108,7 +112,8 @@ class AppUI {
   static showMsgBox(
       BuildContext context, String title, String summary, Widget? child) {
     showDialog(
-        context: currentAppState.navigatorKey.currentState!.context,
+        useRootNavigator: false,
+        context: currentGame!.navigatorKey.currentState!.context,
         builder: (context) {
           return NonFullScreenDialog(
             title: title,
@@ -134,7 +139,8 @@ class AppUI {
   static Future<bool?> showConfirmBox(
       BuildContext context, String title, String summary, Widget? child) {
     return showDialog<bool>(
-        context: currentAppState.navigatorKey.currentState!.context,
+        useRootNavigator: false,
+        context: currentGame!.navigatorKey.currentState!.context,
         builder: (context) {
           return NonFullScreenDialog(
             title: title,

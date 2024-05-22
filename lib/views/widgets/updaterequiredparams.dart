@@ -10,7 +10,8 @@ import '../../states/appstate.dart';
 Future<message.RequiredParam?> showCreateReqiredParam(
     BuildContext context) async {
   return showDialog<message.RequiredParam?>(
-    context: currentAppState.navigatorKey.currentState!.context,
+    useRootNavigator: false,
+    context: currentGame!.navigatorKey.currentState!.context,
     builder: (context) {
       return const NonFullScreenDialog(
           title: '创建脚本', child: CreateRequiredParamForm());
@@ -21,7 +22,8 @@ Future<message.RequiredParam?> showCreateReqiredParam(
 Future<bool?> showUpdateReqiredParam(
     BuildContext context, message.RequiredParam param) async {
   return showDialog<bool?>(
-    context: currentAppState.navigatorKey.currentState!.context,
+    useRootNavigator: false,
+    context: currentGame!.navigatorKey.currentState!.context,
     builder: (context) {
       return NonFullScreenDialog(
           title: '创建脚本', child: UpdateRequiredParamForm(param: param));

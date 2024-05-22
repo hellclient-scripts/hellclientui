@@ -27,6 +27,7 @@ class Game {
   bool silenceQuit = false;
   String current = "";
   String status = "";
+  GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
   late Server server;
   int historypos = -1;
   bool showAllParams = false;

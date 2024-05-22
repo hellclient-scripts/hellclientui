@@ -53,7 +53,8 @@ class GameUI {
       BuildContext context, message.RequiredParams params) {
     AppUI.hideUI(context);
     showDialog<bool?>(
-        context: currentAppState.navigatorKey.currentState!.context,
+        useRootNavigator: false,
+        context: currentGame!.navigatorKey.currentState!.context,
         builder: (context) {
           return UpdateRequiredParams(params: params);
         });
@@ -62,7 +63,8 @@ class GameUI {
   static showScriptTimers(BuildContext context) {
     AppUI.hideUI(context);
     showDialog<bool?>(
-        context: currentAppState.navigatorKey.currentState!.context,
+        useRootNavigator: false,
+        context: currentGame!.navigatorKey.currentState!.context,
         builder: (context) {
           return const Timers(
             byUser: false,
@@ -73,7 +75,8 @@ class GameUI {
   static showUserTimers(BuildContext context) {
     AppUI.hideUI(context);
     showDialog<bool?>(
-        context: currentAppState.navigatorKey.currentState!.context,
+        useRootNavigator: false,
+        context: currentGame!.navigatorKey.currentState!.context,
         builder: (context) {
           return const Timers(byUser: true);
         });
@@ -82,7 +85,8 @@ class GameUI {
   static showScriptTriggers(BuildContext context) {
     AppUI.hideUI(context);
     showDialog<bool?>(
-        context: currentAppState.navigatorKey.currentState!.context,
+        useRootNavigator: false,
+        context: currentGame!.navigatorKey.currentState!.context,
         builder: (context) {
           return const Triggers(
             byUser: false,
@@ -93,7 +97,8 @@ class GameUI {
   static showUserTriggers(BuildContext context) {
     AppUI.hideUI(context);
     showDialog<bool?>(
-        context: currentAppState.navigatorKey.currentState!.context,
+        useRootNavigator: false,
+        context: currentGame!.navigatorKey.currentState!.context,
         builder: (context) {
           return const Triggers(byUser: true);
         });
@@ -102,7 +107,8 @@ class GameUI {
   static showScriptAliases(BuildContext context) {
     AppUI.hideUI(context);
     showDialog<bool?>(
-        context: currentAppState.navigatorKey.currentState!.context,
+        useRootNavigator: false,
+        context: currentGame!.navigatorKey.currentState!.context,
         builder: (context) {
           return const Aliases(
             byUser: false,
@@ -113,7 +119,8 @@ class GameUI {
   static showUserAliases(BuildContext context) {
     AppUI.hideUI(context);
     showDialog<bool?>(
-        context: currentAppState.navigatorKey.currentState!.context,
+        useRootNavigator: false,
+        context: currentGame!.navigatorKey.currentState!.context,
         builder: (context) {
           return const Aliases(byUser: true);
         });
@@ -122,7 +129,8 @@ class GameUI {
   static showParamsInfo(BuildContext context) {
     AppUI.hideUI(context);
     showDialog<bool?>(
-        context: currentAppState.navigatorKey.currentState!.context,
+        useRootNavigator: false,
+        context: currentGame!.navigatorKey.currentState!.context,
         builder: (context) {
           return const ParamsView();
         });
@@ -131,7 +139,8 @@ class GameUI {
   static showScript(BuildContext context, message.ScriptInfo scriptinfo) {
     AppUI.hideUI(context);
     showDialog<bool?>(
-        context: currentAppState.navigatorKey.currentState!.context,
+        useRootNavigator: false,
+        context: currentGame!.navigatorKey.currentState!.context,
         builder: (context) {
           return Dialog.fullscreen(
               child: FullScreenDialog(
@@ -203,7 +212,8 @@ class GameUI {
   static updateWorldSettings(
       BuildContext context, message.WorldSettings worldSettings) {
     showDialog<bool?>(
-        context: currentAppState.navigatorKey.currentState!.context,
+        useRootNavigator: false,
+        context: currentGame!.navigatorKey.currentState!.context,
         builder: (context) {
           return Dialog.fullscreen(
               child: FullScreenDialog(
@@ -229,7 +239,8 @@ class GameUI {
       BuildContext context, message.WorldSettings worldSettings) {
     AppUI.hideUI(context);
     showDialog<bool?>(
-        context: currentAppState.navigatorKey.currentState!.context,
+        useRootNavigator: false,
+        context: currentGame!.navigatorKey.currentState!.context,
         builder: (context) {
           return Dialog.fullscreen(
             child: Stack(children: [
@@ -338,7 +349,8 @@ class GameUI {
   static updateScriptSettings(
       BuildContext context, message.ScriptSettings scriptSettings) {
     showDialog<bool?>(
-        context: currentAppState.navigatorKey.currentState!.context,
+        useRootNavigator: false,
+        context: currentGame!.navigatorKey.currentState!.context,
         builder: (context) {
           return Dialog.fullscreen(
               child: FullScreenDialog(
@@ -365,7 +377,8 @@ class GameUI {
       BuildContext context, message.ScriptSettings scriptSettings) {
     AppUI.hideUI(context);
     showDialog<bool?>(
-        context: currentAppState.navigatorKey.currentState!.context,
+        useRootNavigator: false,
+        context: currentGame!.navigatorKey.currentState!.context,
         builder: (context) {
           return Dialog.fullscreen(
               child: Stack(children: [
@@ -487,7 +500,8 @@ class GameUI {
   static showAuthorized(BuildContext context, message.Authorized authorized) {
     AppUI.hideUI(context);
     showDialog<bool?>(
-      context: currentAppState.navigatorKey.currentState!.context,
+      useRootNavigator: false,
+      context: currentGame!.navigatorKey.currentState!.context,
       builder: (context) {
         return DialogOverlay(
             child: SizedBox(
@@ -565,7 +579,8 @@ class GameUI {
       BuildContext context, message.RequestTrust request) async {
     AppUI.hideUI(context);
     final result = await showDialog<bool?>(
-        context: currentAppState.navigatorKey.currentState!.context,
+        useRootNavigator: false,
+        context: currentGame!.navigatorKey.currentState!.context,
         builder: (context) {
           return DialogOverlay(
               child: FullScreenDialog(
@@ -615,7 +630,8 @@ class GameUI {
       BuildContext context, message.RequestTrust request) async {
     AppUI.hideUI(context);
     final result = await showDialog<bool?>(
-        context: currentAppState.navigatorKey.currentState!.context,
+        useRootNavigator: false,
+        context: currentGame!.navigatorKey.currentState!.context,
         builder: (context) {
           return DialogOverlay(
               child: FullScreenDialog(

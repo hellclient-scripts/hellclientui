@@ -16,7 +16,8 @@ Future<bool?> showAllLines(BuildContext context) async {
     return false;
   }
   return showDialog<bool>(
-      context: currentAppState.navigatorKey.currentState!.context,
+      useRootNavigator: false,
+      context: currentGame!.navigatorKey.currentState!.context,
       builder: (context) {
         return Material(
             type: MaterialType.transparency,

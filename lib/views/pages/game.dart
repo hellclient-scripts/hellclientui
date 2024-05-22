@@ -13,10 +13,11 @@ import '../widgets/appui.dart';
 import '../widgets/gameui.dart';
 import '../../forms/sendbatchcommandform.dart';
 
-void showSendBatchCommand(
+Future<void> showSendBatchCommand(
     BuildContext context, message.BatchCommandScripts scripts) async {
-  showDialog(
-    context: context,
+  await showDialog(
+    useRootNavigator: false,
+    context: gameengine.currentGame!.navigatorKey.currentState!.context,
     builder: (context) {
       return DialogOverlay(
           child: FullScreenDialog(
@@ -29,7 +30,8 @@ void showSendBatchCommand(
 Future<String?> showNotOpened(
     BuildContext context, message.NotOpened games) async {
   return showDialog<String>(
-    context: currentAppState.navigatorKey.currentState!.context,
+    useRootNavigator: false,
+    context: gameengine.currentGame!.navigatorKey.currentState!.context,
     builder: (context) {
       return Dialog.fullscreen(
         child: NotOpened(games: games.games),
@@ -41,7 +43,7 @@ Future<String?> showNotOpened(
 Future<String?> showScriptInfoList(
     BuildContext context, message.ScriptInfoList list) async {
   return showDialog<String>(
-    context: currentAppState.navigatorKey.currentState!.context,
+    context: gameengine.currentGame!.navigatorKey.currentState!.context,
     builder: (context) {
       return Dialog.fullscreen(
         child: ScriptInfoListView(list: list.list),
@@ -115,7 +117,7 @@ class GameState extends State<Game> {
       }
       if (currentAppState.navigatorKey.currentState != null) {
         final result = await showDisconneted(
-            currentAppState.navigatorKey.currentState!.context);
+            gameengine.currentGame!.navigatorKey.currentState!.context);
         if (result == true) {
           try {
             if (context.mounted) {
@@ -125,7 +127,7 @@ class GameState extends State<Game> {
           } catch (e) {
             if (context.mounted) {
               showConnectError(
-                  currentAppState.navigatorKey.currentState!.context,
+                  gameengine.currentGame!.navigatorKey.currentState!.context,
                   e.toString());
             }
           }
@@ -293,45 +295,53 @@ class GameState extends State<Game> {
         focusNode: gameengine.currentGame!.focusNode,
         autofocus: true,
         child: Scaffold(
-          appBar: AppBar(
-            actions: [
-              IconButton(
-                onPressed: () {
-                  AppUI.showMsgBox(
-                      context,
-                      "快捷键帮助",
-                      "在游戏主界面可以使用如下快捷键",
-                      const Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text("单击:显示历史输出"),
-                            Text("双击:调用助手按纽"),
-                            Text("上划:进入游戏一览"),
-                            Text("下划:快速进入游戏"),
-                            Text("ctrl+数字快速进入游戏"),
-                            Text("ctrl+k 连接当前游戏"),
-                            Text("ctrl+shfit+k 断开前游戏"),
-                          ]));
-                },
-                tooltip: '快捷键帮助',
-                icon: const Icon(Icons.help_outline),
-              )
-            ], // This trailing comma makes auto-formatting nicer for build methods.
+            appBar: AppBar(
+              actions: [
+                IconButton(
+                  onPressed: () {
+                    AppUI.showMsgBox(
+                        context,
+                        "快捷键帮助",
+                        "在游戏主界面可以使用如下快捷键",
+                        const Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text("单击:显示历史输出"),
+                              Text("双击:调用助手按纽"),
+                              Text("上划:进入游戏一览"),
+                              Text("下划:快速进入游戏"),
+                              Text("ctrl+数字快速进入游戏"),
+                              Text("ctrl+k 连接当前游戏"),
+                              Text("ctrl+shfit+k 断开前游戏"),
+                            ]));
+                  },
+                  tooltip: '快捷键帮助',
+                  icon: const Icon(Icons.help_outline),
+                )
+              ], // This trailing comma makes auto-formatting nicer for build methods.
 
-            backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-            // Here we take the value from the MyHomePage object that was created by
-            // the App.build method, and use it to set our appbar title.
-            title: Text(server.name.isEmpty ? server.host : server.name),
-          ),
-          body: Fullscreen(
-            minWidth:
-                currentAppState.renderSettings.forceDesktopMode ? 1200 : 640,
-            child: currentAppState.connecting.connected
-                ? const Display()
-                : Container(
-                    color: currentAppState.renderSettings.background,
-                  ),
-          ),
-        ));
+              backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+              // Here we take the value from the MyHomePage object that was created by
+              // the App.build method, and use it to set our appbar title.
+              title: Text(server.name.isEmpty ? server.host : server.name),
+            ),
+            body: Navigator(
+                key: widget.game.navigatorKey,
+                initialRoute: '/',
+                onGenerateRoute: (route) => MaterialPageRoute(
+                      settings: route,
+                      builder: (context) => Fullscreen(
+                        minWidth:
+                            currentAppState.renderSettings.forceDesktopMode
+                                ? 1200
+                                : 640,
+                        child: currentAppState.connecting.connected
+                            ? const Display()
+                            : Container(
+                                color:
+                                    currentAppState.renderSettings.background,
+                              ),
+                      ),
+                    ))));
   }
 }

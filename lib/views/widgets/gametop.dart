@@ -10,7 +10,8 @@ import '../../forms/passwordform.dart';
 
 Future<bool?> showUpdatePassowrd(BuildContext context) async {
   return showDialog<bool>(
-    context: currentAppState.navigatorKey.currentState!.context,
+    useRootNavigator: false,
+    context: currentGame!.navigatorKey.currentState!.context,
     builder: (context) {
       return const NonFullScreenDialog(title: '修改客户端密码', child: PasswordForm());
     },
@@ -19,7 +20,8 @@ Future<bool?> showUpdatePassowrd(BuildContext context) async {
 
 Future<bool?> showCloseGame(BuildContext context) async {
   return showDialog<bool>(
-    context: context,
+    useRootNavigator: false,
+    context: currentGame!.navigatorKey.currentState!.context,
     builder: (context) {
       return AlertDialog(
         title: const Text("关闭游戏"),
