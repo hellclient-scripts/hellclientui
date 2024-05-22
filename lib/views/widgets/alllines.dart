@@ -197,11 +197,11 @@ class AllLinesState extends State<AllLines> {
                           toastification.show(
                               context: context,
                               autoCloseDuration: const Duration(seconds: 3),
-                              title: '双击复制成功',
+                              title: Text('双击复制成功'),
                               type: ToastificationType.success,
                               style: ToastificationStyle.flat,
                               showProgressBar: false,
-                              description: '文字“$summary”已经复制到剪贴板。');
+                              description: Text('文字“$summary”已经复制到剪贴板。'));
                         }
                       },
                       child: Text.rich(

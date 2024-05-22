@@ -40,11 +40,11 @@ class UserInputHelper {
     }
     toastification.show(
         context: context,
-        title: data.title,
+        title: Text(data.title),
         type: type,
         autoCloseDuration: const Duration(seconds: 3),
         style: ToastificationStyle.flat,
-        description: data.intro,
+        description: Text(data.intro),
         showProgressBar: false,
         callbacks: ToastificationCallbacks(
           onTap: (value) {
