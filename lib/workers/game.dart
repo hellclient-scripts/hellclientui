@@ -175,7 +175,7 @@ class Game {
     hud.renderer.maxLines = hudContent.length;
     await hud.renderer.renderlines(
         renderSettings, hudContent, true, true, renderSettings.hudbackground);
-    hud.renderer.draw();
+    await hud.renderer.draw();
     hudUpdateStream.add(null);
   }
 

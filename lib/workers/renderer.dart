@@ -129,7 +129,7 @@ class RenderingLine {
     var row = Row();
     row.id = id;
     row.index = index;
-    row.image = await recorder.endRecording().toImage(
+    row.image = recorder.endRecording().toImageSync(
         (devicePixelRatio * settings.width).floor(),
         (devicePixelRatio * settings.lineheight).floor());
     return row;
