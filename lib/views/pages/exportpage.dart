@@ -29,7 +29,7 @@ class ExportPage extends StatelessWidget {
               onTap: () {
                 final String export = base64Encode(utf8
                     .encode(jsonEncode(currentAppState.renderConfig.toJson())));
-                AppUI.showMsgBox(context, '导出当前设置', '',
+                AppUI.showAppMsgBox(context, '导出当前设置', '',
                     SelectableText('hcui-config:$export'));
               },
             ),
@@ -40,7 +40,7 @@ class ExportPage extends StatelessWidget {
               subtitle: const Text('导入hcui-config:开头的颜色等显示设置'),
               trailing: const Icon(Icons.arrow_forward_ios),
               onTap: () async {
-                final result = await AppUI.showConfirmBox(
+                final result = await AppUI.showAppConfirmBox(
                     currentAppState.navigatorKey.currentState!.context,
                     '确认导入',
                     '您确认要导入显示设置吗？导入后您现有的显示设置会全部失效。',
@@ -51,7 +51,7 @@ class ExportPage extends StatelessWidget {
                 final context =
                     currentAppState.navigatorKey.currentState!.context;
                 if (context.mounted) {
-                  final input = await AppUI.promptTextArea(
+                  final input = await AppUI.promptAppTextArea(
                       currentAppState.navigatorKey.currentState!.context,
                       '导入显示设置',
                       '请导入hcui-config:开头的显示设置',
@@ -74,7 +74,7 @@ class ExportPage extends StatelessWidget {
                       }
                     }
                     if (context.mounted) {
-                      AppUI.showMsgBox(context, '导入数据失败', '导入的数据格式错误',
+                      AppUI.showAppMsgBox(context, '导入数据失败', '导入的数据格式错误',
                           SelectableText(input));
                     }
                   }
@@ -90,7 +90,7 @@ class ExportPage extends StatelessWidget {
               subtitle: const Text('导出服务器信息，批量命令等系统设置'),
               trailing: const Icon(Icons.arrow_forward_ios),
               onTap: () async {
-                final result = await AppUI.showConfirmBox(
+                final result = await AppUI.showAppConfirmBox(
                     currentAppState.navigatorKey.currentState!.context,
                     '确认导出',
                     '您确认要导出系统设置吗？系统设置包含服务器密码和各种密钥，需要妥善保护。',
@@ -104,7 +104,7 @@ class ExportPage extends StatelessWidget {
                   final sc = ScrollController();
                   final String export = base64Encode(
                       utf8.encode(jsonEncode(currentAppState.config.toJson())));
-                  AppUI.showMsgBox(
+                  AppUI.showAppMsgBox(
                       context,
                       '导出系统设置',
                       '注意，导出的数据钟中括密码等敏感信息',
@@ -123,10 +123,10 @@ class ExportPage extends StatelessWidget {
               leading: const Icon(Icons.key, color: Color(0xffE6A23C)),
               title: const Text('导入系统设置'),
               subtitle:
-                  const Text('导入hcsystem-config-include-PASSWORD!:开头的颜色等显示设置'),
+                  const Text('导入hcsystem-config-include-PASSWORD!:开头的系统设置'),
               trailing: const Icon(Icons.arrow_forward_ios),
               onTap: () async {
-                final result = await AppUI.showConfirmBox(
+                final result = await AppUI.showAppConfirmBox(
                     currentAppState.navigatorKey.currentState!.context,
                     '确认导入',
                     '您确认要导入系统设置吗？导入后您现有的系统设置会全部失效。',
@@ -137,7 +137,7 @@ class ExportPage extends StatelessWidget {
                 final context =
                     currentAppState.navigatorKey.currentState!.context;
                 if (context.mounted) {
-                  final input = await AppUI.promptTextArea(
+                  final input = await AppUI.promptAppTextArea(
                       currentAppState.navigatorKey.currentState!.context,
                       '导入系统设置',
                       '请导入hcsystem-config-include-PASSWORD!:开头的显示设置',
@@ -161,7 +161,7 @@ class ExportPage extends StatelessWidget {
                       }
                     }
                     if (context.mounted) {
-                      AppUI.showMsgBox(context, '导入数据失败', '导入的数据格式错误',
+                      AppUI.showAppMsgBox(context, '导入数据失败', '导入的数据格式错误',
                           SelectableText(input));
                     }
                   }

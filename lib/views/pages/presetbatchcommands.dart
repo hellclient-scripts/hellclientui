@@ -55,7 +55,7 @@ class PresetBatchCommands extends StatelessWidget {
 
                           break;
                         case 'remove':
-                          if (await AppUI.showConfirmBox(
+                          if (await AppUI.showAppConfirmBox(
                                   context,
                                   '删除',
                                   '',

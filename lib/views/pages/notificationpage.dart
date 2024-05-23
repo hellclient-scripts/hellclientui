@@ -65,7 +65,7 @@ class NotificationPageState extends State<NotificationPage> {
                 break;
               case 'test':
                 currentNotification.desktopNotify('桌面推送测试', '点击测试', () {
-                  AppUI.showMsgBox(context, '测试成功', '检测到点击事件', null);
+                  AppUI.showAppMsgBox(context, '测试成功', '检测到点击事件', null);
                 });
                 break;
             }
@@ -121,7 +121,7 @@ class NotificationPageState extends State<NotificationPage> {
                 break;
               case 'token':
                 debugPrint(currentNotification.tencentToken);
-                AppUI.showMsgBox(context, '腾讯推送token',
+                AppUI.showAppMsgBox(context, '腾讯推送token',
                     currentNotification.tencentToken, null);
                 break;
             }

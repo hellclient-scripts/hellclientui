@@ -109,6 +109,47 @@ class AppUI {
     );
   }
 
+  static Future<String?> promptAppTextArea(BuildContext context, String title,
+      String summary, String hint, String value) async {
+    return await showDialog<String?>(
+      context: context,
+      builder: (context) {
+        final controller = TextEditingController.fromValue(TextEditingValue(
+            text: value,
+            selection:
+                TextSelection(baseOffset: 0, extentOffset: value.length)));
+        return DialogOverlay(
+            child: FullScreenDialog(
+                title: title,
+                summary: summary,
+                child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Padding(
+                          padding: const EdgeInsets.all(4),
+                          child: SelectableText(
+                            hint,
+                            style: textStyleHint,
+                          )),
+                      Container(
+                          color: const Color(0xffeeeeee),
+                          padding: const EdgeInsets.all(4),
+                          child: TextFormField(
+                            controller: controller,
+                            maxLines: null,
+                            minLines: 10,
+                            keyboardType: TextInputType.multiline,
+                          )),
+                      ConfirmOrCancelWidget(onConfirm: () {
+                        Navigator.of(context).pop(controller.text);
+                      }, onCancal: () {
+                        Navigator.of(context).pop(null);
+                      })
+                    ])));
+      },
+    );
+  }
+
   static showMsgBox(
       BuildContext context, String title, String summary, Widget? child) {
     showDialog(
@@ -129,6 +170,59 @@ class AppUI {
                     },
                     onCancal: () {},
                     labelCancel: null,
+                    autofocus: true,
+                  )
+                ]),
+          );
+        });
+  }
+
+  static showAppMsgBox(
+      BuildContext context, String title, String summary, Widget? child) {
+    showDialog(
+        context: context,
+        builder: (context) {
+          return NonFullScreenDialog(
+            title: title,
+            summary: summary,
+            child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Padding(padding: const EdgeInsets.all(10), child: child),
+                  ConfirmOrCancelWidget(
+                    onConfirm: () {
+                      Navigator.pop(context, true);
+                    },
+                    onCancal: () {},
+                    labelCancel: null,
+                    autofocus: true,
+                  )
+                ]),
+          );
+        });
+  }
+
+  static Future<bool?> showAppConfirmBox(
+      BuildContext context, String title, String summary, Widget? child) {
+    return showDialog<bool>(
+        context: context,
+        builder: (context) {
+          return NonFullScreenDialog(
+            title: title,
+            summary: summary,
+            child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Padding(padding: const EdgeInsets.all(10), child: child),
+                  ConfirmOrCancelWidget(
+                    onConfirm: () {
+                      Navigator.pop(context, true);
+                    },
+                    onCancal: () {
+                      Navigator.pop(context, null);
+                    },
                     autofocus: true,
                   )
                 ]),
