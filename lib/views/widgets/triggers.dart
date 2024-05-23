@@ -4,7 +4,6 @@ import 'appui.dart';
 import 'userinput.dart';
 import '../../forms/triggerform.dart';
 import 'package:hellclientui/workers/game.dart';
-import '../../states/appstate.dart';
 import 'dart:async';
 
 showCreateTrigger(BuildContext context, bool byUser) async {

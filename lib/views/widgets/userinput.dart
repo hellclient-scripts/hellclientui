@@ -13,8 +13,6 @@ import 'appui.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
 
-import '../../states/appstate.dart';
-
 const textStyleUserInputNote = TextStyle(
   color: Colors.white,
   fontSize: 14,

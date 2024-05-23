@@ -11,7 +11,6 @@ import 'updaterequiredparams.dart';
 import 'triggers.dart';
 import 'aliases.dart';
 import 'timers.dart';
-import '../../states/appstate.dart';
 
 const textStyleGameUIFieldLabel = TextStyle(
   color: Color(0xff333333),

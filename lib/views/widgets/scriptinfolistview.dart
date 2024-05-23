@@ -3,7 +3,6 @@ import '../../models/message.dart';
 import 'appui.dart';
 import 'userinput.dart';
 import '../../forms/createscriptform.dart' as createscriptform;
-import '../../states/appstate.dart';
 import '../../workers/game.dart';
 
 Future<bool?> showCreateScript(BuildContext context) async {

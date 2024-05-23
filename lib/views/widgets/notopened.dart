@@ -3,7 +3,6 @@ import '../../models/message.dart';
 import 'appui.dart';
 import 'userinput.dart';
 import '../../forms/creategameform.dart' as creategameform;
-import '../../states/appstate.dart';
 import '../../workers/game.dart';
 
 Future<bool?> showCreateGame(BuildContext context) async {
