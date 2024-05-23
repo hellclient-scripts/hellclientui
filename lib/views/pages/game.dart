@@ -43,6 +43,7 @@ Future<String?> showNotOpened(
 Future<String?> showScriptInfoList(
     BuildContext context, message.ScriptInfoList list) async {
   return showDialog<String>(
+    useRootNavigator: false,
     context: gameengine.currentGame!.navigatorKey.currentState!.context,
     builder: (context) {
       return Dialog.fullscreen(

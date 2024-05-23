@@ -39,7 +39,8 @@ class CreateGameFormState extends State<CreateGameForm> {
           case "defaultServer":
             final data = (jsonDecode(event.data) as String).split(':');
             host.value = TextEditingValue(text: data[0]);
-            port.value = TextEditingValue(text: data[1]);
+
+            port.value = TextEditingValue(text: data.length > 1 ? data[1] : "");
             setState(() {});
 
             break;
