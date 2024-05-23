@@ -122,7 +122,7 @@ class RenderingLine {
         paint);
     painter.paint(canvas, offset);
     position = position + painter.width;
-    return position >= settings.width * devicePixelRatio;
+    return position > (settings.width - settings.fontSize) * devicePixelRatio;
   }
 
   Future<Row> toRow() async {
