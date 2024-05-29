@@ -37,6 +37,13 @@ class LineStyle {
   late Color iconcolor;
 }
 
+//wrapped text stlye for fix  selection color bug.
+class TextStyleWithBackground {
+  late TextStyle textStyle;
+  late Color? backgroundColor;
+  TextStyleWithBackground(this.textStyle, this.backgroundColor);
+}
+
 class WordStyle {
   var color = Colors.white;
   var background = Colors.black;
@@ -46,10 +53,28 @@ class WordStyle {
   double fontSize = 0;
   TextStyle toTextStyle(RenderSettings settings,
       {Color? forceColor, Color? forceBackground}) {
+    return _toTextStyle(settings,
+            forceColor: forceColor, forceBackground: forceBackground)
+        .textStyle;
+  }
+
+  TextStyleWithBackground toTextStyleWithBackground(RenderSettings settings,
+      {Color? forceColor, Color? forceBackground}) {
+    return _toTextStyle(settings,
+        forceColor: forceColor,
+        forceBackground: forceBackground,
+        cleanBackground: true);
+  }
+
+  TextStyleWithBackground _toTextStyle(RenderSettings settings,
+      {Color? forceColor,
+      Color? forceBackground,
+      bool cleanBackground = false}) {
+    var _background = forceBackground ?? background;
     var style = TextStyle(
       fontFamily: settings.fontFamily,
       color: forceColor ?? color,
-      backgroundColor: forceBackground ?? background,
+      backgroundColor: cleanBackground ? null : _background,
       fontSize: fontSize,
       height: settings.lineheight / fontSize,
       fontWeight: bold ? FontWeight.bold : FontWeight.normal,
@@ -60,7 +85,7 @@ class WordStyle {
       letterSpacing: 0,
       wordSpacing: 0,
     );
-    return style;
+    return TextStyleWithBackground(style, _background);
   }
 }
 

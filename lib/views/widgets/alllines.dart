@@ -150,11 +150,14 @@ class AllLinesState extends State<AllLines> {
             }
           }
           if (text.isNotEmpty) {
-            style = renderer
+            var cstyle = renderer
                 .getWordStyle(word, linestyle.color,
                     currentAppState.renderSettings.background)
-                .toTextStyle(currentAppState.renderSettings);
-            linedata.add(TextSpan(text: text, style: style));
+                .toTextStyleWithBackground(currentAppState.renderSettings);
+            linedata.add(WidgetSpan(
+                child: Container(
+                    color: cstyle.backgroundColor,
+                    child: Text(text, style: cstyle.textStyle))));
           }
         }
         if (line.triggers.isNotEmpty) {
