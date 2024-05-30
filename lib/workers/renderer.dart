@@ -38,10 +38,10 @@ class LineStyle {
 }
 
 //wrapped text stlye for fix  selection color bug.
-class TextStyleWithBackground {
+class RenderStyle {
   late TextStyle textStyle;
   late Color? backgroundColor;
-  TextStyleWithBackground(this.textStyle, this.backgroundColor);
+  RenderStyle(this.textStyle, this.backgroundColor);
 }
 
 class WordStyle {
@@ -58,7 +58,7 @@ class WordStyle {
         .textStyle;
   }
 
-  TextStyleWithBackground toTextStyleWithBackground(RenderSettings settings,
+  RenderStyle toRenderStyle(RenderSettings settings,
       {Color? forceColor, Color? forceBackground}) {
     return _toTextStyle(settings,
         forceColor: forceColor,
@@ -66,15 +66,15 @@ class WordStyle {
         cleanBackground: true);
   }
 
-  TextStyleWithBackground _toTextStyle(RenderSettings settings,
+  RenderStyle _toTextStyle(RenderSettings settings,
       {Color? forceColor,
       Color? forceBackground,
       bool cleanBackground = false}) {
-    var _background = forceBackground ?? background;
+    var bg = forceBackground ?? background;
     var style = TextStyle(
       fontFamily: settings.fontFamily,
       color: forceColor ?? color,
-      backgroundColor: cleanBackground ? null : _background,
+      backgroundColor: cleanBackground ? null : bg,
       fontSize: fontSize,
       height: settings.lineheight / fontSize,
       fontWeight: bold ? FontWeight.bold : FontWeight.normal,
@@ -85,7 +85,7 @@ class WordStyle {
       letterSpacing: 0,
       wordSpacing: 0,
     );
-    return TextStyleWithBackground(style, _background);
+    return RenderStyle(style, bg);
   }
 }
 

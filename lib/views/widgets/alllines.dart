@@ -10,6 +10,7 @@ import 'package:flutter/services.dart';
 import 'package:toastification/toastification.dart';
 import 'appui.dart';
 import 'dart:async' as async;
+import '../../workers/renderer.dart' as rendererlib;
 
 Future<bool?> showAllLines(BuildContext context) async {
   if (!context.mounted) {
@@ -115,7 +116,7 @@ class AllLinesState extends State<AllLines> {
         for (final word in line.words) {
           plain += word.text;
           var text = word.text;
-          late TextStyle style;
+          late rendererlib.RenderStyle style;
           if (search.text.isNotEmpty) {
             var pos = text.indexOf(search.text);
             while (pos > -1) {
@@ -124,14 +125,17 @@ class AllLinesState extends State<AllLines> {
                 style = renderer
                     .getWordStyle(word, linestyle.color,
                         currentAppState.renderSettings.background)
-                    .toTextStyle(currentAppState.renderSettings);
-                linedata
-                    .add(TextSpan(text: text.substring(0, pos), style: style));
+                    .toRenderStyle(currentAppState.renderSettings);
+                linedata.add(WidgetSpan(
+                    child: Container(
+                        color: style.backgroundColor,
+                        child: Text(text.substring(0, pos),
+                            style: style.textStyle))));
               }
               style = renderer
                   .getWordStyle(word, linestyle.color,
                       currentAppState.renderSettings.background)
-                  .toTextStyle(currentAppState.renderSettings,
+                  .toRenderStyle(currentAppState.renderSettings,
                       forceColor:
                           currentAppState.renderSettings.searchForeground,
                       forceBackground: current == found
@@ -142,22 +146,24 @@ class AllLinesState extends State<AllLines> {
                 currentkey = GlobalKey();
                 isCurrentLine = true;
               }
-              linedata.add(TextSpan(
-                  text: text.substring(pos, pos + search.text.length),
-                  style: style));
+              linedata.add(WidgetSpan(
+                  child: Container(
+                      color: style.backgroundColor,
+                      child: Text(text.substring(pos, pos + search.text.length),
+                          style: style.textStyle))));
               text = text.substring(pos + search.text.length);
               pos = text.indexOf(search.text);
             }
           }
           if (text.isNotEmpty) {
-            var cstyle = renderer
+            style = renderer
                 .getWordStyle(word, linestyle.color,
                     currentAppState.renderSettings.background)
-                .toTextStyleWithBackground(currentAppState.renderSettings);
+                .toRenderStyle(currentAppState.renderSettings);
             linedata.add(WidgetSpan(
                 child: Container(
-                    color: cstyle.backgroundColor,
-                    child: Text(text, style: cstyle.textStyle))));
+                    color: style.backgroundColor,
+                    child: Text(text, style: style.textStyle))));
           }
         }
         if (line.triggers.isNotEmpty) {
