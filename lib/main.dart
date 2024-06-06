@@ -77,6 +77,7 @@ class MyApp extends StatelessWidget {
           supportedLocales: const [Locale("zh", "CN")],
           locale: const Locale("zh", "CN"),
           initialRoute: "/",
+          debugShowCheckedModeBanner: false,
           routes: {
             "/": (context) => const HomePage(),
             "/create": (context) => CreatePage(),
