@@ -35,6 +35,7 @@ class Game {
   bool hideInput = false;
   String lastInput = "";
   bool showAllParams = false;
+  int alllinesScale = ScaleSettings.defaultScale;
   ClientInfo? currentClient;
   APIVersion? apiVersion;
   late RenderSettings renderSettings;
@@ -104,6 +105,7 @@ class Game {
       noSortLines: true,
     ));
     hideInput = renderSettings.defaultHideInput;
+    alllinesScale = renderSettings.getDefaultScale();
   }
 
   void unbind() {
@@ -760,6 +762,29 @@ class Game {
         return KeyEventResult.handled;
     }
     return KeyEventResult.ignored;
+  }
+
+  void alllinesZoomIn() {
+    for (var val in ScaleSettings.list) {
+      if (val > alllinesScale) {
+        alllinesScale = val;
+        return;
+      }
+    }
+  }
+
+  void alllinesZoomOut() {
+    var min = alllinesScale;
+    for (var val in ScaleSettings.list) {
+      if (val < alllinesScale) {
+        min = val;
+      }
+    }
+    alllinesScale = min;
+  }
+
+  double getAlllinesScale() {
+    return alllinesScale.toDouble() / 100;
   }
 
   static enterGame(String serverhost, String gameid) async {

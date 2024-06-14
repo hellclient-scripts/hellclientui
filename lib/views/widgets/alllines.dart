@@ -55,6 +55,7 @@ class AllLinesState extends State<AllLines> {
   int current = 0;
   int found = 0;
   bool scrollCurrent = false;
+  double beforescale = 1;
   async.Timer? _debounce;
   final ScrollController scrollController = ScrollController();
   final ScrollController scrollController2 = ScrollController();
@@ -242,12 +243,40 @@ class AllLinesState extends State<AllLines> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Padding(
-          padding: EdgeInsets.all(20),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [H1('历史输出'), Summary('双击复制一行文字')],
-          ),
+        Row(
+          children: [
+            const Padding(
+              padding: EdgeInsets.fromLTRB(4, 4, 4, 4),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  H2('历史输出'),
+                  Text(
+                    '双击复制行',
+                    style: textStyleHint,
+                  )
+                ],
+              ),
+            ),
+            const Expanded(child: Center()),
+            IconButton(
+              onPressed: () {
+                currentGame!.alllinesZoomOut();
+                setState(() {});
+              },
+              icon: const Icon(Icons.zoom_out_outlined),
+              iconSize: 20,
+            ),
+            Text(
+                '${(currentGame!.getAlllinesScale() * 100).floor().toString()}%'),
+            IconButton(
+                onPressed: () {
+                  currentGame!.alllinesZoomIn();
+                  setState(() {});
+                },
+                icon: const Icon(Icons.zoom_in_outlined),
+                iconSize: 16),
+          ],
         ),
         Row(children: [
           Expanded(
@@ -318,9 +347,13 @@ class AllLinesState extends State<AllLines> {
                                       child: SizedBox(
                                           width:
                                               renderer.renderSettings.linewidth,
-                                          child: material.Column(
-                                            children: list,
-                                          )))))));
+                                          child: Transform.scale(
+                                              scale: currentGame!
+                                                  .getAlllinesScale(),
+                                              alignment: Alignment.bottomLeft,
+                                              child: material.Column(
+                                                children: list,
+                                              ))))))));
                 }))))
       ],
     );

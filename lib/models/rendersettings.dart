@@ -20,6 +20,24 @@ class SuggestionMode {
   static const large = 2;
 }
 
+class ScaleSettings {
+  static List<int> list = [
+    25,
+    50,
+    75,
+    100,
+    125,
+    150,
+    175,
+    200,
+    250,
+    300,
+    350,
+    400,
+  ];
+  static const defaultScale = 100;
+}
+
 class RenderConfig {
   RenderConfig();
   Color? color;
@@ -46,6 +64,7 @@ class RenderConfig {
   int commandDisplayMode = CommandDisplayMode.normal;
   int suggestionMode = SuggestionMode.small;
   bool defaultHideInput = false;
+  int defaultScale = ScaleSettings.defaultScale;
   RenderConfig.fromJson(Map<String, dynamic> json)
       : color = json['color'] != null ? Color(json['color']) : null,
         background =
@@ -79,7 +98,8 @@ class RenderConfig {
         commandDisplayMode =
             json['commandDisplayMode'] ?? CommandDisplayMode.normal,
         suggestionMode = json['suggestionMode'] ?? SuggestionMode.small,
-        defaultHideInput = json['defaultHideInput'] ?? false;
+        defaultHideInput = json['defaultHideInput'] ?? false,
+        defaultScale = json['defaultScale'] ?? ScaleSettings.defaultScale;
 
   Map<String, dynamic> toJson() => {
         'color': color?.value,
@@ -106,6 +126,7 @@ class RenderConfig {
         'roundDpi': roundDpi,
         'suggestionMode': suggestionMode,
         'defaultHideInput': defaultHideInput,
+        'defaultScale': defaultScale,
       };
 
   RenderSettings getSettings() {
@@ -170,6 +191,7 @@ class RenderConfig {
     settings.commandDisplayMode = commandDisplayMode;
     settings.suggestionMode = suggestionMode;
     settings.defaultHideInput = defaultHideInput;
+    settings.defaultScale = defaultScale;
     return settings;
   }
 
@@ -236,6 +258,7 @@ class RenderSettings {
   var commandDisplayMode = 0;
   int suggestionMode = 0;
   bool defaultHideInput = false;
+  int defaultScale = ScaleSettings.defaultScale;
   Display getDisplay() {
     switch (commandDisplayMode) {
       case CommandDisplayMode.larger:
@@ -258,6 +281,15 @@ class RenderSettings {
         break;
     }
     return 5;
+  }
+
+  int getDefaultScale() {
+    for (var val in ScaleSettings.list) {
+      if (defaultScale == val) {
+        return val;
+      }
+    }
+    return ScaleSettings.defaultScale;
   }
 }
 

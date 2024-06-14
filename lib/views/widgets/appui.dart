@@ -373,6 +373,12 @@ const textStyleH1 = TextStyle(
   fontWeight: FontWeight.bold,
   color: Color(0xff303133),
 );
+const textStyleH2 = TextStyle(
+  fontSize: 16,
+  height: 20 / 16,
+  fontWeight: FontWeight.bold,
+  color: Color(0xff303133),
+);
 
 class H1 extends StatelessWidget {
   const H1(this.data, {super.key});
@@ -383,6 +389,20 @@ class H1 extends StatelessWidget {
       data,
       textAlign: TextAlign.start,
       style: textStyleH1,
+      maxLines: 1,
+    );
+  }
+}
+
+class H2 extends StatelessWidget {
+  const H2(this.data, {super.key});
+  final String data;
+  @override
+  Widget build(BuildContext context) {
+    return SelectableText(
+      data,
+      textAlign: TextAlign.start,
+      style: textStyleH2,
       maxLines: 1,
     );
   }

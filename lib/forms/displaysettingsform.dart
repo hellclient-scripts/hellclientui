@@ -450,17 +450,29 @@ class DisplaySettiingsFormState extends State<DisplaySettiingsForm> {
                     label: Text("默认输入状态"),
                   ),
                   items: const <DropdownMenuItem>[
-                    DropdownMenuItem(
-                      value: '',
-                      enabled: false,
-                      child: Text('<未选择>'),
-                    ),
                     DropdownMenuItem(value: false, child: Text('启用')),
                     DropdownMenuItem(value: true, child: Text('禁用')),
                   ],
                   onChanged: (value) {
                     setState(() {
                       config.defaultHideInput = value;
+                    });
+                  },
+                ),
+                DropdownButtonFormField(
+                  value: config.getSettings().getDefaultScale(),
+                  decoration: const InputDecoration(
+                    label: Text("历史输出默认缩放比例"),
+                  ),
+                  items: ScaleSettings.list.map((val) {
+                    return DropdownMenuItem(
+                      value: val,
+                      child: Text('${(val).toString()}%'),
+                    );
+                  }).toList(),
+                  onChanged: (value) {
+                    setState(() {
+                      config.defaultScale = value ?? ScaleSettings.defaultScale;
                     });
                   },
                 ),
