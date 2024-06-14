@@ -276,57 +276,122 @@ class DisplayBottomState extends State<DisplayBottom> {
                             ),
                           )))),
               Expanded(
-                  child: SingleChildScrollView(
-                      scrollDirection: Axis.vertical,
-                      child: TextField(
-                        controller: inputController,
-                        textInputAction: TextInputAction.next,
-                        focusNode: focusNode,
-                        maxLines: 1,
-                        autofocus: true,
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: fontsize,
-                        ),
-                        decoration: (const InputDecoration(
-                            isDense: true, // Added this
-                            contentPadding: EdgeInsets.all(8), // Added this
-                            hintText: "输入指令",
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.zero,
-                              gapPadding: 0,
-                            ))),
-                        onChanged: (value) {
-                          currentGame?.historypos = 0;
-                          currentGame?.suggestion = [];
-                          currentGame?.lastInput = value;
-                          if (currentGame!.history.isNotEmpty && value != "") {
-                            for (var data in currentGame!.history) {
-                              if (data.contains(value)) {
-                                currentGame!.suggestion.add(data);
+                  child: currentGame!.hideInput == true
+                      ? SizedBox(
+                          height: height,
+                          child: MouseRegion(
+                              cursor: SystemMouseCursors.click,
+                              child: GestureDetector(
+                                  onTap: () {
+                                    currentGame!.hideInput = false;
+                                    setState(() {
+                                      focusNode.requestFocus();
+                                    });
+                                  },
+                                  child: Tooltip(
+                                      message: '输入',
+                                      child: SizedBox(
+                                        width: double.infinity,
+                                        height: height,
+                                        child: Container(
+                                          decoration: BoxDecoration(
+                                              border: Border.all(
+                                                  color:
+                                                      const Color(0xffDCDFE6),
+                                                  width: 1)),
+                                          child: Icon(
+                                            Icons.keyboard_outlined,
+                                            color: const Color(
+                                              0xff909399,
+                                            ),
+                                            size: iconsize,
+                                          ),
+                                        ),
+                                      )))),
+                        )
+                      : SingleChildScrollView(
+                          scrollDirection: Axis.vertical,
+                          child: TextField(
+                            controller: inputController,
+                            textInputAction: TextInputAction.next,
+                            focusNode: focusNode,
+                            maxLines: 1,
+                            autofocus: true,
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: fontsize,
+                            ),
+                            decoration: (const InputDecoration(
+                                isDense: true, // Added this
+                                contentPadding: EdgeInsets.all(8), // Added this
+                                hintText: "输入指令",
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.zero,
+                                  gapPadding: 0,
+                                ))),
+                            onChanged: (value) {
+                              currentGame?.historypos = 0;
+                              currentGame?.suggestion = [];
+                              currentGame?.lastInput = value;
+                              if (currentGame!.history.isNotEmpty &&
+                                  value != "") {
+                                for (var data in currentGame!.history) {
+                                  if (data.contains(value)) {
+                                    currentGame!.suggestion.add(data);
+                                  }
+                                }
+                                var limit = currentAppState!.renderSettings
+                                    .getSuggestionLimit();
+                                if (currentGame!.suggestion.length > limit) {
+                                  currentGame!.suggestion = currentGame!
+                                      .suggestion
+                                      .sublist(currentGame!.suggestion.length -
+                                          limit);
+                                }
                               }
-                            }
-                            var limit = currentAppState!.renderSettings
-                                .getSuggestionLimit();
-                            if (currentGame!.suggestion.length > limit) {
-                              currentGame!.suggestion = currentGame!.suggestion
-                                  .sublist(
-                                      currentGame!.suggestion.length - limit);
-                            }
-                          }
-                          setState(() {});
-                        },
-                        onSubmitted: (value) {
-                          currentGame?.historypos = 0;
-                          currentGame?.suggestion = [];
-                          currentGame?.handleSend(value);
-                          focusNode.requestFocus();
-                          inputController.selection = TextSelection(
-                              baseOffset: 0,
-                              extentOffset: inputController.value.text.length);
-                          setState(() {});
-                        },
-                      ))),
+                              setState(() {});
+                            },
+                            onSubmitted: (value) {
+                              currentGame?.historypos = 0;
+                              currentGame?.suggestion = [];
+                              currentGame?.handleSend(value);
+                              focusNode.requestFocus();
+                              inputController.selection = TextSelection(
+                                  baseOffset: 0,
+                                  extentOffset:
+                                      inputController.value.text.length);
+                              setState(() {});
+                            },
+                          ))),
+              currentGame!.hideInput == true
+                  ? const SizedBox()
+                  : MouseRegion(
+                      cursor: SystemMouseCursors.click,
+                      child: GestureDetector(
+                          onTap: () {
+                            currentGame!.hideInput = true;
+                            currentGame!.suggestion = [];
+                            setState(() {});
+                          },
+                          child: Tooltip(
+                              message: '关闭输入',
+                              child: SizedBox(
+                                width: 54,
+                                height: height,
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                      border: Border.all(
+                                          color: const Color(0xffDCDFE6),
+                                          width: 1)),
+                                  child: Icon(
+                                    Icons.keyboard_hide_outlined,
+                                    color: const Color(
+                                      0xff909399,
+                                    ),
+                                    size: iconsize,
+                                  ),
+                                ),
+                              )))),
               MouseRegion(
                   cursor: SystemMouseCursors.click,
                   child: GestureDetector(

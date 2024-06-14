@@ -32,6 +32,7 @@ class Game {
   int historypos = 0;
   List<String> history = [];
   List<String> suggestion = [];
+  bool hideInput = false;
   String lastInput = "";
   bool showAllParams = false;
   ClientInfo? currentClient;
@@ -102,6 +103,7 @@ class Game {
       background: settings.hudbackground,
       noSortLines: true,
     ));
+    hideInput = renderSettings.defaultHideInput;
   }
 
   void unbind() {

@@ -45,6 +45,7 @@ class RenderConfig {
   bool? forceDesktopMode;
   int commandDisplayMode = CommandDisplayMode.normal;
   int suggestionMode = SuggestionMode.small;
+  bool defaultHideInput = false;
   RenderConfig.fromJson(Map<String, dynamic> json)
       : color = json['color'] != null ? Color(json['color']) : null,
         background =
@@ -77,7 +78,8 @@ class RenderConfig {
         roundDpi = json['roundDpi'] ?? false,
         commandDisplayMode =
             json['commandDisplayMode'] ?? CommandDisplayMode.normal,
-        suggestionMode = json['suggestionMode'] ?? SuggestionMode.small;
+        suggestionMode = json['suggestionMode'] ?? SuggestionMode.small,
+        defaultHideInput = json['defaultHideInput'] ?? false;
 
   Map<String, dynamic> toJson() => {
         'color': color?.value,
@@ -103,6 +105,7 @@ class RenderConfig {
         'commandDisplayMode': commandDisplayMode,
         'roundDpi': roundDpi,
         'suggestionMode': suggestionMode,
+        'defaultHideInput': defaultHideInput,
       };
 
   RenderSettings getSettings() {
@@ -166,6 +169,7 @@ class RenderConfig {
     settings.forceDesktopMode = forceDesktopMode == true;
     settings.commandDisplayMode = commandDisplayMode;
     settings.suggestionMode = suggestionMode;
+    settings.defaultHideInput = defaultHideInput;
     return settings;
   }
 
@@ -231,6 +235,7 @@ class RenderSettings {
   bool forceDesktopMode = false;
   var commandDisplayMode = 0;
   int suggestionMode = 0;
+  bool defaultHideInput = false;
   Display getDisplay() {
     switch (commandDisplayMode) {
       case CommandDisplayMode.larger:

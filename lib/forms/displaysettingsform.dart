@@ -444,6 +444,26 @@ class DisplaySettiingsFormState extends State<DisplaySettiingsForm> {
                     });
                   },
                 ),
+                DropdownButtonFormField(
+                  value: config.defaultHideInput,
+                  decoration: const InputDecoration(
+                    label: Text("默认输入状态"),
+                  ),
+                  items: const <DropdownMenuItem>[
+                    DropdownMenuItem(
+                      value: '',
+                      enabled: false,
+                      child: Text('<未选择>'),
+                    ),
+                    DropdownMenuItem(value: false, child: Text('启用')),
+                    DropdownMenuItem(value: true, child: Text('禁用')),
+                  ],
+                  onChanged: (value) {
+                    setState(() {
+                      config.defaultHideInput = value;
+                    });
+                  },
+                ),
                 Row(
                   children: [
                     Checkbox(
