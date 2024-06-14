@@ -384,7 +384,7 @@ class DisplaySettiingsFormState extends State<DisplaySettiingsForm> {
                         });
                       }),
                   ColorItem(
-                      label: '白色',
+                      label: '亮白色',
                       color: config.brightWhite,
                       defaultColor: defaultSettings.brightWhite,
                       onSelect: (color) {
@@ -417,6 +417,30 @@ class DisplaySettiingsFormState extends State<DisplaySettiingsForm> {
                   onChanged: (value) {
                     setState(() {
                       config.commandDisplayMode = value;
+                    });
+                  },
+                ),
+                DropdownButtonFormField(
+                  value: config.suggestionMode,
+                  decoration: const InputDecoration(
+                    label: Text("补全提示"),
+                  ),
+                  items: const <DropdownMenuItem>[
+                    DropdownMenuItem(
+                      value: '',
+                      enabled: false,
+                      child: Text('<未选择>'),
+                    ),
+                    DropdownMenuItem(
+                        value: SuggestionMode.none, child: Text('无')),
+                    DropdownMenuItem(
+                        value: SuggestionMode.small, child: Text('普通(5条)')),
+                    DropdownMenuItem(
+                        value: SuggestionMode.large, child: Text('多(10条)')),
+                  ],
+                  onChanged: (value) {
+                    setState(() {
+                      config.suggestionMode = value;
                     });
                   },
                 ),

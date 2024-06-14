@@ -165,7 +165,8 @@ class DisplayState extends State<Display> {
     var appState = context.watch<AppState>();
     return Positioned(
         height: appState.renderSettings.height,
-        bottom: 0,
+        bottom: currentAppState.renderSettings.getDisplay().height +
+            currentAppState.renderSettings.lineheight,
         left: 0,
         right: 0,
         child: GestureDetector(onVerticalDragEnd: (details) {
@@ -214,33 +215,40 @@ class DisplayState extends State<Display> {
 
   Widget buildPrompt(BuildContext context) {
     var appState = context.watch<AppState>();
-    return LayoutBuilder(builder: (context, constraints) {
-      var viewwidth = constraints.maxWidth;
-      Widget output = Transform.scale(
-          scale: 1 / appState.devicePixelRatio,
-          alignment: Alignment.topLeft,
-          child: CustomPaint(
-            size: Size(
-                appState.renderSettings.linewidth * appState.devicePixelRatio,
-                appState.renderSettings.lineheight * appState.devicePixelRatio),
-            painter: currentGame!.prompt,
-          ));
-      if (viewwidth <
-          appState.renderSettings.minChars * appState.renderSettings.fontSize) {
-        output = FittedBox(
-            fit: BoxFit.fitWidth,
-            alignment: Alignment.bottomLeft,
-            child: Container(
-              constraints: BoxConstraints(
-                maxWidth: appState.renderSettings.minChars *
-                    appState.renderSettings.fontSize,
-              ),
-              child: output,
-            ));
-      }
-      return SizedBox(
-          height: appState.renderSettings.lineheight, child: output);
-    });
+    return Positioned(
+        left: 0,
+        right: 0,
+        bottom: currentAppState.renderSettings.getDisplay().height,
+        child: LayoutBuilder(builder: (context, constraints) {
+          var viewwidth = constraints.maxWidth;
+          Widget output = Transform.scale(
+              scale: 1 / appState.devicePixelRatio,
+              alignment: Alignment.topLeft,
+              child: CustomPaint(
+                size: Size(
+                    appState.renderSettings.linewidth *
+                        appState.devicePixelRatio,
+                    appState.renderSettings.lineheight *
+                        appState.devicePixelRatio),
+                painter: currentGame!.prompt,
+              ));
+          if (viewwidth <
+              appState.renderSettings.minChars *
+                  appState.renderSettings.fontSize) {
+            output = FittedBox(
+                fit: BoxFit.fitWidth,
+                alignment: Alignment.bottomLeft,
+                child: Container(
+                  constraints: BoxConstraints(
+                    maxWidth: appState.renderSettings.minChars *
+                        appState.renderSettings.fontSize,
+                  ),
+                  child: output,
+                ));
+          }
+          return SizedBox(
+              height: appState.renderSettings.lineheight, child: output);
+        }));
   }
 
   @override
@@ -255,10 +263,12 @@ class DisplayState extends State<Display> {
             child: Stack(children: [
           buildOutput(context),
           const Hud(),
+          buildPrompt(context),
+          const DisplayBottom(),
         ])),
       );
-      children.add(buildPrompt(context));
-      children.add(const DisplayBottom());
+      // children.add(buildPrompt(context));
+      // children.add(const DisplayBottom());
     } else {
       if (currentGame?.current == "") {
         children.add(const Expanded(child: Overview()));

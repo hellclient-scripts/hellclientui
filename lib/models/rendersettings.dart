@@ -1,4 +1,24 @@
+import 'dart:ffi';
+
 import 'package:flutter/material.dart';
+
+class CommandDisplayMode {
+  static const normal = 0;
+  static const larger = 1;
+}
+
+class Display {
+  double height;
+  double iconSize;
+  double fontSize;
+  Display({this.height = 0, this.iconSize = 0, this.fontSize = 0});
+}
+
+class SuggestionMode {
+  static const none = 0;
+  static const small = 1;
+  static const large = 2;
+}
 
 class RenderConfig {
   RenderConfig();
@@ -24,6 +44,7 @@ class RenderConfig {
   bool? roundDpi;
   bool? forceDesktopMode;
   int commandDisplayMode = CommandDisplayMode.normal;
+  int suggestionMode = SuggestionMode.small;
   RenderConfig.fromJson(Map<String, dynamic> json)
       : color = json['color'] != null ? Color(json['color']) : null,
         background =
@@ -55,7 +76,9 @@ class RenderConfig {
         forceDesktopMode = json['forceDesktopMode'] ?? false,
         roundDpi = json['roundDpi'] ?? false,
         commandDisplayMode =
-            json['commandDisplayMode'] ?? CommandDisplayMode.normal;
+            json['commandDisplayMode'] ?? CommandDisplayMode.normal,
+        suggestionMode = json['suggestionMode'] ?? SuggestionMode.small;
+
   Map<String, dynamic> toJson() => {
         'color': color?.value,
         'background': background?.value,
@@ -79,6 +102,7 @@ class RenderConfig {
         'disableHidpi': disableHidpi == true,
         'commandDisplayMode': commandDisplayMode,
         'roundDpi': roundDpi,
+        'suggestionMode': suggestionMode,
       };
 
   RenderSettings getSettings() {
@@ -141,6 +165,7 @@ class RenderConfig {
     settings.roundDpi = roundDpi == true;
     settings.forceDesktopMode = forceDesktopMode == true;
     settings.commandDisplayMode = commandDisplayMode;
+    settings.suggestionMode = suggestionMode;
     return settings;
   }
 
@@ -205,11 +230,30 @@ class RenderSettings {
   bool roundDpi = false;
   bool forceDesktopMode = false;
   var commandDisplayMode = 0;
+  int suggestionMode = 0;
+  Display getDisplay() {
+    switch (commandDisplayMode) {
+      case CommandDisplayMode.larger:
+        return Display(height: 45, iconSize: 24, fontSize: fontSize * 1.5);
+    }
+    return Display(
+      height: 30,
+      iconSize: 16,
+      fontSize: fontSize,
+    );
+  }
+
+  int getSuggestionLimit() {
+    switch (suggestionMode) {
+      case SuggestionMode.none:
+        return 0;
+      case SuggestionMode.large:
+        return 10;
+      case SuggestionMode.small:
+        break;
+    }
+    return 5;
+  }
 }
 
 final defaultRenderSettings = RenderSettings();
-
-class CommandDisplayMode {
-  static const normal = 0;
-  static const larger = 1;
-}

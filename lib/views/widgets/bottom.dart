@@ -1,5 +1,8 @@
+import 'dart:ffi';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter/widgets.dart';
 import 'package:hellclientui/models/message.dart';
 import 'package:hellclientui/models/rendersettings.dart';
 import '../../workers/game.dart';
@@ -76,6 +79,31 @@ class DisplayBottomState extends State<DisplayBottom> {
   late StreamSubscription subCommand;
   late TextEditingController inputController;
   late FocusNode focusNode;
+  void setInput(String value) {
+    inputController.text = value;
+    inputController.selection = TextSelection(
+        baseOffset: 0, extentOffset: inputController.value.text.length);
+    setState(() {});
+  }
+
+  void onFindHistory() {
+    if (currentGame!.historypos == 0) {
+      setInput(currentGame!.lastInput);
+      return;
+    }
+    if (currentGame!.historypos <= currentGame!.suggestion.length) {
+      setInput(currentGame!.suggestion[
+          currentGame!.suggestion.length - currentGame!.historypos]);
+      return;
+    }
+    if (currentGame!.historypos <=
+        (currentGame!.history.length + currentGame!.suggestion.length)) {
+      setInput(currentGame!.history[currentGame!.history.length -
+          (currentGame!.historypos - currentGame!.suggestion.length)]);
+      return;
+    }
+  }
+
   @override
   void initState() {
     inputController = TextEditingController();
@@ -83,18 +111,25 @@ class DisplayBottomState extends State<DisplayBottom> {
       onKeyEvent: (node, value) {
         if (value is KeyDownEvent) {
           switch (value.logicalKey.keyLabel) {
+            case 'Escape':
+              currentGame?.suggestion = [];
+              setState(() {});
+              return KeyEventResult.handled;
             case 'Arrow Up':
-              currentGame!
-                  .handleCmd("findhistory", currentGame!.historypos + 1);
+              currentGame!.historypos++;
+              if (currentGame!.historypos >
+                  (currentGame!.history.length +
+                      currentGame!.suggestion.length)) {
+                currentGame!.historypos = 0;
+              }
+              onFindHistory();
               return KeyEventResult.handled;
             case 'Arrow Down':
-              if (currentGame!.historypos <= 0) {
-                currentGame!.historypos = -1;
-                inputController.text = "";
-                return KeyEventResult.handled;
+              currentGame!.historypos--;
+              if (currentGame!.historypos < 0) {
+                currentGame!.historypos = 0;
               }
-              currentGame!
-                  .handleCmd("findhistory", currentGame!.historypos - 1);
+              onFindHistory();
               return KeyEventResult.handled;
           }
         }
@@ -129,138 +164,221 @@ class DisplayBottomState extends State<DisplayBottom> {
 
   Widget buildBottom(BuildContext context) {
     focusNode.requestFocus();
-    inputController.selection = TextSelection(
-        baseOffset: 0, extentOffset: inputController.value.text.length);
+    // inputController.selection = TextSelection(
+    //     baseOffset: 0, extentOffset: inputController.value.text.length);
     late double height;
     late double iconsize;
     late double fontsize;
-    switch (currentAppState.renderSettings.commandDisplayMode) {
-      case CommandDisplayMode.larger:
-        height = 45;
-        iconsize = 24;
-        fontsize = currentAppState.renderSettings.fontSize * 1.5;
-        break;
-      default:
-        height = 30;
-        iconsize = 16;
-        fontsize = currentAppState.renderSettings.fontSize;
-        break;
-    }
-    return SizedBox(
-      height: height,
-      child: Row(
-        children: [
-          SizedBox(
-            width: 80,
-            child: Text(
-              currentGame!.current,
-              style: textStyleBottomGameName,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-            ),
-          ),
-          MouseRegion(
-              cursor: SystemMouseCursors.click,
-              child: GestureDetector(
-                  onTap: () {
-                    currentGame!.handleCmd("assist", currentGame!.current);
-                  },
-                  child: Tooltip(
-                      message: '助理',
-                      child: SizedBox(
-                        width: 54,
-                        height: height,
-                        child: Container(
-                          decoration: BoxDecoration(
-                              border: Border.all(
-                                  color: const Color(0xffDCDFE6), width: 1)),
-                          child: Icon(
-                            Icons.person_2_outlined,
-                            color: const Color(
-                              0xff909399,
-                            ),
-                            size: iconsize,
-                          ),
-                        ),
-                      )))),
-          Expanded(
-              child: SingleChildScrollView(
-                  scrollDirection: Axis.vertical,
-                  child: TextField(
-                    controller: inputController,
-                    textInputAction: TextInputAction.next,
-                    focusNode: focusNode,
-                    maxLines: 1,
-                    autofocus: true,
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: fontsize,
-                    ),
-                    decoration: (const InputDecoration(
-                        isDense: true, // Added this
-                        contentPadding: EdgeInsets.all(8), // Added this
-                        hintText: "输入指令",
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.zero,
-                          gapPadding: 0,
-                        ))),
-                    onSubmitted: (value) {
-                      currentGame?.handleSend(value);
-                      focusNode.requestFocus();
-                      inputController.selection = TextSelection(
-                          baseOffset: 0,
-                          extentOffset: inputController.value.text.length);
-                    },
-                  ))),
-          MouseRegion(
-              cursor: SystemMouseCursors.click,
-              child: GestureDetector(
-                  onTap: () {
-                    showMassSend(context);
-                  },
-                  child: Tooltip(
-                      message: '批量输入',
-                      child: SizedBox(
-                        width: 54,
-                        height: height,
-                        child: Container(
-                          decoration: BoxDecoration(
-                              border: Border.all(
-                                  color: const Color(0xffDCDFE6), width: 1)),
-                          child: Icon(
-                            Icons.archive_outlined,
-                            color: const Color(
-                              0xff909399,
-                            ),
-                            size: iconsize,
-                          ),
-                        ),
-                      )))),
-          Container(
-              width: 80,
-              height: 32,
-              alignment: Alignment.centerRight,
-              child: MouseRegion(
+    var display = currentAppState.renderSettings.getDisplay();
+    height = display.height;
+    iconsize = display.iconSize;
+    fontsize = display.fontSize;
+    return Positioned(
+      left: 0,
+      bottom: 0,
+      right: 0,
+      child: Column(children: [
+        currentGame!.suggestion.isEmpty
+            ? const SizedBox()
+            : GestureDetector(
+                onTap: () {
+                  currentGame!.suggestion = [];
+                  setState(() {});
+                },
+                child: Container(
+                    width: double.infinity,
+                    color: const Color(0xEEEEEEEE),
+                    padding: const EdgeInsets.fromLTRB(
+                        80 + 54, 0.5 * 16, 54 + 80, 0.5 * 16),
+                    child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: currentGame!.suggestion.map((value) {
+                          return TextButton(
+                              onPressed: () {
+                                currentGame!.suggestion = [];
+                                inputController.text = value;
+                                inputController.selection = TextSelection(
+                                    baseOffset: 0,
+                                    extentOffset:
+                                        inputController.value.text.length);
+                                setState(() {});
+                              },
+                              style: ButtonStyle(
+                                  shape: const WidgetStatePropertyAll<
+                                          RoundedRectangleBorder>(
+                                      RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.zero,
+                                  )),
+                                  animationDuration: Duration.zero,
+                                  foregroundColor:
+                                      WidgetStateProperty.resolveWith<Color>(
+                                          (Set<WidgetState> states) {
+                                    if (states.contains(WidgetState.hovered)) {
+                                      return Colors.white;
+                                    }
+                                    return const Color(0xff333333);
+                                  }),
+                                  backgroundColor:
+                                      WidgetStateProperty.resolveWith<Color>(
+                                          (Set<WidgetState> states) {
+                                    if (states.contains(WidgetState.hovered)) {
+                                      return Colors.black;
+                                    }
+                                    return const Color(0x00000000);
+                                  })),
+                              child: SizedBox(
+                                width: double.infinity,
+                                child: Text(
+                                  value,
+                                  style: const TextStyle(
+                                    fontSize: 16.0,
+                                    height: 26 / 16,
+                                  ),
+                                ),
+                              ));
+                        }).toList()))),
+        SizedBox(
+          height: height,
+          child: Row(
+            children: [
+              SizedBox(
+                width: 80,
+                child: Text(
+                  currentGame!.current,
+                  style: textStyleBottomGameName,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+              MouseRegion(
                   cursor: SystemMouseCursors.click,
                   child: GestureDetector(
-                    onTap: () {
-                      currentGame!.handleCmd("change", '');
-                    },
-                    child: const Tooltip(
-                      message: '游戏一览',
-                      child: Padding(
-                          padding: EdgeInsets.all(4),
-                          child: Icon(
-                            Icons.home,
-                            size: 16,
-                            color: Color(
-                              0xff909399,
+                      onTap: () {
+                        currentGame!.handleCmd("assist", currentGame!.current);
+                      },
+                      child: Tooltip(
+                          message: '助理',
+                          child: SizedBox(
+                            width: 54,
+                            height: height,
+                            child: Container(
+                              decoration: BoxDecoration(
+                                  border: Border.all(
+                                      color: const Color(0xffDCDFE6),
+                                      width: 1)),
+                              child: Icon(
+                                Icons.person_2_outlined,
+                                color: const Color(
+                                  0xff909399,
+                                ),
+                                size: iconsize,
+                              ),
                             ),
-                          )),
-                    ),
-                  )))
-        ],
-      ),
+                          )))),
+              Expanded(
+                  child: SingleChildScrollView(
+                      scrollDirection: Axis.vertical,
+                      child: TextField(
+                        controller: inputController,
+                        textInputAction: TextInputAction.next,
+                        focusNode: focusNode,
+                        maxLines: 1,
+                        autofocus: true,
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: fontsize,
+                        ),
+                        decoration: (const InputDecoration(
+                            isDense: true, // Added this
+                            contentPadding: EdgeInsets.all(8), // Added this
+                            hintText: "输入指令",
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.zero,
+                              gapPadding: 0,
+                            ))),
+                        onChanged: (value) {
+                          currentGame?.historypos = 0;
+                          currentGame?.suggestion = [];
+                          currentGame?.lastInput = value;
+                          if (currentGame!.history.isNotEmpty && value != "") {
+                            for (var data in currentGame!.history) {
+                              if (data.contains(value)) {
+                                currentGame!.suggestion.add(data);
+                              }
+                            }
+                            var limit = currentAppState!.renderSettings
+                                .getSuggestionLimit();
+                            if (currentGame!.suggestion.length > limit) {
+                              currentGame!.suggestion = currentGame!.suggestion
+                                  .sublist(
+                                      currentGame!.suggestion.length - limit);
+                            }
+                          }
+                          setState(() {});
+                        },
+                        onSubmitted: (value) {
+                          currentGame?.historypos = 0;
+                          currentGame?.suggestion = [];
+                          currentGame?.handleSend(value);
+                          focusNode.requestFocus();
+                          inputController.selection = TextSelection(
+                              baseOffset: 0,
+                              extentOffset: inputController.value.text.length);
+                          setState(() {});
+                        },
+                      ))),
+              MouseRegion(
+                  cursor: SystemMouseCursors.click,
+                  child: GestureDetector(
+                      onTap: () {
+                        showMassSend(context);
+                      },
+                      child: Tooltip(
+                          message: '批量输入',
+                          child: SizedBox(
+                            width: 54,
+                            height: height,
+                            child: Container(
+                              decoration: BoxDecoration(
+                                  border: Border.all(
+                                      color: const Color(0xffDCDFE6),
+                                      width: 1)),
+                              child: Icon(
+                                Icons.archive_outlined,
+                                color: const Color(
+                                  0xff909399,
+                                ),
+                                size: iconsize,
+                              ),
+                            ),
+                          )))),
+              Container(
+                  width: 80,
+                  height: 32,
+                  alignment: Alignment.centerRight,
+                  child: MouseRegion(
+                      cursor: SystemMouseCursors.click,
+                      child: GestureDetector(
+                        onTap: () {
+                          currentGame!.handleCmd("change", '');
+                        },
+                        child: const Tooltip(
+                          message: '游戏一览',
+                          child: Padding(
+                              padding: EdgeInsets.all(4),
+                              child: Icon(
+                                Icons.home,
+                                size: 16,
+                                color: Color(
+                                  0xff909399,
+                                ),
+                              )),
+                        ),
+                      )))
+            ],
+          ),
+        )
+      ]),
     );
   }
 

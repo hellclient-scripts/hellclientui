@@ -29,7 +29,10 @@ class Game {
   String status = "";
   GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
   late Server server;
-  int historypos = -1;
+  int historypos = 0;
+  List<String> history = [];
+  List<String> suggestion = [];
+  String lastInput = "";
   bool showAllParams = false;
   ClientInfo? currentClient;
   APIVersion? apiVersion;
@@ -263,7 +266,9 @@ class Game {
         break;
       }
     }
-    historypos = -1;
+    historypos = 0;
+    history = [];
+    suggestion = [];
     output.renderer.reset();
     hud.renderer.reset();
     clientsUpdateStream.add(null);
@@ -289,6 +294,17 @@ class Game {
       }
     }
     clientsUpdateStream.add(null);
+  }
+
+  Future<void> onCmdHistory(String data) async {
+    historypos = 0;
+    final dynamic jsondata = json.decode(data);
+    history = [];
+    suggestion = [];
+    history = List<dynamic>.from(jsondata)
+        .map((e) => e == null ? "" : e as String)
+        .skipWhile((value) => value == "")
+        .toList();
   }
 
   Future<void> onMessage(String msg) async {
@@ -319,6 +335,9 @@ class Game {
       case "current":
         await onCmdCurrent(data);
         commandStream.add(GameCommand(command: command, data: data));
+        break;
+      case "history":
+        onCmdHistory(data);
         break;
       case "connected":
         await onCmdConnected(data);
@@ -414,6 +433,8 @@ class Game {
     if (connecting.channel != null) {
       connecting.channel!.sink.add('send ${json.encode(cmd)}');
       historypos = 0;
+      lastInput = "";
+      suggestion = [];
     }
   }
 
