@@ -38,6 +38,14 @@ class ScaleSettings {
   static const defaultScale = 100;
 }
 
+class MinCharsSettings {
+  static List<int> list = [40, 60, 80];
+  static const defaultMinChars = 40;
+  static int loadMinChars(dynamic data) {
+    return MinCharsSettings.defaultMinChars;
+  }
+}
+
 class RenderConfig {
   RenderConfig();
   Color? color;
@@ -65,6 +73,7 @@ class RenderConfig {
   int suggestionMode = SuggestionMode.small;
   bool defaultHideInput = false;
   int defaultScale = ScaleSettings.defaultScale;
+  int minChars = MinCharsSettings.defaultMinChars;
   RenderConfig.fromJson(Map<String, dynamic> json)
       : color = json['color'] != null ? Color(json['color']) : null,
         background =
@@ -99,7 +108,8 @@ class RenderConfig {
             json['commandDisplayMode'] ?? CommandDisplayMode.normal,
         suggestionMode = json['suggestionMode'] ?? SuggestionMode.small,
         defaultHideInput = json['defaultHideInput'] ?? false,
-        defaultScale = json['defaultScale'] ?? ScaleSettings.defaultScale;
+        defaultScale = json['defaultScale'] ?? ScaleSettings.defaultScale,
+        minChars = MinCharsSettings.loadMinChars(json['minChars']);
 
   Map<String, dynamic> toJson() => {
         'color': color?.value,
@@ -127,6 +137,7 @@ class RenderConfig {
         'suggestionMode': suggestionMode,
         'defaultHideInput': defaultHideInput,
         'defaultScale': defaultScale,
+        'minChars': minChars,
       };
 
   RenderSettings getSettings() {
@@ -192,6 +203,7 @@ class RenderConfig {
     settings.suggestionMode = suggestionMode;
     settings.defaultHideInput = defaultHideInput;
     settings.defaultScale = defaultScale;
+    settings.minChars = minChars;
     return settings;
   }
 
@@ -209,7 +221,7 @@ class RenderSettings {
   double height = 2000;
   int maxLines = 100;
   late double linewidth = 80 * fontSize;
-  int minChars = 40;
+  int minChars = MinCharsSettings.defaultMinChars;
   var background = Colors.black;
   var hudbackground = const Color(0xff333333);
   var color = const Color(0xffffffff);

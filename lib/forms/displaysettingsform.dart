@@ -476,6 +476,24 @@ class DisplaySettiingsFormState extends State<DisplaySettiingsForm> {
                     });
                   },
                 ),
+                DropdownButtonFormField(
+                  value: config.minChars,
+                  decoration: const InputDecoration(
+                    label: Text("最小显示字符"),
+                  ),
+                  items: MinCharsSettings.list.map((val) {
+                    return DropdownMenuItem(
+                      value: val,
+                      child: Text(val.toString()),
+                    );
+                  }).toList(),
+                  onChanged: (value) {
+                    setState(() {
+                      config.minChars =
+                          value ?? MinCharsSettings.defaultMinChars;
+                    });
+                  },
+                ),
                 Row(
                   children: [
                     Checkbox(
