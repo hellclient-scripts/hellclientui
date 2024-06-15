@@ -39,7 +39,7 @@ class ScaleSettings {
 }
 
 class MinCharsSettings {
-  static List<int> list = [40, 60, 80];
+  static List<int> list = [30, 40, 60, 80];
   static const defaultMinChars = 40;
   static int loadMinChars(dynamic data) {
     return MinCharsSettings.defaultMinChars;
