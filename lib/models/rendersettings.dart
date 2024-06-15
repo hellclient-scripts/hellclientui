@@ -1,5 +1,3 @@
-import 'dart:ffi';
-
 import 'package:flutter/material.dart';
 
 class CommandDisplayMode {
@@ -42,6 +40,11 @@ class MinCharsSettings {
   static List<int> list = [30, 40, 60, 80];
   static const defaultMinChars = 40;
   static int loadMinChars(dynamic data) {
+    for (var v in MinCharsSettings.list) {
+      if (v == data) {
+        return v;
+      }
+    }
     return MinCharsSettings.defaultMinChars;
   }
 }
@@ -69,6 +72,7 @@ class RenderConfig {
   bool? disableHidpi;
   bool? roundDpi;
   bool? forceDesktopMode;
+  bool? hudDragable;
   int commandDisplayMode = CommandDisplayMode.normal;
   int suggestionMode = SuggestionMode.small;
   bool defaultHideInput = false;
@@ -109,7 +113,8 @@ class RenderConfig {
         suggestionMode = json['suggestionMode'] ?? SuggestionMode.small,
         defaultHideInput = json['defaultHideInput'] ?? false,
         defaultScale = json['defaultScale'] ?? ScaleSettings.defaultScale,
-        minChars = MinCharsSettings.loadMinChars(json['minChars']);
+        minChars = MinCharsSettings.loadMinChars(json['minChars']),
+        hudDragable = json['hudDragable'] ?? false;
 
   Map<String, dynamic> toJson() => {
         'color': color?.value,
@@ -138,6 +143,7 @@ class RenderConfig {
         'defaultHideInput': defaultHideInput,
         'defaultScale': defaultScale,
         'minChars': minChars,
+        'hudDragable': hudDragable,
       };
 
   RenderSettings getSettings() {
@@ -204,6 +210,7 @@ class RenderConfig {
     settings.defaultHideInput = defaultHideInput;
     settings.defaultScale = defaultScale;
     settings.minChars = minChars;
+    settings.hudDragable = hudDragable == true;
     return settings;
   }
 
@@ -271,6 +278,7 @@ class RenderSettings {
   int suggestionMode = 0;
   bool defaultHideInput = false;
   int defaultScale = ScaleSettings.defaultScale;
+  bool hudDragable = false;
   Display getDisplay() {
     switch (commandDisplayMode) {
       case CommandDisplayMode.larger:

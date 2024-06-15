@@ -189,10 +189,8 @@ class DisplayState extends State<Display> {
               scale: 1 / appState.devicePixelRatio,
               alignment: Alignment.topLeft,
               child: CustomPaint(
-                size: Size(
-                    appState.renderSettings.linewidth *
-                        appState.devicePixelRatio,
-                    appState.renderSettings.height * appState.devicePixelRatio),
+                size: Size(appState.renderSettings.linewidth,
+                    appState.renderSettings.height),
                 painter: currentGame?.output,
               ));
           if (viewwidth <
@@ -200,7 +198,7 @@ class DisplayState extends State<Display> {
                   appState.renderSettings.fontSize) {
             output = FittedBox(
                 fit: BoxFit.fitWidth,
-                alignment: Alignment.bottomLeft,
+                alignment: Alignment.bottomCenter,
                 child: Container(
                   constraints: BoxConstraints(
                     maxWidth: appState.renderSettings.minChars *
@@ -225,11 +223,8 @@ class DisplayState extends State<Display> {
               scale: 1 / appState.devicePixelRatio,
               alignment: Alignment.topLeft,
               child: CustomPaint(
-                size: Size(
-                    appState.renderSettings.linewidth *
-                        appState.devicePixelRatio,
-                    appState.renderSettings.lineheight *
-                        appState.devicePixelRatio),
+                size: Size(appState.renderSettings.linewidth,
+                    appState.renderSettings.lineheight),
                 painter: currentGame!.prompt,
               ));
           if (viewwidth <
@@ -237,7 +232,7 @@ class DisplayState extends State<Display> {
                   appState.renderSettings.fontSize) {
             output = FittedBox(
                 fit: BoxFit.fitWidth,
-                alignment: Alignment.bottomLeft,
+                alignment: Alignment.bottomCenter,
                 child: Container(
                   constraints: BoxConstraints(
                     maxWidth: appState.renderSettings.minChars *

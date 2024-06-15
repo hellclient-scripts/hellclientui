@@ -479,12 +479,12 @@ class DisplaySettiingsFormState extends State<DisplaySettiingsForm> {
                 DropdownButtonFormField(
                   value: config.minChars,
                   decoration: const InputDecoration(
-                    label: Text("最小显示字符"),
+                    label: Text("最小显示宽度"),
                   ),
                   items: MinCharsSettings.list.map((val) {
                     return DropdownMenuItem(
                       value: val,
-                      child: Text(val.toString()),
+                      child: Text('${val.toString()}字符'),
                     );
                   }).toList(),
                   onChanged: (value) {
@@ -529,6 +529,21 @@ class DisplaySettiingsFormState extends State<DisplaySettiingsForm> {
                         }),
                     const Text(
                       '强制使用桌面模式',
+                      softWrap: true,
+                    )
+                  ],
+                ),
+                Row(
+                  children: [
+                    Checkbox(
+                        value: config.hudDragable == true,
+                        onChanged: (value) {
+                          setState(() {
+                            config.hudDragable = (value == true);
+                          });
+                        }),
+                    const Text(
+                      '宽度不足时顶部HUD可以横向拖动',
                       softWrap: true,
                     )
                   ],

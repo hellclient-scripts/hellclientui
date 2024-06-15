@@ -1,8 +1,5 @@
 import 'dart:convert';
 import 'dart:async';
-
-import 'package:flutter/material.dart';
-
 import 'server.dart';
 import 'package:web_socket_channel/io.dart';
 import 'package:synchronized/synchronized.dart';
@@ -84,13 +81,11 @@ class Connecting {
   }
 
   void _listen() {
-    debugPrint('listen');
     streamsub = channel!.stream.listen((event) async {
       messageStream.add(event);
     }, onError: (error) {
       errorStream.add(error);
     }, onDone: () {
-      debugPrint('done');
       eventDisconnected.add(null);
       if (streamsub != null) {
         streamsub!.cancel();

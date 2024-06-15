@@ -1,10 +1,6 @@
-import 'dart:ffi';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter/widgets.dart';
 import 'package:hellclientui/models/message.dart';
-import 'package:hellclientui/models/rendersettings.dart';
 import '../../workers/game.dart';
 import '../../states/appstate.dart';
 import 'appui.dart';
@@ -340,7 +336,7 @@ class DisplayBottomState extends State<DisplayBottom> {
                                     currentGame!.suggestion.add(data);
                                   }
                                 }
-                                var limit = currentAppState!.renderSettings
+                                var limit = currentAppState.renderSettings
                                     .getSuggestionLimit();
                                 if (currentGame!.suggestion.length > limit) {
                                   currentGame!.suggestion = currentGame!

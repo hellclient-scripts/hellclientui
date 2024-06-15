@@ -1,4 +1,3 @@
-import 'package:flutter/material.dart';
 import 'package:tpns_flutter_plugin/tpns_flutter_plugin.dart';
 import "../models/notificationconfig.dart";
 import 'dart:io';
@@ -88,7 +87,6 @@ class Notification {
       startTpush();
       _sub = uriLinkStream.listen((Uri? uri) {
         if (uri != null) {
-          debugPrint(uri.path);
           if (uri.path.startsWith(tpushPrefix)) {
             final server = uri.path.replaceFirst(tpushPrefix, '');
             onTPushNofity(server, uri.fragment);
