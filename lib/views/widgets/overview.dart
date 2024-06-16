@@ -280,7 +280,7 @@ class OverviewState extends State<Overview> {
           );
         },
         onAcceptWithDetails: (detail) {
-          var data = detail as int;
+          var data = detail.data;
           if (data >= 0 && data < currentGame!.clientinfos.clientInfos.length) {
             final info = currentGame!.clientinfos.clientInfos[data];
             currentGame!.clientinfos.clientInfos[data] =
