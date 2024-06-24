@@ -2,6 +2,8 @@ import 'dart:convert';
 import 'package:flutter/services.dart';
 
 import 'package:flutter/material.dart';
+import '../models/feature.dart';
+
 import 'package:hellclientui/workers/game.dart';
 import '../views/widgets/appui.dart';
 import '../models/message.dart' as message;
@@ -31,6 +33,7 @@ class ScriptSettingsFormState extends State<ScriptSettingsForm> {
   late TextEditingController onBufferMax;
   late TextEditingController onSubneg;
   late TextEditingController onFocus;
+  late TextEditingController onLoseFocus;
   late TextEditingController intro;
 
   message.CreateFail? fail;
@@ -71,6 +74,8 @@ class ScriptSettingsFormState extends State<ScriptSettingsForm> {
         TextEditingValue(text: widget.settings.onSubneg));
     onFocus = TextEditingController.fromValue(
         TextEditingValue(text: widget.settings.onFocus));
+    onLoseFocus = TextEditingController.fromValue(
+        TextEditingValue(text: widget.settings.onLoseFocus));
     intro = TextEditingController.fromValue(
         TextEditingValue(text: widget.settings.intro));
 
@@ -204,6 +209,14 @@ class ScriptSettingsFormState extends State<ScriptSettingsForm> {
             label: Text("获得焦点函数"),
           ),
         ),
+        currentGame!.support(Features.onLoseFocus)
+            ? TextFormField(
+                controller: onLoseFocus,
+                decoration: const InputDecoration(
+                  label: Text("失去焦点函数"),
+                ),
+              )
+            : const Center(),
         Container(
             color: const Color(0xffeeeeee),
             padding: const EdgeInsets.all(4),
@@ -236,6 +249,7 @@ class ScriptSettingsFormState extends State<ScriptSettingsForm> {
           form.onBufferMax = int.tryParse(onBufferMax.text) ?? 0;
           form.onSubneg = onSubneg.text;
           form.onFocus = onFocus.text;
+          form.onLoseFocus = onLoseFocus.text;
           form.intro = intro.text;
           form.id = currentGame!.current;
           currentGame!.handleCmd('updateScriptSettings', form);

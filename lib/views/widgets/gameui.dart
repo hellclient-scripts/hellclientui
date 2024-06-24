@@ -473,6 +473,15 @@ class GameUI {
                             style: textStyleGameUIFieldLabel,
                           ),
                           Text(scriptSettings.onFocus),
+                          currentGame!.support(Features.onLoseFocus)
+                              ? const Text(
+                                  '失去焦点函数',
+                                  style: textStyleGameUIFieldLabel,
+                                )
+                              : const Center(),
+                          currentGame!.support(Features.onLoseFocus)
+                              ? Text(scriptSettings.onLoseFocus)
+                              : const Center(),
                           const Text(
                             '描述',
                             style: textStyleGameUIFieldLabel,

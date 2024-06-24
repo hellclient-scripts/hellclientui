@@ -411,11 +411,11 @@ class Game {
     }
   }
 
-  bool support(Feature feature) {
+  bool support(Feature featureToCheck) {
     if (apiVersion == null) {
       return false;
     }
-    return feature.isSupported(apiVersion!);
+    return featureToCheck.isSupportedBy(apiVersion!);
   }
 
   Future<void> connect(AppState appState, Function(String) errorhandler) async {

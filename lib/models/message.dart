@@ -504,6 +504,7 @@ class ScriptInfo {
   String onConnect = "";
   String onDisconnect = "";
   String onFocus = "";
+  String onLoseFocus = "";
   String onHUDClick = "";
   String onKeyUp = "";
   String onOpen = "";
@@ -523,6 +524,7 @@ class ScriptInfo {
     onConnect = json['OnConnect'] ?? "";
     onDisconnect = json['OnDisconnect'] ?? "";
     onFocus = json['OnFocus'] ?? "";
+    onLoseFocus = json['OnLoseFocus'] ?? "";
     onHUDClick = json['OnHUDClick'] ?? "";
     onKeyUp = json['OnKeyUp'] ?? "";
     onResponse = json['OnResponse'] ?? "";
@@ -553,6 +555,7 @@ class ScriptSettings {
   String onConnect = '';
   String onDisconnect = '';
   String onFocus = '';
+  String onLoseFocus = "";
   String onHUDClick = '';
   String onKeyUp = '';
   String onOpen = '';
@@ -560,25 +563,26 @@ class ScriptSettings {
   String onSubneg = '';
   String type = '';
   ScriptSettings.fromJson(Map<String, dynamic> json) {
-    channel = json['Channel'];
-    desc = json['Desc'];
-    intro = json['Intro'];
-    name = json['Name'];
-    onAssist = json['OnAssist'];
-    onBroadcast = json['OnBroadcast'];
-    onBuffer = json['OnBuffer'];
-    onBufferMax = json['OnBufferMax'];
-    onBufferMin = json['OnBufferMin'];
-    onClose = json['OnClose'];
-    onConnect = json['OnConnect'];
-    onDisconnect = json['OnDisconnect'];
-    onFocus = json['OnFocus'];
-    onHUDClick = json['OnHUDClick'];
-    onKeyUp = json['OnKeyUp'];
-    onOpen = json['OnOpen'];
-    onResponse = json['OnResponse'];
-    onSubneg = json['OnSubneg'];
-    type = json['Type'];
+    channel = json['Channel'] ?? "";
+    desc = json['Desc'] ?? "";
+    intro = json['Intro'] ?? "";
+    name = json['Name'] ?? "";
+    onAssist = json['OnAssist'] ?? "";
+    onBroadcast = json['OnBroadcast'] ?? "";
+    onBuffer = json['OnBuffer'] ?? "";
+    onBufferMax = json['OnBufferMax'] ?? "";
+    onBufferMin = json['OnBufferMin'] ?? "";
+    onClose = json['OnClose'] ?? "";
+    onConnect = json['OnConnect'] ?? "";
+    onDisconnect = json['OnDisconnect'] ?? "";
+    onFocus = json['OnFocus'] ?? "";
+    onLoseFocus = json['OnLoseFocus'] ?? "";
+    onHUDClick = json['OnHUDClick'] ?? "";
+    onKeyUp = json['OnKeyUp'] ?? "";
+    onOpen = json['OnOpen'] ?? "";
+    onResponse = json['OnResponse'] ?? "";
+    onSubneg = json['OnSubneg'] ?? "";
+    type = json['Type'] ?? "";
   }
 }
 
@@ -599,6 +603,7 @@ class UpdateScriptSettingsForm extends ScriptSettings {
         'OnConnect': onConnect,
         'OnDisconnect': onDisconnect,
         'OnFocus': onFocus,
+        'OnLoseFocus': onLoseFocus,
         'OnHUDClick': onHUDClick,
         'OnKeyUp': onKeyUp,
         'OnOpen': onOpen,
