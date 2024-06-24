@@ -112,9 +112,11 @@ class NotOpenedGame {
   NotOpenedGame();
   String id = "";
   String lastUpdated = "";
+  String name = '';
   NotOpenedGame.fromJson(dynamic json)
-      : id = json["ID"],
-        lastUpdated = json["LastUpdated"];
+      : id = json["ID"] ?? "",
+        name = json['Name'] ?? "",
+        lastUpdated = json["LastUpdated"] ?? "";
 }
 
 class NotOpened {

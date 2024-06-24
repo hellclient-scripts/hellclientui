@@ -2,9 +2,12 @@ import 'package:flutter/material.dart';
 import '../../models/message.dart';
 import 'appui.dart';
 import 'userinput.dart';
+import '../../models/feature.dart';
 import '../../forms/creategameform.dart' as creategameform;
 import '../../workers/game.dart';
 
+const int renderModeNormal = 0;
+const int renderModeWithName = 1;
 Future<bool?> showCreateGame(BuildContext context) async {
   return showDialog<bool>(
     useRootNavigator: false,
@@ -25,28 +28,46 @@ class NotOpened extends StatefulWidget {
 
 class NotOpenedState extends State<NotOpened> {
   TextEditingValue? filter;
-  @override
-  Widget build(BuildContext context) {
-    filter ??= const TextEditingValue();
-    final controller = TextEditingController.fromValue(filter);
-    final List<TableRow> children = [
-      createTableRow([
-        const TableHead(
-          '名称',
-          textAlign: TextAlign.start,
-        ),
-        const TableHead('最后更新', textAlign: TextAlign.start),
-        const TableHead('操作', textAlign: TextAlign.end),
-      ])
+  List<TableHead> renderHead(int mode) {
+    switch (mode) {
+      case 1:
+        return const [
+          TableHead(
+            'ID',
+            textAlign: TextAlign.start,
+          ),
+          TableHead(
+            '名称',
+            textAlign: TextAlign.start,
+          ),
+          TableHead('最后更新', textAlign: TextAlign.start),
+          TableHead('操作', textAlign: TextAlign.end),
+        ];
+    }
+    return const [
+      TableHead(
+        '名称',
+        textAlign: TextAlign.start,
+      ),
+      TableHead('最后更新', textAlign: TextAlign.start),
+      TableHead('操作', textAlign: TextAlign.end),
     ];
-    for (final game in widget.games) {
-      if (filter!.text.isEmpty || game.id.contains(filter!.text)) {
-        children.add(createTableRow([
+  }
+
+  List<Widget> renderItem(NotOpenedGame game, int mode) {
+    switch (mode) {
+      case renderModeWithName:
+        return [
           TCell(TextButton(
               onPressed: () {
                 Navigator.of(context).pop(game.id);
               },
               child: Text(game.id))),
+          TCell(TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(game.name);
+              },
+              child: Text(game.name))),
           TCell(Text(game.lastUpdated)),
           TCell(
             TextButton(
@@ -57,7 +78,42 @@ class NotOpenedState extends State<NotOpened> {
                   '打开',
                 )),
           )
-        ]));
+        ];
+    }
+    return [
+      TCell(TextButton(
+          onPressed: () {
+            Navigator.of(context).pop(game.id);
+          },
+          child: Text(game.id))),
+      TCell(Text(game.lastUpdated)),
+      TCell(
+        TextButton(
+            onPressed: () {
+              Navigator.of(context).pop(game.id);
+            },
+            child: const Text(
+              '打开',
+            )),
+      )
+    ];
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    filter ??= const TextEditingValue();
+    final controller = TextEditingController.fromValue(filter);
+    int renderMode = 0;
+    if (currentGame!.support(Features.notOpenedName)) {
+      renderMode = 1;
+    }
+    var headlist = renderHead(renderMode);
+    final List<TableRow> children = [createTableRow(headlist)];
+    for (final game in widget.games) {
+      if (filter!.text.isEmpty ||
+          game.id.contains(filter!.text) ||
+          game.name.contains(filter!.text)) {
+        children.add(createTableRow(renderItem(game, renderMode)));
       }
     }
     return Stack(children: [
@@ -79,7 +135,7 @@ class NotOpenedState extends State<NotOpened> {
                       });
                     })),
             Table(
-              columnWidths: const {2: FixedColumnWidth(80)},
+              columnWidths: {headlist.length - 1: const FixedColumnWidth(80)},
               children: children,
             ),
             const SizedBox(

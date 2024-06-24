@@ -52,11 +52,7 @@ class ExportPage extends StatelessWidget {
                     currentAppState.navigatorKey.currentState!.context;
                 if (context.mounted) {
                   final input = await AppUI.promptAppTextArea(
-                      currentAppState.navigatorKey.currentState!.context,
-                      '导入显示设置',
-                      '请导入hcui-config:开头的显示设置',
-                      '',
-                      '');
+                      context, '导入显示设置', '请导入hcui-config:开头的显示设置', '', '');
                   if (input != null) {
                     if (input.startsWith('hcui-config:')) {
                       try {
@@ -137,12 +133,8 @@ class ExportPage extends StatelessWidget {
                 final context =
                     currentAppState.navigatorKey.currentState!.context;
                 if (context.mounted) {
-                  final input = await AppUI.promptAppTextArea(
-                      currentAppState.navigatorKey.currentState!.context,
-                      '导入系统设置',
-                      '请导入hcsystem-config-include-PASSWORD!:开头的显示设置',
-                      '',
-                      '');
+                  final input = await AppUI.promptAppTextArea(context, '导入系统设置',
+                      '请导入hcsystem-config-include-PASSWORD!:开头的显示设置', '', '');
                   if (input != null) {
                     if (input
                         .startsWith('hcsystem-config-include-PASSWORD!:')) {

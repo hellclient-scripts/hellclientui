@@ -73,7 +73,7 @@ class GameState extends State<Game> {
     }
     widget.game.init();
     await widget.game.dial(listen);
-    if (context.mounted) {
+    if (mounted) {
       AppUI.hideUI(context);
     }
     setState(() {
@@ -102,7 +102,7 @@ class GameState extends State<Game> {
         widget.game.streamConnectError.stream.listen((data) async {
       if (data is Exception) {
         if (await showConnectError(context, data.toString()) == true) {
-          if (context.mounted) {
+          if (mounted) {
             Navigator.of(context).pop();
           }
         }
@@ -121,19 +121,19 @@ class GameState extends State<Game> {
             gameengine.currentGame!.navigatorKey.currentState!.context);
         if (result == true) {
           try {
-            if (context.mounted) {
+            if (mounted) {
               AppUI.hideUI(context);
             }
             await (reconnect(false));
           } catch (e) {
-            if (context.mounted) {
-              showConnectError(
-                  gameengine.currentGame!.navigatorKey.currentState!.context,
-                  e.toString());
+            var gamecontext =
+                gameengine.currentGame!.navigatorKey.currentState!.context;
+            if (mounted && gamecontext.mounted) {
+              showConnectError(gamecontext, e.toString());
             }
           }
         } else if (result == false) {
-          if (context.mounted) {
+          if (mounted) {
             var nav = Navigator.of(context);
             nav.pop();
           }

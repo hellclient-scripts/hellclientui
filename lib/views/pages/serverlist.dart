@@ -54,7 +54,9 @@ void connectServer(Server server, BuildContext context) async {
       await Navigator.pushNamed(context, "/game", arguments: currentGame);
     }
   } catch (e) {
-    showConnectError(context, e.toString());
+    if (context.mounted) {
+      showConnectError(context, e.toString());
+    }
   }
 }
 
