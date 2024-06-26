@@ -41,24 +41,22 @@ class SendBatchCommandFormState extends State<SendBatchCommandForm> {
       children: [
         Text.rich(TextSpan(children: [
           const TextSpan(text: '选择脚本', style: _textStyleLabel),
-          ...scriptlabels
-              .map((e) => TextSpan(children: [
-                    WidgetSpan(
-                        alignment: PlaceholderAlignment.middle,
-                        baseline: TextBaseline.alphabetic,
-                        child: SizedBox(
-                            height: 32,
-                            child: Checkbox(
-                              value: e.value,
-                              onChanged: (value) {
-                                setState(() {
-                                  e.value = (value == true);
-                                });
-                              },
-                            ))),
-                    TextSpan(text: '[${e.label}]', style: _textStyleScriptLabel)
-                  ]))
-              .toList()
+          ...scriptlabels.map((e) => TextSpan(children: [
+                WidgetSpan(
+                    alignment: PlaceholderAlignment.middle,
+                    baseline: TextBaseline.alphabetic,
+                    child: SizedBox(
+                        height: 32,
+                        child: Checkbox(
+                          value: e.value,
+                          onChanged: (value) {
+                            setState(() {
+                              e.value = (value == true);
+                            });
+                          },
+                        ))),
+                TextSpan(text: '[${e.label}]', style: _textStyleScriptLabel)
+              ]))
         ])),
         Container(
             color: Colors.black,

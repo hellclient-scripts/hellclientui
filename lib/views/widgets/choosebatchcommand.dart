@@ -59,8 +59,7 @@ class ChooseBatchCommand extends StatelessWidget {
                           onPressed: () {
                             Navigator.of(context).pop(entry.value);
                           }),
-                    ))
-                .toList(),
+                    )),
             ConfirmOrCancelWidget(
                 labelConfirm: null,
                 onConfirm: () {},

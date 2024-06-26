@@ -473,6 +473,9 @@ class Game {
     subscription.cancel();
     disconnectSub.cancel();
     subConnectError.cancel();
+    output.dispose();
+    prompt.dispose();
+    hud.dispose();
   }
 
   void clientQuick() {

@@ -14,6 +14,10 @@ class RenderPainter extends CustomPainter {
     return painter;
   }
 
+  dispose() {
+    renderer.dispose();
+  }
+
   @override
   void paint(Canvas canvas, ui.Size size) {
     // renderer.resetFrame();
@@ -171,6 +175,10 @@ class Row {
     }
     return a.index.compareTo(b.index);
   }
+
+  dispose() {
+    image.dispose();
+  }
 }
 
 class Renderer {
@@ -193,6 +201,10 @@ class Renderer {
     current = pictureRecorder.endRecording();
   }
 
+  dispose() {
+    resetRows();
+  }
+
   var lock = Lock();
   List<Row> rows = [];
 
@@ -209,9 +221,16 @@ class Renderer {
     canvas.drawRect(rect, paint);
   }
 
+  void resetRows() {
+    for (var row in rows) {
+      row.dispose();
+    }
+    rows = [];
+  }
+
   void reset() {
     resetFrame();
-    rows = [];
+    resetRows();
   }
 
   Future<void> draw() async {
@@ -223,6 +242,9 @@ class Renderer {
       if (noSortLines != true) {
         rows.sort(Row.compare);
         if (rows.length > maxLines) {
+          for (var i = 0; i < rows.length - maxLines; i++) {
+            rows[i].dispose();
+          }
           rows = rows.sublist(rows.length - maxLines);
         }
       }

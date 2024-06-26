@@ -68,33 +68,28 @@ class PresetBatchCommandFormState extends State<PresetBatchCommandForm> {
                           size: 32,
                         ),
                       ))),
-              ...scripts
-                  .asMap()
-                  .entries
-                  .map((entry) => TextSpan(children: [
-                        TextSpan(
-                            text:
-                                '[${entry.value.isEmpty ? "全部脚本" : entry.value}]',
-                            style: _textStyleScriptLabel),
-                        WidgetSpan(
-                            alignment: PlaceholderAlignment.middle,
-                            baseline: TextBaseline.alphabetic,
-                            child: SizedBox(
-                                height: 32,
-                                child: IconButton(
-                                  onPressed: () {
-                                    setState(() {
-                                      scripts.removeAt(entry.key);
-                                    });
-                                  },
-                                  tooltip: '移除',
-                                  icon: const Icon(
-                                    Icons.close,
-                                    size: 32,
-                                  ),
-                                ))),
-                      ]))
-                  .toList()
+              ...scripts.asMap().entries.map((entry) => TextSpan(children: [
+                    TextSpan(
+                        text: '[${entry.value.isEmpty ? "全部脚本" : entry.value}]',
+                        style: _textStyleScriptLabel),
+                    WidgetSpan(
+                        alignment: PlaceholderAlignment.middle,
+                        baseline: TextBaseline.alphabetic,
+                        child: SizedBox(
+                            height: 32,
+                            child: IconButton(
+                              onPressed: () {
+                                setState(() {
+                                  scripts.removeAt(entry.key);
+                                });
+                              },
+                              tooltip: '移除',
+                              icon: const Icon(
+                                Icons.close,
+                                size: 32,
+                              ),
+                            ))),
+                  ]))
             ])),
             Container(
                 color: const Color(0xffeeeeee),
