@@ -3,7 +3,6 @@ import 'package:hellclientui/models/message.dart';
 import 'package:hellclientui/states/appstate.dart';
 import 'package:hellclientui/views/widgets/appui.dart';
 import 'package:provider/provider.dart';
-import '../../workers/renderer.dart';
 import '../../workers/game.dart';
 import 'datagridview.dart';
 import 'package:web_socket_channel/io.dart';
@@ -73,7 +72,7 @@ class Display extends StatefulWidget {
 class DisplayState extends State<Display> {
   DisplayState();
   IOWebSocketChannel? channel;
-  final repaint = Repaint();
+  // final repaint = Repaint();
   late StreamSubscription subCommand;
   @override
   void dispose() {
