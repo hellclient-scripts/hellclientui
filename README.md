@@ -5,6 +5,6 @@
 支持的平台包括
 * Windows
 * Linux
-* Mac os x
+* Mac os x\(试验性支持\)
 * Android
-* iOS
+* iOS [Appstore 中查看](https://apps.apple.com/app/hellclient-ui/id6502743040)
