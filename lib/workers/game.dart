@@ -155,7 +155,6 @@ class Game {
     final Map<String, dynamic> jsondata = json.decode(data);
     final line = Line.fromJson(jsondata);
     await output.renderer.drawLine(line);
-    await output.renderer.draw();
   }
 
   Future<void> onCmdPrompt(String data) async {
@@ -473,9 +472,6 @@ class Game {
     subscription.cancel();
     disconnectSub.cancel();
     subConnectError.cancel();
-    output.dispose();
-    prompt.dispose();
-    hud.dispose();
   }
 
   void clientQuick() {

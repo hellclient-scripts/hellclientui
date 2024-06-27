@@ -19,9 +19,11 @@ class RenderPainter extends CustomPainter {
   }
 
   @override
-  void paint(Canvas canvas, ui.Size size) {
-    // renderer.resetFrame();
-    canvas.drawPicture(renderer.current);
+  void paint(Canvas canvas, ui.Size size) async {
+    await renderer.lock.synchronized(() async {
+      renderer.draw();
+      canvas.drawPicture(renderer.current);
+    });
   }
 
   @override
@@ -158,16 +160,14 @@ class RenderingLine {
     var row = Row();
     row.id = id;
     row.index = index;
-    row.image = recorder.endRecording().toImageSync(
-        (devicePixelRatio * settings.width).floor(),
-        (devicePixelRatio * settings.lineheight).floor());
+    row.picture = recorder.endRecording();
     return row;
   }
 }
 
 class Row {
   String id = "";
-  late ui.Image image;
+  late ui.Picture picture;
   int index = 0;
   static int compare(Row a, Row b) {
     if (a.id != b.id) {
@@ -177,7 +177,7 @@ class Row {
   }
 
   dispose() {
-    image.dispose();
+    picture.dispose();
   }
 }
 
@@ -198,27 +198,26 @@ class Renderer {
   late double devicePixelRatio;
   void init() {
     resetFrame();
-    current = pictureRecorder.endRecording();
   }
 
   dispose() {
-    resetRows();
+    for (var row in rows) {
+      row.dispose();
+    }
   }
 
   var lock = Lock();
   List<Row> rows = [];
 
-  ui.PictureRecorder pictureRecorder = ui.PictureRecorder();
   Paint paint = Paint();
-  late Canvas canvas = Canvas(pictureRecorder);
   late RenderSettings renderSettings;
   late Rect rect =
       Rect.fromLTWH(0, 0, renderSettings.width, renderSettings.lineheight);
   void resetFrame() {
-    paint.color = background;
-    pictureRecorder = ui.PictureRecorder();
-    canvas = Canvas(pictureRecorder);
-    canvas.drawRect(rect, paint);
+    ui.PictureRecorder pictureRecorder = ui.PictureRecorder();
+    var canvas = Canvas(pictureRecorder);
+    canvas.drawColor(background, BlendMode.src);
+    current = pictureRecorder.endRecording();
   }
 
   void resetRows() {
@@ -226,6 +225,8 @@ class Renderer {
       row.dispose();
     }
     rows = [];
+    updated = true;
+    repaint.notifyRepaint();
   }
 
   void reset() {
@@ -233,38 +234,49 @@ class Renderer {
     resetRows();
   }
 
-  Future<void> draw() async {
-    await lock.synchronized(() async {
-      if (!updated) {
-        return;
+  check() {
+    lock.synchronized(() {
+      if (updated) {
+        repaint.notifyRepaint();
       }
-      resetFrame();
-      if (noSortLines != true) {
-        rows.sort(Row.compare);
-        if (rows.length > maxLines) {
-          for (var i = 0; i < rows.length - maxLines; i++) {
-            rows[i].dispose();
-          }
-          rows = rows.sublist(rows.length - maxLines);
-        }
-      }
-      int index = 0;
-      for (final row in rows) {
-        canvas.drawImage(
-            row.image,
-            Offset(
-                0,
-                devicePixelRatio * renderSettings.lineheight * maxLines -
-                    (rows.length - index) *
-                        devicePixelRatio *
-                        renderSettings.lineheight),
-            Paint());
-        index++;
-      }
-      current = pictureRecorder.endRecording();
-      updated = false;
-      repaint.notifyRepaint();
     });
+  }
+
+  draw() {
+    if (!updated) {
+      return;
+    }
+    if (noSortLines != true) {
+      rows.sort(Row.compare);
+    }
+    if (rows.length > maxLines) {
+      for (var i = 0; i < rows.length - maxLines; i++) {
+        rows[i].dispose();
+      }
+      rows = rows.sublist(rows.length - maxLines);
+    }
+    int index = 0;
+    var pictureRecorder = ui.PictureRecorder();
+    var canvas = Canvas(pictureRecorder);
+    for (final row in rows) {
+      var img = row.picture.toImageSync(
+          (devicePixelRatio * renderSettings.width).floor(),
+          (devicePixelRatio * renderSettings.lineheight).floor());
+      canvas.drawImage(
+          img,
+          Offset(
+              0,
+              devicePixelRatio * renderSettings.lineheight * maxLines -
+                  (rows.length - index) *
+                      devicePixelRatio *
+                      renderSettings.lineheight),
+          Paint());
+      img.dispose();
+      index++;
+    }
+    current.dispose();
+    current = pictureRecorder.endRecording();
+    updated = false;
   }
 
   Future<void> drawLine(Line line) async {
@@ -300,6 +312,7 @@ class Renderer {
         await _renderline(settings, line, withouticon, nocr, bcolor);
       }
       updated = true;
+      repaint.notifyRepaint();
     });
   }
 
@@ -308,6 +321,7 @@ class Renderer {
     await lock.synchronized(() async {
       await _renderline(settings, line, withouticon, nocr, bcolor);
       updated = true;
+      repaint.notifyRepaint();
     });
   }
 
