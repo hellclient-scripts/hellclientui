@@ -164,10 +164,8 @@ class Game {
       prompt.renderer.reset();
       await prompt.renderer.renderline(
           renderSettings, line, true, true, renderSettings.background);
-      await prompt.renderer.draw();
     } else {
       prompt.renderer.reset();
-      await prompt.renderer.draw();
     }
   }
 
@@ -182,7 +180,6 @@ class Game {
     hud.renderer.maxLines = hudContent.length;
     await hud.renderer.renderlines(
         renderSettings, hudContent, true, true, renderSettings.hudbackground);
-    await hud.renderer.draw();
     hudUpdateStream.add(null);
   }
 
@@ -230,7 +227,6 @@ class Game {
     final dynamic jsondata = json.decode(data);
     final lines = Lines.fromJson(jsondata);
     await output.renderer.drawLines(lines.lines);
-    output.renderer.draw();
   }
 
   Future<void> onCmdClients(String data) async {
@@ -426,10 +422,6 @@ class Game {
 
   Future<void> close() async {
     await connecting.close();
-  }
-
-  void onPostFrame(Duration time) {
-    output.renderer.draw();
   }
 
   void handleSend(String cmd) {

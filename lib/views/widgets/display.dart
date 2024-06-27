@@ -72,7 +72,6 @@ class Display extends StatefulWidget {
 class DisplayState extends State<Display> {
   DisplayState();
   IOWebSocketChannel? channel;
-  // final repaint = Repaint();
   late StreamSubscription subCommand;
   @override
   void dispose() {
@@ -98,12 +97,6 @@ class DisplayState extends State<Display> {
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((Duration time) {
-      if (mounted) {
-        currentGame!.onPostFrame(time);
-      }
-    });
-
     subCommand = currentGame!.commandStream.stream.listen((event) async {
       if (event is GameCommand) {
         switch (event.command) {
@@ -261,8 +254,6 @@ class DisplayState extends State<Display> {
           const DisplayBottom(),
         ])),
       );
-      // children.add(buildPrompt(context));
-      // children.add(const DisplayBottom());
     } else {
       if (currentGame?.current == "") {
         children.add(const Expanded(child: Overview()));
