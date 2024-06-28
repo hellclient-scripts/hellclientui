@@ -1,6 +1,15 @@
 import 'dart:convert';
 
 class Word {
+  Word({
+    required this.text,
+    required this.color,
+    required this.background,
+    required this.bold,
+    required this.underlined,
+    required this.blinking,
+    required this.inverse,
+  });
   String text = "";
   String color = "";
   String background = "";
@@ -17,6 +26,19 @@ class Word {
         underlined = json['Underlined'],
         blinking = json['Blinking'],
         inverse = json['Inverse'];
+  List<Word> split() {
+    return text
+        .split("")
+        .map((e) => Word(
+            text: e,
+            color: color,
+            background: background,
+            bold: bold,
+            underlined: underlined,
+            blinking: blinking,
+            inverse: inverse))
+        .toList();
+  }
 }
 
 class Line {
@@ -46,6 +68,13 @@ class Line {
                 .toList(),
         creatorType = json['CreatorType'],
         creator = json['Creator'];
+  List<Word> splitWords() {
+    List<Word> result = [];
+    for (var word in words) {
+      result.addAll(word.split());
+    }
+    return result;
+  }
 }
 
 class Lines {

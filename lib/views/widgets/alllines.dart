@@ -62,14 +62,15 @@ class AllLinesState extends State<AllLines> {
 
   void _onSearchChange(String value) {
     if (_debounce?.isActive ?? false) _debounce!.cancel();
-    _debounce = async.Timer(const Duration(milliseconds: 500), () {
+    _debounce = async.Timer(const Duration(milliseconds: 2000), () {
       _onSearch(value);
     });
   }
 
   void _onSearch(String value) {
     setState(() {
-      current = 0;
+      current = 1;
+      scrollCurrent = true;
     });
   }
 
@@ -105,7 +106,7 @@ class AllLinesState extends State<AllLines> {
       for (final line in lines!.lines) {
         bool isCurrentLine = false;
         List<InlineSpan> linedata = [];
-        var plain = "";
+        var plain = line.words.map((e) => e.text).join("");
         final linestyle = renderer.getLineStyle(line);
         if (linestyle.icon.isNotEmpty) {
           final iconstyle = renderer.getIconStyle(1, linestyle.iconcolor,
@@ -114,59 +115,56 @@ class AllLinesState extends State<AllLines> {
               child: SelectionContainer.disabled(
                   child: Text(linestyle.icon, style: iconstyle))));
         }
-        for (final word in line.words) {
-          plain += word.text;
+        final matched = search.text.isNotEmpty && plain.contains(search.text);
+        final List<Word> words = matched ? line.splitWords() : line.words;
+        final allmatched = search.text.allMatches(plain).toList();
+        var index = 0;
+        for (final word in words) {
           var text = word.text;
           late rendererlib.RenderStyle style;
-          if (search.text.isNotEmpty) {
-            var pos = text.indexOf(search.text);
-            while (pos > -1) {
-              found++;
-              if (pos > 0) {
-                style = renderer
-                    .getWordStyle(word, linestyle.color,
-                        currentAppState.renderSettings.background)
-                    .toRenderStyle(currentAppState.renderSettings);
-                linedata.add(WidgetSpan(
-                    child: Container(
-                        color: style.backgroundColor,
-                        child: Text(text.substring(0, pos),
-                            style: style.textStyle))));
+          Color? forceColor;
+          Color? forceBackground;
+          if (word.text == "\n") {
+            linedata.add(TextSpan(text: word.text));
+          } else {
+            if (matched) {
+              for (final (mindex, m) in allmatched.indexed) {
+                if ((index >= m.start) && (index + text.length <= m.end)) {
+                  forceColor = currentAppState.renderSettings.searchForceground;
+                  if (mindex + found == current - 1) {
+                    forceBackground =
+                        currentAppState.renderSettings.searchCurrentBackground;
+                    if (index == m.start) {
+                      isCurrentLine = true;
+                    }
+                  } else {
+                    forceBackground =
+                        currentAppState.renderSettings.searchBackground;
+                  }
+                }
               }
-              style = renderer
-                  .getWordStyle(word, linestyle.color,
-                      currentAppState.renderSettings.background)
-                  .toRenderStyle(currentAppState.renderSettings,
-                      forceColor:
-                          currentAppState.renderSettings.searchForeground,
-                      forceBackground: current == found
-                          ? currentAppState
-                              .renderSettings.searchCurrentBackground
-                          : currentAppState.renderSettings.searchBackground);
-              if (current == found) {
-                currentkey = GlobalKey();
-                isCurrentLine = true;
-              }
-              linedata.add(WidgetSpan(
-                  child: Container(
-                      color: style.backgroundColor,
-                      child: Text(text.substring(pos, pos + search.text.length),
-                          style: style.textStyle))));
-              text = text.substring(pos + search.text.length);
-              pos = text.indexOf(search.text);
             }
-          }
-          if (text.isNotEmpty) {
             style = renderer
                 .getWordStyle(word, linestyle.color,
                     currentAppState.renderSettings.background)
-                .toRenderStyle(currentAppState.renderSettings);
+                .toRenderStyle(
+                  currentAppState.renderSettings,
+                  forceColor: forceColor,
+                  forceBackground: forceBackground,
+                );
+            if (isCurrentLine) {
+              currentkey = GlobalKey();
+            }
             linedata.add(WidgetSpan(
                 child: Container(
+                    key: isCurrentLine ? currentkey : null,
                     color: style.backgroundColor,
                     child: Text(text, style: style.textStyle))));
+            isCurrentLine = false;
           }
+          index += text.length;
         }
+        found = found + allmatched.length;
         if (line.triggers.isNotEmpty) {
           linedata.add(WidgetSpan(
               child: SelectionContainer.disabled(
@@ -188,9 +186,6 @@ class AllLinesState extends State<AllLines> {
           }
         }
         children.add(Row(children: [
-          Center(
-            key: isCurrentLine ? currentkey : null,
-          ),
           Tooltip(
               message: tooltip,
               child: SizedBox(
@@ -234,8 +229,10 @@ class AllLinesState extends State<AllLines> {
         (timeStamp) {
           if (currentkey!.currentContext != null &&
               currentkey.currentContext!.mounted) {
-            Scrollable.ensureVisible(currentkey.currentContext!,
-                alignment: 0.5);
+            Scrollable.ensureVisible(
+              currentkey.currentContext!,
+              alignment: 0.5,
+            );
           }
         },
       );
@@ -289,7 +286,9 @@ class AllLinesState extends State<AllLines> {
               label: Text("搜索"),
             ),
           )),
-          search.text.isEmpty ? const Center() : Text('$current / $found'),
+          search.text.isEmpty
+              ? const Center()
+              : Text('${found == 0 ? 0 : current} / $found'),
           IconButton(
               onPressed: () {
                 if (search.text.isNotEmpty && found > 0) {
