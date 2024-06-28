@@ -330,6 +330,8 @@ class AllLinesState extends State<AllLines> {
                       thumbVisibility: true,
                       controller: scrollController2,
                       scrollbarOrientation: ScrollbarOrientation.bottom,
+                      notificationPredicate: (notification) =>
+                          notification.depth == 1,
                       child: RawScrollbar(
                           thumbColor: Colors.white,
                           thumbVisibility: true,
