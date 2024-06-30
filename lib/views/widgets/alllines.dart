@@ -51,6 +51,7 @@ class AllLinesState extends State<AllLines> {
   final focusNode = FocusNode();
   late StreamSubscription subCommand;
   final search = TextEditingController();
+  var searchtext = "";
   late List<InlineSpan> linedata = [];
   int current = 0;
   int found = 0;
@@ -60,15 +61,12 @@ class AllLinesState extends State<AllLines> {
   final ScrollController scrollController = ScrollController();
   final ScrollController scrollController2 = ScrollController();
 
-  void _onSearchChange(String value) {
-    if (_debounce?.isActive ?? false) _debounce!.cancel();
-    _debounce = async.Timer(const Duration(milliseconds: 2000), () {
-      _onSearch(value);
-    });
-  }
-
   void _onSearch(String value) {
+    focusNode.requestFocus();
+    search.selection =
+        TextSelection(baseOffset: 0, extentOffset: search.value.text.length);
     setState(() {
+      searchtext = value;
       current = 1;
       scrollCurrent = true;
     });
@@ -115,9 +113,9 @@ class AllLinesState extends State<AllLines> {
               child: SelectionContainer.disabled(
                   child: Text(linestyle.icon, style: iconstyle))));
         }
-        final matched = search.text.isNotEmpty && plain.contains(search.text);
+        final matched = searchtext.isNotEmpty && plain.contains(searchtext);
         final List<Word> words = matched ? line.splitWords() : line.words;
-        final allmatched = search.text.allMatches(plain).toList();
+        final allmatched = searchtext.allMatches(plain).toList();
         var index = 0;
         for (final word in words) {
           var text = word.text;
@@ -279,19 +277,19 @@ class AllLinesState extends State<AllLines> {
           Expanded(
               child: TextFormField(
             controller: search,
-            onChanged: (value) {
-              _onSearchChange(value);
-            },
-            decoration: const InputDecoration(
-              label: Text("搜索"),
+            focusNode: focusNode,
+            textInputAction: TextInputAction.search,
+            onFieldSubmitted: (value) => {_onSearch(value)},
+            decoration: InputDecoration(
+              label: Text(searchtext.isEmpty ? "搜索" : "搜索 $searchtext"),
             ),
           )),
-          search.text.isEmpty
+          searchtext.isEmpty
               ? const Center()
               : Text('${found == 0 ? 0 : current} / $found'),
           IconButton(
               onPressed: () {
-                if (search.text.isNotEmpty && found > 0) {
+                if (searchtext.isNotEmpty && found > 0) {
                   setState(() {
                     current--;
                     scrollCurrent = true;
@@ -305,7 +303,7 @@ class AllLinesState extends State<AllLines> {
               icon: const Icon(Icons.arrow_drop_up)),
           IconButton(
               onPressed: () {
-                if (search.text.isNotEmpty && found > 0) {
+                if (searchtext.isNotEmpty && found > 0) {
                   setState(() {
                     current++;
                     scrollCurrent = true;
@@ -317,7 +315,14 @@ class AllLinesState extends State<AllLines> {
                 }
               },
               tooltip: '下一个',
-              icon: const Icon(Icons.arrow_drop_down))
+              icon: const Icon(Icons.arrow_drop_down)),
+          IconButton(
+              onPressed: () {
+                search.text = "";
+                _onSearch("");
+              },
+              tooltip: '清除',
+              icon: const Icon(Icons.clear)),
         ]),
         Expanded(
             child: Container(
