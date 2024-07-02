@@ -11,4 +11,4 @@ PRODUCT_NAME = hellclientui
 PRODUCT_BUNDLE_IDENTIFIER = com.jarlyyn.hellclientui
 
 // The copyright displayed in application information
-PRODUCT_COPYRIGHT = Copyright © 2023 com.jarlyyn. All rights reserved.
+PRODUCT_COPYRIGHT = Copyright © 2024 com.jarlyyn. All rights reserved.
