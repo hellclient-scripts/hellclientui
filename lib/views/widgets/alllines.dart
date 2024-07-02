@@ -134,7 +134,7 @@ class SearchBarWidgettState extends State<SearchBarWidget> {
             _onSearch("");
           },
           tooltip: '清除',
-          icon: const Icon(Icons.clear)),
+          icon: const Icon(Icons.delete)),
     ]);
   }
 }
@@ -344,7 +344,7 @@ class AllLinesState extends State<AllLines> {
   void doSearch() {
     searchData.found = 0;
     for (final key in lineKeys) {
-      if (key.currentContext!.mounted) {
+      if (key.currentContext != null && key.currentContext!.mounted) {
         final state = key.currentState as LineWidgetState;
         if (state.matched && searchData.text != state.lastSearch) {
           state.cleanSearch();
@@ -453,11 +453,11 @@ class AllLinesState extends State<AllLines> {
                                       scrollDirection: Axis.horizontal,
                                       controller: scrollController2,
                                       child: SizedBox(
-                                          width:
-                                              renderer.renderSettings.linewidth,
-                                          child: Transform.scale(
-                                              scale: currentGame!
-                                                  .getAlllinesScale(),
+                                          width: renderer
+                                                  .renderSettings.linewidth *
+                                              currentGame!.getAlllinesScale(),
+                                          child: FittedBox(
+                                              fit: BoxFit.fitWidth,
                                               alignment: Alignment.bottomLeft,
                                               child: material.Column(
                                                 children: list,
