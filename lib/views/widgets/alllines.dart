@@ -314,7 +314,6 @@ class AllLines extends StatefulWidget {
 
 class AllLinesState extends State<AllLines> {
   Lines? lines;
-  // initialized to FocusNode()
   late StreamSubscription subCommand;
   late List<InlineSpan> linedata = [];
   double beforescale = 1;
