@@ -189,6 +189,9 @@ class ServerListState extends State<ServerList> {
     }
     return ReorderableListView(
         children: list,
+        footer: const SizedBox(
+          height: 80,
+        ),
         onReorder: (oldIndex, newIndex) {
           if (oldIndex < newIndex) {
             newIndex -= 1;
