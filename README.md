@@ -2,7 +2,7 @@
 
 基于flutter开发的跨平台hellclient控制界面。
 
-本身不带有连接MUD服务的功能，需要连接到运行中的(hellclient)[https://github.com/jarlyyn/hellclient]服务。
+本身不带有连接MUD服务的功能，需要连接到运行中的[hellclient](https://github.com/jarlyyn/hellclient) 服务。
 
 主要作用是可以方便的连接多个hellclient终端，可以对连接界面有一定的自定义，界面渲染显示效果也更好。
 
