@@ -197,6 +197,13 @@ class OverviewState extends State<Overview> {
     ]);
   }
 
+  Widget buildPlaceHolderButton(
+      BuildContext context, double opacity, bool large) {
+    return Opacity(
+        opacity: opacity,
+        child: SizedBox(width: 600, height: large ? 136 : 91));
+  }
+
   Widget buildButton(BuildContext context, Color bgcolor, Widget child,
       void Function() onTap, double opacity, bool large) {
     return Opacity(
@@ -224,25 +231,27 @@ class OverviewState extends State<Overview> {
 
   Widget buildButtons(BuildContext context, bool large) {
     List<Widget> buttons = [];
-    buttons.add(buildButton(
-        context,
-        const Color(0xffe6a23c),
-        Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-          const SizedBox(
-              width: 30,
-              height: 30,
-              child: Icon(
-                size: 30,
-                Icons.lightbulb,
-                color: Colors.white,
-              )),
-          Container(
-              margin: const EdgeInsets.fromLTRB(0, 5, 0, 0),
-              child: const Text('快速开始', style: labelStyle)),
-        ]), () {
-      currentGame!.clientQuick();
-    }, 1, large));
     List<ClientInfo> infos = currentGame!.clientinfos.clientInfos;
+    if (infos.isNotEmpty) {
+      buttons.add(buildButton(
+          context,
+          const Color(0xffe6a23c),
+          Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+            const SizedBox(
+                width: 30,
+                height: 30,
+                child: Icon(
+                  size: 30,
+                  Icons.lightbulb,
+                  color: Colors.white,
+                )),
+            Container(
+                margin: const EdgeInsets.fromLTRB(0, 5, 0, 0),
+                child: const Text('快速开始', style: labelStyle)),
+          ]), () {
+        currentGame!.clientQuick();
+      }, 1, large));
+    }
     int index = 0;
     for (final info in infos) {
       late Color bgcolor;
@@ -313,6 +322,11 @@ class OverviewState extends State<Overview> {
       currentGame!.openGames();
     }, 1, large));
     final scrollController = ScrollController();
+    if (buttons.length < 3) {
+      for (var i = buttons.length; i < 3; i++) {
+        buttons.add(buildPlaceHolderButton(context, 1.0, large));
+      }
+    }
     return Expanded(
         child: RawScrollbar(
             controller: scrollController,
