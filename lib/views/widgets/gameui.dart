@@ -487,6 +487,11 @@ class GameUI {
                             style: textStyleGameUIFieldLabel,
                           ),
                           Text(scriptSettings.desc),
+                          const Text(
+                            '简介',
+                            style: textStyleGameUIFieldLabel,
+                          ),
+                          Text(scriptSettings.intro),
                           const SizedBox(
                             height: 150,
                           )
