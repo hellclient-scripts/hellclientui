@@ -165,12 +165,12 @@ class GameTopState extends State<GameTop> {
         currentGame!.handleCmd("worldSettings", currentGame!.current);
       }, '游戏设置', const Color(0xff606266), Colors.white,
           borderColor: const Color(0xffDCDFE6)));
-      children.add(AppUI.buildIconButton(
-          context, const Icon(Icons.memory_sharp), () async {
-        currentGame!.handleCmd("scriptinfo", currentGame!.current);
-      }, '脚本', const Color(0xff606266), Colors.white,
-          borderColor: const Color(0xffDCDFE6)));
     }
+    children.add(AppUI.buildIconButton(context, const Icon(Icons.memory_sharp),
+        () async {
+      currentGame!.handleCmd("scriptinfo", currentGame!.current);
+    }, '脚本', const Color(0xff606266), Colors.white,
+        borderColor: const Color(0xffDCDFE6)));
     children.add(AppUI.buildIconButton(
       context,
       const Icon(Icons.key),

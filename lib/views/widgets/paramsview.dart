@@ -131,7 +131,9 @@ class RequiredParamsState extends State<RequiredParams> {
         children.add(createTableRow([
           TCell(TextButton(onPressed: update, child: Text(info.name))),
           TCell(Text(currentAppState.hiddenFields[info.name] == true
-              ? '******'
+              ? ((paramsInfo!.params[info.name] ?? '').isNotEmpty
+                  ? '******'
+                  : "")
               : (paramsInfo!.params[info.name] ?? ''))),
           TCell(Text.rich(TextSpan(children: [
             TextSpan(text: info.desc),
