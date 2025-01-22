@@ -11,13 +11,13 @@ class Overview extends StatefulWidget {
   State<Overview> createState() => OverviewState();
 }
 
-const List<Color> avatarColors = [
+const avatarColors = BoringAvatarPalette([
   Color(0xff92A1C6),
   Color(0xff146A7C),
   Color(0xfff0AB3D),
   Color(0xffC271B4),
   Color(0xffC20D90)
-];
+]);
 const labelStyle = TextStyle(
   fontFamily: 'monospace',
   color: Colors.white,
@@ -138,11 +138,11 @@ class OverviewState extends State<Overview> {
       SizedBox(
           width: 64,
           height: 64,
-          child: AnimatedBoringAvatars(
+          child: AnimatedBoringAvatar(
             duration: Duration.zero,
             name: info.id,
-            type: BoringAvatarsType.beam,
-            colors: avatarColors,
+            type: BoringAvatarType.beam,
+            palette: avatarColors,
           )),
       Column(children: [
         SizedBox(
@@ -279,11 +279,11 @@ class OverviewState extends State<Overview> {
             feedback: SizedBox(
                 width: 64,
                 height: 64,
-                child: AnimatedBoringAvatars(
+                child: AnimatedBoringAvatar(
                   duration: Duration.zero,
                   name: info.id,
-                  type: BoringAvatarsType.beam,
-                  colors: avatarColors,
+                  type: BoringAvatarType.beam,
+                  palette: avatarColors,
                 )),
             child: button,
           );

@@ -611,7 +611,7 @@ class UserInputVisualPromptBase64SlideWidgetState
   }
 
   int page = 0;
-  CarouselController carouselController = CarouselController();
+  CarouselSliderController carouselController = CarouselSliderController();
 
   @override
   Widget build(BuildContext context) {

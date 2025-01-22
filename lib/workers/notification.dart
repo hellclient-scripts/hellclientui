@@ -1,4 +1,3 @@
-import 'package:tpns_flutter_plugin/tpns_flutter_plugin.dart';
 import "../models/notificationconfig.dart";
 import 'dart:io';
 import 'package:local_notifier/local_notifier.dart';
@@ -6,38 +5,15 @@ import '../models/message.dart' as message;
 import 'package:window_manager/window_manager.dart';
 import 'package:audioplayers/audioplayers.dart';
 import "../workers/game.dart";
-import "dart:async";
-import 'package:uni_links/uni_links.dart';
+import 'package:app_links/app_links.dart';
 
 Notification currentNotification = Notification();
 const tpushPrefix = '/notify/';
+final appLinks = AppLinks();
 
 class Notification {
   bool desktopNotificationDisabled = false;
-  String tencentToken = "";
   late NotificationConfig config;
-  XgFlutterPlugin? tpush;
-  StreamSubscription? _sub;
-  void startTpush() {
-    if (config.tencentAccessID == "" ||
-        config.tencentAccessKey == "" ||
-        config.tencentEnabled == false) {
-      return;
-    }
-    tpush = XgFlutterPlugin();
-    tpush!.addEventHandler(
-      onRegisteredDeviceToken: (String msg) async {
-        tencentToken = msg;
-      },
-
-      /// TPNS注册成功会走此回调
-      onRegisteredDone: (String msg) async {
-        tencentToken = msg;
-      },
-    );
-    tpush!.configureClusterDomainName("tpns.sh.tencent.com");
-    tpush!.startXg(config.tencentAccessID, config.tencentAccessKey);
-  }
 
   void desktopNotify(String title, String body, Function() onOpen) {
     if (config.audio.isNotEmpty) {
@@ -78,14 +54,7 @@ class Notification {
   void updateConfig(NotificationConfig nconfig) async {
     config = nconfig;
     if (Platform.isAndroid) {
-      if (tpush != null) {
-        tpush!.stopXg();
-      }
-      if (_sub != null) {
-        await _sub!.cancel();
-      }
-      startTpush();
-      _sub = uriLinkStream.listen((Uri? uri) {
+      appLinks.uriLinkStream.listen((Uri? uri) {
         if (uri != null) {
           if (uri.path.startsWith(tpushPrefix)) {
             final server = uri.path.replaceFirst(tpushPrefix, '');

@@ -4,7 +4,6 @@ import 'package:provider/provider.dart';
 import 'nav.dart';
 import 'serverlist.dart';
 import 'settingspage.dart';
-import '../../workers/notification.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -37,9 +36,7 @@ class HomePageState extends State<HomePage> {
         child = const SettingsPage();
         break;
       default:
-        child = Center(
-            child:
-                TextFormField(initialValue: currentNotification.tencentToken));
+        child = const Center();
     }
     return Scaffold(
       body: Row(
