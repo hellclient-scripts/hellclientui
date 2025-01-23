@@ -499,10 +499,17 @@ class NonFullScreenDialogState extends State<NonFullScreenDialog> {
             ],
           )),
     ];
+    final scrollController = ScrollController();
     if (widget.summary.isNotEmpty) {
-      children.add(Padding(
-          padding: const EdgeInsets.fromLTRB(10, 10, 10, 20),
-          child: Summary(widget.summary)));
+      children.add(Flexible(
+          child: Expanded(
+              child: Scrollbar(
+                  controller: scrollController,
+                  child: SingleChildScrollView(
+                      controller: scrollController,
+                      child: Padding(
+                          padding: const EdgeInsets.fromLTRB(10, 10, 10, 20),
+                          child: Summary(widget.summary)))))));
     }
     children.add(widget.child);
     return Material(
