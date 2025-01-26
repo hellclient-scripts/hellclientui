@@ -47,7 +47,7 @@ class Notification {
     });
   }
 
-  void onTPushNofity(String host, String id) {
+  void onPushNofity(String host, String id) {
     Game.enterGame(host, id);
   }
 
@@ -58,7 +58,7 @@ class Notification {
         if (uri != null) {
           if (uri.path.startsWith(tpushPrefix)) {
             final server = uri.path.replaceFirst(tpushPrefix, '');
-            onTPushNofity(server, uri.fragment);
+            onPushNofity(server, uri.fragment);
           }
         }
       });
