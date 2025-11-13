@@ -103,7 +103,7 @@ class ExportPage extends StatelessWidget {
                   AppUI.showAppMsgBox(
                       context,
                       '导出系统设置',
-                      '注意，导出的数据钟中括密码等敏感信息',
+                      '注意，导出的数据中括密码等敏感信息',
                       Container(
                           constraints: const BoxConstraints(maxHeight: 400),
                           child: RawScrollbar(

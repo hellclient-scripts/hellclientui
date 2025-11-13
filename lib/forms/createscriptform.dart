@@ -61,6 +61,7 @@ class CreateScriptFormState extends State<CreateScriptForm> {
             ),
             DropdownMenuItem(value: 'lua', child: Text('Lua')),
             DropdownMenuItem(value: 'jscript', child: Text('JavaScript')),
+            DropdownMenuItem(value: 'v8', child: Text('V8')),
           ],
           onChanged: (value) {
             type = value;

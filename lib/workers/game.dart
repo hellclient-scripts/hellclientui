@@ -252,7 +252,7 @@ class Game {
         break;
       }
     }
-    output.renderer.reset();
+    // output.renderer.reset();
     clientsUpdateStream.add(null);
   }
 
