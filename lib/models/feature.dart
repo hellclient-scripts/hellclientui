@@ -9,6 +9,8 @@ abstract final class Features {
       Feature(min: APIVersion(major: 1, year: 2024, month: 06, day: 23));
   static const Feature notOpenedName =
       Feature(min: APIVersion(major: 1, year: 2024, month: 06, day: 23));
+  static const Feature v8engine =
+      Feature(min: APIVersion(major: 1, year: 2025, month: 11, day: 13));
 }
 
 class Feature {

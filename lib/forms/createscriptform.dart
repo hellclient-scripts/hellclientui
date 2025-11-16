@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:hellclientui/workers/game.dart';
 import '../views/widgets/appui.dart';
+import '../models/feature.dart';
 import '../models/message.dart' as message;
 import 'dart:async';
 
@@ -39,6 +40,18 @@ class CreateScriptFormState extends State<CreateScriptForm> {
 
   @override
   Widget build(BuildContext context) {
+    var items = <DropdownMenuItem>[
+      const DropdownMenuItem(
+        value: '',
+        enabled: false,
+        child: Text('<未选择>'),
+      ),
+      const DropdownMenuItem(value: 'lua', child: Text('Lua')),
+      const DropdownMenuItem(value: 'jscript', child: Text('JavaScript')),
+    ];
+    if (currentGame!.support(Features.v8engine)) {
+      items.add(const DropdownMenuItem(value: 'v8', child: Text('V8')));
+    }
     return Column(
       children: [
         CreateFailMessage(fail: fail),
@@ -53,16 +66,7 @@ class CreateScriptFormState extends State<CreateScriptForm> {
           decoration: const InputDecoration(
             label: Text("类型"),
           ),
-          items: const <DropdownMenuItem>[
-            DropdownMenuItem(
-              value: '',
-              enabled: false,
-              child: Text('<未选择>'),
-            ),
-            DropdownMenuItem(value: 'lua', child: Text('Lua')),
-            DropdownMenuItem(value: 'jscript', child: Text('JavaScript')),
-            DropdownMenuItem(value: 'v8', child: Text('V8')),
-          ],
+          items: items,
           onChanged: (value) {
             type = value;
           },
