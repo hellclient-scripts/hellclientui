@@ -62,7 +62,8 @@ class Connecting {
       headers['Authorization'] = 'Basic ${base64.encode(utf8.encode(auth))}';
     }
     try {
-      final wschannel = IOWebSocketChannel.connect(serveruri, headers: headers);
+      final wschannel = IOWebSocketChannel.connect(serveruri,
+          headers: headers, connectTimeout: const Duration(seconds: 10));
       await wschannel.ready;
       channel = wschannel;
       currentServer = server;
