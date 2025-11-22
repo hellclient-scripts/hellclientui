@@ -281,6 +281,9 @@ class Game {
         break;
       }
     }
+    if (currentClient != null && currentClient!.id == id) {
+      currentClient!.running = true;
+    }
     clientsUpdateStream.add(null);
   }
 
@@ -291,6 +294,9 @@ class Game {
         info.running = false;
         break;
       }
+    }
+    if (currentClient != null && currentClient!.id == id) {
+      currentClient!.running = false;
     }
     clientsUpdateStream.add(null);
   }
