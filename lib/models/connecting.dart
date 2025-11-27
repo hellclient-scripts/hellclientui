@@ -63,7 +63,7 @@ class Connecting {
     }
     try {
       final wschannel = IOWebSocketChannel.connect(serveruri,
-          headers: headers, connectTimeout: const Duration(seconds: 10));
+          headers: headers, connectTimeout: const Duration(seconds: 120));
       await wschannel.ready;
       channel = wschannel;
       currentServer = server;
