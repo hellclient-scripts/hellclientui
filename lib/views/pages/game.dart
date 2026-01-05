@@ -178,6 +178,7 @@ class GameState extends State<Game> {
                     const SelectableText('Hellclient'),
                     const SelectableText(
                         'https://github.com/jarlyyn/hellclient'),
+                    const SelectableText('社区 https://forum.hellclient.com'),
                     const SizedBox(
                       height: 10,
                     ),

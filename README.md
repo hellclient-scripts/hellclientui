@@ -13,6 +13,10 @@
 * Android
 * iOS [Appstore 中查看](https://apps.apple.com/app/hellclient-ui/id6502743040)
 
+## 社区支持
+
+访问[Hellclient社区](http://forum.hellclient.com)获得社区支持。
+
 ## 常见问题
 
 ### Windows版报错 “由于找不到 VCRUNTIME140_1.dll,无法继续执行代码，重新安装程序可能会解决此问题。”

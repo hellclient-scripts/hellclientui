@@ -27,6 +27,13 @@ class Nav {
               showAboutDialog(
                   context: context,
                   applicationName: "Hellclient UI",
+                  children: [
+                    const SelectableText('Hellclient管理应用'),
+                    const SizedBox(height: 10),
+                    const SelectableText(
+                        'GitHub: https://github.com/jarlyyn/hellclient'),
+                    const SelectableText('社区: https://forum.hellclient.com'),
+                  ],
                   applicationVersion: appState.version);
               return;
           }
