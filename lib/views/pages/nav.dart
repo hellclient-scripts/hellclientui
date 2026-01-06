@@ -1,6 +1,8 @@
 import 'package:hellclientui/states/appstate.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:url_launcher/url_launcher.dart';
+import 'package:flutter/gestures.dart';
 
 class Nav {
   static Widget build(BuildContext context) {
@@ -30,9 +32,40 @@ class Nav {
                   children: [
                     const SelectableText('Hellclient管理应用'),
                     const SizedBox(height: 10),
-                    const SelectableText(
-                        'GitHub: https://github.com/jarlyyn/hellclient'),
-                    const SelectableText('社区: https://forum.hellclient.com'),
+                    RichText(
+                        text: TextSpan(
+                      children: [
+                        TextSpan(
+                          text: 'Github',
+                          style: const TextStyle(
+                            color: Colors.blue,
+                            decoration: TextDecoration.underline,
+                          ),
+                          recognizer: TapGestureRecognizer()
+                            ..onTap = () {
+                              launchUrl(Uri.parse(
+                                  'https://github.com/hellclient-scripts/hellclientui'));
+                            },
+                        ),
+                      ],
+                    )),
+                    RichText(
+                        text: TextSpan(
+                      children: [
+                        TextSpan(
+                          text: '社区',
+                          style: const TextStyle(
+                            color: Colors.blue,
+                            decoration: TextDecoration.underline,
+                          ),
+                          recognizer: TapGestureRecognizer()
+                            ..onTap = () {
+                              launchUrl(
+                                  Uri.parse('http://forum.hellclient.com'));
+                            },
+                        ),
+                      ],
+                    )),
                   ],
                   applicationVersion: appState.version);
               return;

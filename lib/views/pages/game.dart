@@ -12,6 +12,8 @@ import '../../models/message.dart' as message;
 import '../widgets/appui.dart';
 import '../widgets/gameui.dart';
 import '../../forms/sendbatchcommandform.dart';
+import 'package:url_launcher/url_launcher.dart';
+import 'package:flutter/gestures.dart';
 
 Future<void> showSendBatchCommand(
     BuildContext context, message.BatchCommandScripts scripts) async {
@@ -176,9 +178,39 @@ class GameState extends State<Game> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     const SelectableText('Hellclient'),
-                    const SelectableText(
-                        'https://github.com/jarlyyn/hellclient'),
-                    const SelectableText('社区 https://forum.hellclient.com'),
+                    RichText(
+                        text: TextSpan(
+                      children: [
+                        TextSpan(
+                          text: 'Github',
+                          style: const TextStyle(
+                            color: Colors.blue,
+                            decoration: TextDecoration.underline,
+                          ),
+                          recognizer: TapGestureRecognizer()
+                            ..onTap = () {
+                              launchUrl(Uri.parse('https://github.com'));
+                            },
+                        ),
+                      ],
+                    )),
+                    RichText(
+                        text: TextSpan(
+                      children: [
+                        TextSpan(
+                          text: '社区',
+                          style: const TextStyle(
+                            color: Colors.blue,
+                            decoration: TextDecoration.underline,
+                          ),
+                          recognizer: TapGestureRecognizer()
+                            ..onTap = () {
+                              launchUrl(
+                                  Uri.parse('http://forum.hellclient.com'));
+                            },
+                        ),
+                      ],
+                    )),
                     const SizedBox(
                       height: 10,
                     ),

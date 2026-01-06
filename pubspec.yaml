@@ -39,6 +39,7 @@ dependencies:
   web_socket_channel:
   flutter_boring_avatars:
   flex_color_picker:
+  url_launcher:
   local_notifier:
     git:
       url: https://github.com/jarlyyn/local_notifier
