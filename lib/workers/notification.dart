@@ -53,7 +53,7 @@ class Notification {
 
   void updateConfig(NotificationConfig nconfig) async {
     config = nconfig;
-    if (Platform.isAndroid) {
+    if (Platform.isAndroid || Platform.isIOS) {
       appLinks.uriLinkStream.listen((Uri? uri) {
         if (uri != null) {
           if (uri.path.startsWith(tpushPrefix)) {
