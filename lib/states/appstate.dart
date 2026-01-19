@@ -16,7 +16,7 @@ late AppState currentAppState;
 
 class AppState extends ChangeNotifier {
   bool inGame = false;
-  String version = "1.25.11.13 [API 1.25.11.13]";
+  String version = "1.26.01.19 [API 1.25.11.13]";
   var navigatorKey = GlobalKey<NavigatorState>();
   Config config = Config();
   String settingsPath = "";
