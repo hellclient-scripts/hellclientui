@@ -299,6 +299,10 @@ class LineWidgetState extends State<LineWidget> {
                       applyHeightToFirstAscent: false,
                       applyHeightToLastDescent: false,
                     ),
+                    strutStyle: StrutStyle(
+                        forceStrutHeight: true,
+                        height: renderer.renderSettings.fontHeight,
+                        fontSize: renderer.renderSettings.fontSize),
                     TextSpan(children: linedata),
                     softWrap: true,
                   ))))

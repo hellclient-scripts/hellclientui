@@ -548,6 +548,21 @@ class DisplaySettiingsFormState extends State<DisplaySettiingsForm> {
                     )
                   ],
                 ),
+                Row(
+                  children: [
+                    Checkbox(
+                        value: config.compactMode == true,
+                        onChanged: (value) {
+                          setState(() {
+                            config.compactMode = (value == true);
+                          });
+                        }),
+                    const Text(
+                      '文字紧凑行模式',
+                      softWrap: true,
+                    )
+                  ],
+                ),
                 const SizedBox(
                   height: 150,
                 )

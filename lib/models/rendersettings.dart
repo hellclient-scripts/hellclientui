@@ -73,6 +73,7 @@ class RenderConfig {
   bool? roundDpi;
   bool? forceDesktopMode;
   bool? hudDragable;
+  bool? compactMode;
   int commandDisplayMode = CommandDisplayMode.normal;
   int suggestionMode = SuggestionMode.small;
   bool defaultHideInput = false;
@@ -114,7 +115,8 @@ class RenderConfig {
         defaultHideInput = json['defaultHideInput'] ?? false,
         defaultScale = json['defaultScale'] ?? ScaleSettings.defaultScale,
         minChars = MinCharsSettings.loadMinChars(json['minChars']),
-        hudDragable = json['hudDragable'] ?? false;
+        hudDragable = json['hudDragable'] ?? false,
+        compactMode = json['compactMode'] ?? false;
 
   Map<String, dynamic> toJson() => {
         'color': color?.value,
@@ -144,10 +146,15 @@ class RenderConfig {
         'defaultScale': defaultScale,
         'minChars': minChars,
         'hudDragable': hudDragable,
+        'compactMode': compactMode,
       };
 
   RenderSettings getSettings() {
     var settings = RenderSettings();
+    settings.lineheight = compactMode == true ? 14 : 20;
+    settings.linemiddle = settings.lineheight / 2;
+    settings.fontHeight = settings.lineheight / settings.fontSize;
+    settings.height = settings.lineheight * settings.maxLines;
     if (color != null) {
       settings.color = color!;
     }
@@ -211,6 +218,7 @@ class RenderConfig {
     settings.defaultScale = defaultScale;
     settings.minChars = minChars;
     settings.hudDragable = hudDragable == true;
+    settings.compactMode = compactMode == true;
     return settings;
   }
 
@@ -223,6 +231,7 @@ class RenderSettings {
   RenderSettings();
   double fontSize = 14.0;
   double lineheight = 20.0;
+  double fontHeight = 20 / 14;
   double linemiddle = 10.0;
   double width = 1120;
   double height = 2000;
@@ -279,6 +288,7 @@ class RenderSettings {
   bool defaultHideInput = false;
   int defaultScale = ScaleSettings.defaultScale;
   bool hudDragable = false;
+  bool? compactMode;
   Display getDisplay() {
     switch (commandDisplayMode) {
       case CommandDisplayMode.larger:

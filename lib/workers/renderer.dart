@@ -296,6 +296,7 @@ class Renderer {
       color: iconcolor,
       backgroundColor: background,
       fontSize: renderSettings.fontSize,
+      height: renderSettings.fontHeight,
       fontWeight: FontWeight.normal,
       decoration: TextDecoration.none,
       fontStyle: FontStyle.normal,
