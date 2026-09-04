@@ -84,7 +84,7 @@ class WorldSettingsFormState extends State<WorldSettingsForm> {
           ),
         ),
         DropdownButtonFormField(
-          value: charset,
+          initialValue: charset,
           decoration: const InputDecoration(
             label: Text("字符编码"),
           ),

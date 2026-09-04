@@ -62,7 +62,7 @@ class CreateScriptFormState extends State<CreateScriptForm> {
           ),
         ),
         DropdownButtonFormField(
-          value: type,
+          initialValue: type,
           decoration: const InputDecoration(
             label: Text("类型"),
           ),

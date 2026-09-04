@@ -196,7 +196,7 @@ class UpdateRequiredParamsState extends State<UpdateRequiredParams> {
                 child: ReorderableListView(
               buildDefaultDragHandles: false,
               children: children,
-              onReorder: (oldIndex, newIndex) async {
+              onReorderItem: (oldIndex, newIndex) async {
                 if (oldIndex < newIndex) {
                   newIndex -= 1;
                 }

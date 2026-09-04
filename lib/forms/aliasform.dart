@@ -88,7 +88,7 @@ class AliasFormState extends State<AliasForm> {
           ),
         ),
         DropdownButtonFormField(
-          value: sendTo,
+          initialValue: sendTo,
           decoration: const InputDecoration(
             label: Text("发送到"),
           ),

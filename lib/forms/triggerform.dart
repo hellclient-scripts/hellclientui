@@ -95,7 +95,7 @@ class TriggerFormState extends State<TriggerForm> {
           ),
         ),
         DropdownButtonFormField(
-          value: sendTo,
+          initialValue: sendTo,
           decoration: const InputDecoration(
             label: Text("发送到"),
           ),

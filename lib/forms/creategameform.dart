@@ -49,7 +49,9 @@ class CreateGameFormState extends State<CreateGameForm> {
             setState(() {});
             break;
           case "createSuccess":
-            AppUI.hideUI(context);
+            if (context.mounted) {
+              AppUI.hideUI(context);
+            }
             currentGame!.handleCmd('change', jsonDecode(event.data) as String);
             break;
         }
@@ -92,7 +94,7 @@ class CreateGameFormState extends State<CreateGameForm> {
           ),
         ),
         DropdownButtonFormField(
-          value: charset,
+          initialValue: charset,
           decoration: const InputDecoration(
             label: Text("字符编码"),
           ),

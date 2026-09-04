@@ -188,19 +188,20 @@ class ServerListState extends State<ServerList> {
       ));
     }
     return ReorderableListView(
-        children: list,
-        footer: const SizedBox(
-          height: 80,
-        ),
-        onReorder: (oldIndex, newIndex) {
-          if (oldIndex < newIndex) {
-            newIndex -= 1;
-          }
-          final item = appState.config.servers.removeAt(oldIndex);
-          appState.config.servers.insert(newIndex, item);
-          appState.save();
-          appState.updated();
-        });
+      footer: const SizedBox(
+        height: 80,
+      ),
+      onReorderItem: (oldIndex, newIndex) {
+        if (oldIndex < newIndex) {
+          newIndex -= 1;
+        }
+        final item = appState.config.servers.removeAt(oldIndex);
+        appState.config.servers.insert(newIndex, item);
+        appState.save();
+        appState.updated();
+      },
+      children: list,
+    );
   }
 
   KeyEventResult onKey(KeyEvent key, BuildContext context) {

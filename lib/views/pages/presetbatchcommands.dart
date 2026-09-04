@@ -81,7 +81,7 @@ class PresetBatchCommands extends StatelessWidget {
                   ),
                 ))
             .toList(),
-        onReorder: (oldIndex, newIndex) {
+        onReorderItem: (oldIndex, newIndex) {
           if (oldIndex < newIndex) {
             newIndex -= 1;
           }

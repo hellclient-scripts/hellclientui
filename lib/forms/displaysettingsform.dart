@@ -399,7 +399,7 @@ class DisplaySettiingsFormState extends State<DisplaySettiingsForm> {
                       }),
                 ]),
                 DropdownButtonFormField(
-                  value: config.commandDisplayMode,
+                  initialValue: config.commandDisplayMode,
                   decoration: const InputDecoration(
                     label: Text("命令框样式"),
                   ),
@@ -421,7 +421,7 @@ class DisplaySettiingsFormState extends State<DisplaySettiingsForm> {
                   },
                 ),
                 DropdownButtonFormField(
-                  value: config.suggestionMode,
+                  initialValue: config.suggestionMode,
                   decoration: const InputDecoration(
                     label: Text("补全提示"),
                   ),
@@ -445,7 +445,7 @@ class DisplaySettiingsFormState extends State<DisplaySettiingsForm> {
                   },
                 ),
                 DropdownButtonFormField(
-                  value: config.defaultHideInput,
+                  initialValue: config.defaultHideInput,
                   decoration: const InputDecoration(
                     label: Text("默认输入状态"),
                   ),
@@ -460,7 +460,7 @@ class DisplaySettiingsFormState extends State<DisplaySettiingsForm> {
                   },
                 ),
                 DropdownButtonFormField(
-                  value: config.getSettings().getDefaultScale(),
+                  initialValue: config.getSettings().getDefaultScale(),
                   decoration: const InputDecoration(
                     label: Text("历史输出默认缩放比例"),
                   ),
@@ -477,7 +477,7 @@ class DisplaySettiingsFormState extends State<DisplaySettiingsForm> {
                   },
                 ),
                 DropdownButtonFormField(
-                  value: config.minChars,
+                  initialValue: config.minChars,
                   decoration: const InputDecoration(
                     label: Text("最小显示宽度"),
                   ),
