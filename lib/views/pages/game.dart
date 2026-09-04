@@ -170,53 +170,61 @@ class GameState extends State<Game> {
             break;
 
           case 'version':
+            List<Widget> children = [
+              const SelectableText('Hellclient'),
+              RichText(
+                  text: TextSpan(
+                children: [
+                  TextSpan(
+                    text: 'Github',
+                    style: const TextStyle(
+                      color: Colors.blue,
+                      decoration: TextDecoration.underline,
+                    ),
+                    recognizer: TapGestureRecognizer()
+                      ..onTap = () {
+                        launchUrl(Uri.parse('https://github.com'));
+                      },
+                  ),
+                ],
+              )),
+              RichText(
+                  text: TextSpan(
+                children: [
+                  TextSpan(
+                    text: '社区',
+                    style: const TextStyle(
+                      color: Colors.blue,
+                      decoration: TextDecoration.underline,
+                    ),
+                    recognizer: TapGestureRecognizer()
+                      ..onTap = () {
+                        launchUrl(Uri.parse('http://forum.hellclient.com'));
+                      },
+                  ),
+                ],
+              )),
+              const SizedBox(
+                height: 10,
+              ),
+              SelectableText('服务器版本: ${jsonDecode(event.data) as String}'),
+            ];
+            if (widget.game.scriptTypes.isNotEmpty) {
+              children.add(const SizedBox(
+                height: 10,
+              ));
+              children.add(const SelectableText('脚本支持:'));
+              for (var scriptType in widget.game.scriptTypes) {
+                children.add(SelectableText('- ${scriptType.label}'));
+              }
+            }
             AppUI.showMsgBox(
                 context,
                 "关于",
                 '',
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const SelectableText('Hellclient'),
-                    RichText(
-                        text: TextSpan(
-                      children: [
-                        TextSpan(
-                          text: 'Github',
-                          style: const TextStyle(
-                            color: Colors.blue,
-                            decoration: TextDecoration.underline,
-                          ),
-                          recognizer: TapGestureRecognizer()
-                            ..onTap = () {
-                              launchUrl(Uri.parse('https://github.com'));
-                            },
-                        ),
-                      ],
-                    )),
-                    RichText(
-                        text: TextSpan(
-                      children: [
-                        TextSpan(
-                          text: '社区',
-                          style: const TextStyle(
-                            color: Colors.blue,
-                            decoration: TextDecoration.underline,
-                          ),
-                          recognizer: TapGestureRecognizer()
-                            ..onTap = () {
-                              launchUrl(
-                                  Uri.parse('http://forum.hellclient.com'));
-                            },
-                        ),
-                      ],
-                    )),
-                    const SizedBox(
-                      height: 10,
-                    ),
-                    SelectableText(
-                        '服务器版本: ${jsonDecode(event.data) as String}'),
-                  ],
+                  children: children,
                 ));
             break;
           case 'authorized':

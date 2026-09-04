@@ -40,17 +40,34 @@ class CreateScriptFormState extends State<CreateScriptForm> {
 
   @override
   Widget build(BuildContext context) {
-    var items = <DropdownMenuItem>[
-      const DropdownMenuItem(
-        value: '',
-        enabled: false,
-        child: Text('<未选择>'),
-      ),
-      const DropdownMenuItem(value: 'lua', child: Text('Lua')),
-      const DropdownMenuItem(value: 'jscript', child: Text('JavaScript')),
-    ];
-    if (currentGame!.support(Features.v8engine)) {
-      items.add(const DropdownMenuItem(value: 'v8', child: Text('V8')));
+    List<DropdownMenuItem> items;
+    if (currentGame!.scriptTypes.isEmpty) {
+      items = <DropdownMenuItem>[
+        const DropdownMenuItem(
+          value: '',
+          enabled: false,
+          child: Text('<未选择>'),
+        ),
+        const DropdownMenuItem(value: 'lua', child: Text('Lua')),
+        const DropdownMenuItem(value: 'jscript', child: Text('JavaScript')),
+      ];
+      if (currentGame!.support(Features.v8engine)) {
+        items.add(const DropdownMenuItem(value: 'v8', child: Text('V8')));
+      }
+    } else {
+      items = <DropdownMenuItem>[
+        const DropdownMenuItem(
+          value: '',
+          enabled: false,
+          child: Text('<未选择>'),
+        )
+      ];
+      for (var scriptType in currentGame!.scriptTypes) {
+        items.add(DropdownMenuItem(
+          value: scriptType.key,
+          child: Text(scriptType.label),
+        ));
+      }
     }
     return Column(
       children: [

@@ -50,7 +50,7 @@ class Game {
   Triggers? triggers;
   Aliases? aliases;
   Timers? timers;
-
+  List<ScriptType> scriptTypes = [];
   var hudLock = Lock();
   List<Line> hudContent = [];
   ClientInfos clientinfos = ClientInfos();
@@ -386,6 +386,12 @@ class Game {
       case 'apiversion':
         final dynamic jsondata = json.decode(data);
         apiVersion = APIVersion.fromJson(jsondata);
+        break;
+      case 'scriptTypes':
+        final dynamic jsondata = json.decode(data);
+        scriptTypes = List<dynamic>.from(jsondata)
+            .map((e) => ScriptType.fromJson(e))
+            .toList();
         break;
       case 'defaultCharset':
       case 'defaultServer':

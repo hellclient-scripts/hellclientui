@@ -1145,3 +1145,12 @@ class BatchCommand {
         'Command': command,
       };
 }
+
+class ScriptType {
+  ScriptType(this.label, this.key);
+  final String label;
+  final String key;
+  ScriptType.fromJson(Map<String, dynamic> json)
+      : label = json['Label'],
+        key = json['Key'];
+}
