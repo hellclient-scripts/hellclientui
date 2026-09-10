@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:hellclientui/models/feature.dart';
 import 'package:hellclientui/models/message.dart';
 import 'package:hellclientui/states/appstate.dart';
 import 'package:hellclientui/views/widgets/appui.dart';
@@ -155,10 +156,13 @@ class DisplayState extends State<Display> {
 
   Widget buildOutput(BuildContext context) {
     var appState = context.watch<AppState>();
+    double bottomOffset = currentGame!.support(Features.noPrompt)
+        ? 0
+        : currentAppState.renderSettings.lineheight;
     return Positioned(
         height: appState.renderSettings.height,
-        bottom: currentAppState.renderSettings.getDisplay().height +
-            currentAppState.renderSettings.lineheight,
+        bottom:
+            currentAppState.renderSettings.getDisplay().height + bottomOffset,
         left: 0,
         right: 0,
         child: GestureDetector(onVerticalDragEnd: (details) {
@@ -205,6 +209,14 @@ class DisplayState extends State<Display> {
 
   Widget buildPrompt(BuildContext context) {
     var appState = context.watch<AppState>();
+    if (currentGame!.support(Features.noPrompt)) {
+      return const Positioned(
+        left: 0,
+        right: 0,
+        bottom: 0,
+        child: SizedBox.shrink(),
+      );
+    }
     return Positioned(
         left: 0,
         right: 0,
