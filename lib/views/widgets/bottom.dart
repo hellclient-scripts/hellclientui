@@ -109,6 +109,7 @@ class DisplayBottomState extends State<DisplayBottom> {
           switch (value.logicalKey.keyLabel) {
             case 'Escape':
               currentGame?.suggestion = [];
+              currentGame?.displayedSuggestion = [];
               setState(() {});
               return KeyEventResult.handled;
             case 'Arrow Up':
@@ -174,11 +175,13 @@ class DisplayBottomState extends State<DisplayBottom> {
       bottom: 0,
       right: 0,
       child: Column(children: [
-        currentGame!.suggestion.isEmpty
+        currentGame!.suggestion.isEmpty ||
+                currentAppState.renderSettings.hideSuggestions
             ? const SizedBox()
             : GestureDetector(
                 onTap: () {
                   currentGame!.suggestion = [];
+                  currentGame?.displayedSuggestion = [];
                   setState(() {});
                 },
                 child: Container(
@@ -188,10 +191,11 @@ class DisplayBottomState extends State<DisplayBottom> {
                         80 + 54, 0.5 * 16, 54 + 80, 0.5 * 16),
                     child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
-                        children: currentGame!.suggestion.map((value) {
+                        children: currentGame!.displayedSuggestion.map((value) {
                           return TextButton(
                               onPressed: () {
                                 currentGame!.suggestion = [];
+                                currentGame?.displayedSuggestion = [];
                                 inputController.text = value;
                                 inputController.selection = TextSelection(
                                     baseOffset: 0,
@@ -328,12 +332,14 @@ class DisplayBottomState extends State<DisplayBottom> {
                             onChanged: (value) {
                               currentGame?.historypos = 0;
                               currentGame?.suggestion = [];
+                              currentGame?.displayedSuggestion = [];
                               currentGame?.lastInput = value;
                               if (currentGame!.history.isNotEmpty &&
                                   value != "") {
                                 for (var data in currentGame!.history) {
                                   if (data.contains(value)) {
                                     currentGame!.suggestion.add(data);
+                                    currentGame!.displayedSuggestion.add(data);
                                   }
                                 }
                                 var limit = currentAppState.renderSettings
@@ -344,12 +350,23 @@ class DisplayBottomState extends State<DisplayBottom> {
                                       .sublist(currentGame!.suggestion.length -
                                           limit);
                                 }
+                                var displayed = currentAppState.renderSettings
+                                    .getSuggestionDisplayed();
+                                if (currentGame!.displayedSuggestion.length >
+                                    displayed) {
+                                  currentGame?.displayedSuggestion =
+                                      currentGame!.displayedSuggestion.sublist(
+                                          currentGame!
+                                                  .displayedSuggestion.length -
+                                              displayed);
+                                }
                               }
                               setState(() {});
                             },
                             onSubmitted: (value) {
                               currentGame?.historypos = 0;
                               currentGame?.suggestion = [];
+                              currentGame?.displayedSuggestion = [];
                               currentGame?.handleSend(value);
                               focusNode.requestFocus();
                               inputController.selection = TextSelection(

@@ -423,7 +423,7 @@ class DisplaySettiingsFormState extends State<DisplaySettiingsForm> {
                 DropdownButtonFormField(
                   initialValue: config.suggestionMode,
                   decoration: const InputDecoration(
-                    label: Text("补全提示"),
+                    label: Text("补全数量"),
                   ),
                   items: const <DropdownMenuItem>[
                     DropdownMenuItem(
@@ -437,12 +437,28 @@ class DisplaySettiingsFormState extends State<DisplaySettiingsForm> {
                         value: SuggestionMode.small, child: Text('普通(5条)')),
                     DropdownMenuItem(
                         value: SuggestionMode.large, child: Text('多(10条)')),
+                    DropdownMenuItem(
+                        value: SuggestionMode.xl, child: Text('特多(20条)')),
+                    DropdownMenuItem(
+                        value: SuggestionMode.xxl, child: Text('超多(30条)')),
                   ],
                   onChanged: (value) {
                     setState(() {
                       config.suggestionMode = value;
                     });
                   },
+                ),
+                Row(
+                  children: [
+                    Checkbox(
+                        value: config.hideSuggestions == true,
+                        onChanged: (value) {
+                          setState(() {
+                            config.hideSuggestions = (value == true);
+                          });
+                        }),
+                    const Text('隐藏补全提示', softWrap: true)
+                  ],
                 ),
                 DropdownButtonFormField(
                   initialValue: config.defaultHideInput,

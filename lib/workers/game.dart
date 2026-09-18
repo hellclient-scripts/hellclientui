@@ -32,6 +32,7 @@ class Game {
   int historypos = 0;
   List<String> history = [];
   List<String> suggestion = [];
+  List<String> displayedSuggestion = [];
   bool hideInput = false;
   String lastInput = "";
   bool showAllParams = false;

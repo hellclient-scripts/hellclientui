@@ -16,6 +16,8 @@ class SuggestionMode {
   static const none = 0;
   static const small = 1;
   static const large = 2;
+  static const xl = 3;
+  static const xxl = 4;
 }
 
 class ScaleSettings {
@@ -76,6 +78,7 @@ class RenderConfig {
   bool? compactMode;
   int commandDisplayMode = CommandDisplayMode.normal;
   int suggestionMode = SuggestionMode.small;
+  bool hideSuggestions = false;
   bool defaultHideInput = false;
   int defaultScale = ScaleSettings.defaultScale;
   int minChars = MinCharsSettings.defaultMinChars;
@@ -112,6 +115,7 @@ class RenderConfig {
         commandDisplayMode =
             json['commandDisplayMode'] ?? CommandDisplayMode.normal,
         suggestionMode = json['suggestionMode'] ?? SuggestionMode.small,
+        hideSuggestions = json['hideSuggestions'] ?? false,
         defaultHideInput = json['defaultHideInput'] ?? false,
         defaultScale = json['defaultScale'] ?? ScaleSettings.defaultScale,
         minChars = MinCharsSettings.loadMinChars(json['minChars']),
@@ -142,6 +146,7 @@ class RenderConfig {
         'commandDisplayMode': commandDisplayMode,
         'roundDpi': roundDpi,
         'suggestionMode': suggestionMode,
+        'hideSuggestions': hideSuggestions,
         'defaultHideInput': defaultHideInput,
         'defaultScale': defaultScale,
         'minChars': minChars,
@@ -214,6 +219,7 @@ class RenderConfig {
     settings.forceDesktopMode = forceDesktopMode == true;
     settings.commandDisplayMode = commandDisplayMode;
     settings.suggestionMode = suggestionMode;
+    settings.hideSuggestions = hideSuggestions;
     settings.defaultHideInput = defaultHideInput;
     settings.defaultScale = defaultScale;
     settings.minChars = minChars;
@@ -285,6 +291,7 @@ class RenderSettings {
   bool forceDesktopMode = false;
   var commandDisplayMode = 0;
   int suggestionMode = 0;
+  bool hideSuggestions = false;
   bool defaultHideInput = false;
   int defaultScale = ScaleSettings.defaultScale;
   bool hudDragable = false;
@@ -307,10 +314,19 @@ class RenderSettings {
         return 0;
       case SuggestionMode.large:
         return 10;
+      case SuggestionMode.xl:
+        return 20;
+      case SuggestionMode.xxl:
+        return 30;
       case SuggestionMode.small:
         break;
     }
     return 5;
+  }
+
+  int getSuggestionDisplayed() {
+    var limit = getSuggestionLimit();
+    return limit > 10 ? 10 : limit;
   }
 
   int getDefaultScale() {
