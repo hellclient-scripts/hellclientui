@@ -20,7 +20,7 @@ const textStyleUserInputNote = TextStyle(
 );
 
 class UserInputHelper {
-  static popup(BuildContext context, UserInput input) {
+  static void popup(BuildContext context, UserInput input) {
     final data = UserInputTitleIntroType.fromJson(input.data);
     ToastificationType? type;
     switch (data.type) {
@@ -51,7 +51,7 @@ class UserInputHelper {
         ));
   }
 
-  static list(BuildContext context, UserInput input) {
+  static void list(BuildContext context, UserInput input) {
     final data = UserInputList.fromJson(input.data);
     showDialog<bool?>(
       useRootNavigator: false,
@@ -70,7 +70,7 @@ class UserInputHelper {
     );
   }
 
-  static prompt(BuildContext context, UserInput input) async {
+  static Future<void> prompt(BuildContext context, UserInput input) async {
     final data = UserInputTitleIntroValue.fromJson(input.data);
     final controller =
         TextEditingController.fromValue(TextEditingValue(text: data.value));
@@ -112,7 +112,7 @@ class UserInputHelper {
     }
   }
 
-  static alert(BuildContext context, UserInput input) async {
+  static Future<void> alert(BuildContext context, UserInput input) async {
     final data = UserInputTitleIntro.fromJson(input.data);
     final result = await showDialog<bool?>(
       useRootNavigator: false,
@@ -136,7 +136,7 @@ class UserInputHelper {
     }
   }
 
-  static confirm(BuildContext context, UserInput input) async {
+  static Future<void> confirm(BuildContext context, UserInput input) async {
     final data = UserInputTitleIntro.fromJson(input.data);
     final result = await showDialog<bool?>(
       useRootNavigator: false,
@@ -161,7 +161,8 @@ class UserInputHelper {
     }
   }
 
-  static visualPrompt(BuildContext context, UserInput input) async {
+  static Future<void> visualPrompt(
+      BuildContext context, UserInput input) async {
     final data = VisualPrompt.fromJson(input.data);
     final result = await showDialog<bool?>(
         useRootNavigator: false,
@@ -174,7 +175,7 @@ class UserInputHelper {
     }
   }
 
-  static note(BuildContext context, UserInput input) async {
+  static Future<void> note(BuildContext context, UserInput input) async {
     final data = UserInputTitleBodyType.fromJson(input.data);
     final controller = ScrollController();
     late Widget body;
@@ -583,11 +584,11 @@ class UserInputVisualPromptBase64SlideWidgetState
     setState(() {});
   }
 
-  onNext() {
+  void onNext() {
     carouselController.nextPage();
   }
 
-  onPrev() {
+  void onPrev() {
     carouselController.previousPage();
   }
 

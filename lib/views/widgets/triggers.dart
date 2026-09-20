@@ -6,7 +6,7 @@ import '../../forms/triggerform.dart';
 import 'package:hellclientui/workers/game.dart';
 import 'dart:async';
 
-showCreateTrigger(BuildContext context, bool byUser) async {
+Future<void> showCreateTrigger(BuildContext context, bool byUser) async {
   showDialog(
     useRootNavigator: false,
     context: currentGame!.navigatorKey.currentState!.context,
@@ -28,7 +28,7 @@ showCreateTrigger(BuildContext context, bool byUser) async {
   );
 }
 
-showUpdateTrigger(
+Future<void> showUpdateTrigger(
     BuildContext context, message.Trigger trigger, bool byUser) async {
   showDialog(
     useRootNavigator: false,

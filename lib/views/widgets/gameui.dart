@@ -48,7 +48,7 @@ class GameUI {
     );
   }
 
-  static showUpdateRequiredParams(
+  static void showUpdateRequiredParams(
       BuildContext context, message.RequiredParams params) {
     AppUI.hideUI(context);
     showDialog<bool?>(
@@ -59,7 +59,7 @@ class GameUI {
         });
   }
 
-  static showScriptTimers(BuildContext context) {
+  static void showScriptTimers(BuildContext context) {
     AppUI.hideUI(context);
     showDialog<bool?>(
         useRootNavigator: false,
@@ -71,7 +71,7 @@ class GameUI {
         });
   }
 
-  static showUserTimers(BuildContext context) {
+  static void showUserTimers(BuildContext context) {
     AppUI.hideUI(context);
     showDialog<bool?>(
         useRootNavigator: false,
@@ -81,7 +81,7 @@ class GameUI {
         });
   }
 
-  static showScriptTriggers(BuildContext context) {
+  static void showScriptTriggers(BuildContext context) {
     AppUI.hideUI(context);
     showDialog<bool?>(
         useRootNavigator: false,
@@ -93,7 +93,7 @@ class GameUI {
         });
   }
 
-  static showUserTriggers(BuildContext context) {
+  static void showUserTriggers(BuildContext context) {
     AppUI.hideUI(context);
     showDialog<bool?>(
         useRootNavigator: false,
@@ -103,7 +103,7 @@ class GameUI {
         });
   }
 
-  static showScriptAliases(BuildContext context) {
+  static void showScriptAliases(BuildContext context) {
     AppUI.hideUI(context);
     showDialog<bool?>(
         useRootNavigator: false,
@@ -115,7 +115,7 @@ class GameUI {
         });
   }
 
-  static showUserAliases(BuildContext context) {
+  static void showUserAliases(BuildContext context) {
     AppUI.hideUI(context);
     showDialog<bool?>(
         useRootNavigator: false,
@@ -125,7 +125,7 @@ class GameUI {
         });
   }
 
-  static showParamsInfo(BuildContext context) {
+  static void showParamsInfo(BuildContext context) {
     AppUI.hideUI(context);
     showDialog<bool?>(
         useRootNavigator: false,
@@ -135,7 +135,7 @@ class GameUI {
         });
   }
 
-  static showScript(BuildContext context, message.ScriptInfo scriptinfo) {
+  static void showScript(BuildContext context, message.ScriptInfo scriptinfo) {
     AppUI.hideUI(context);
     showDialog<bool?>(
         useRootNavigator: false,
@@ -208,7 +208,7 @@ class GameUI {
         });
   }
 
-  static updateWorldSettings(
+  static void updateWorldSettings(
       BuildContext context, message.WorldSettings worldSettings) {
     showDialog<bool?>(
         useRootNavigator: false,
@@ -234,7 +234,7 @@ class GameUI {
         });
   }
 
-  static showWorldSettings(
+  static void showWorldSettings(
       BuildContext context, message.WorldSettings worldSettings) {
     AppUI.hideUI(context);
     showDialog<bool?>(
@@ -345,7 +345,7 @@ class GameUI {
         });
   }
 
-  static updateScriptSettings(
+  static void updateScriptSettings(
       BuildContext context, message.ScriptSettings scriptSettings) {
     showDialog<bool?>(
         useRootNavigator: false,
@@ -372,7 +372,7 @@ class GameUI {
         });
   }
 
-  static showScriptSettings(
+  static void showScriptSettings(
       BuildContext context, message.ScriptSettings scriptSettings) {
     AppUI.hideUI(context);
     showDialog<bool?>(
@@ -510,7 +510,8 @@ class GameUI {
         });
   }
 
-  static showAuthorized(BuildContext context, message.Authorized authorized) {
+  static void showAuthorized(
+      BuildContext context, message.Authorized authorized) {
     AppUI.hideUI(context);
     showDialog<bool?>(
       useRootNavigator: false,
@@ -588,7 +589,7 @@ class GameUI {
     );
   }
 
-  static requestPermissions(
+  static Future<void> requestPermissions(
       BuildContext context, message.RequestTrust request) async {
     AppUI.hideUI(context);
     final result = await showDialog<bool?>(
@@ -639,7 +640,7 @@ class GameUI {
     }
   }
 
-  static requestTrustDomains(
+  static Future<void> requestTrustDomains(
       BuildContext context, message.RequestTrust request) async {
     AppUI.hideUI(context);
     final result = await showDialog<bool?>(

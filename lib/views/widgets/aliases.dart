@@ -6,7 +6,7 @@ import '../../forms/aliasform.dart';
 import 'package:hellclientui/workers/game.dart';
 import 'dart:async';
 
-showCreateAlias(BuildContext context, bool byUser) async {
+Future<void> showCreateAlias(BuildContext context, bool byUser) async {
   showDialog(
     useRootNavigator: false,
     context: currentGame!.navigatorKey.currentState!.context,
@@ -28,7 +28,8 @@ showCreateAlias(BuildContext context, bool byUser) async {
   );
 }
 
-showUpdateAlias(BuildContext context, message.Alias alias, bool byUser) async {
+Future<void> showUpdateAlias(
+    BuildContext context, message.Alias alias, bool byUser) async {
   showDialog(
     useRootNavigator: false,
     context: currentGame!.navigatorKey.currentState!.context,

@@ -16,7 +16,7 @@ class DatagridViewState extends State<DatagridView> {
   UserInput? input;
   Datagrid? data;
   late StreamSubscription subDatagrid;
-  updateGrid(UserInput? datagrid) {
+  void updateGrid(UserInput? datagrid) {
     input = datagrid;
     data = (datagrid == null)
         ? null

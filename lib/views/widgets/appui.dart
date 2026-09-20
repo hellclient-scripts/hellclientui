@@ -23,7 +23,7 @@ class AppUI {
       ),
     ),
   );
-  static hideUI(BuildContext context) {
+  static void hideUI(BuildContext context) {
     Navigator.of(currentGame!.navigatorKey.currentState!.context)
         .popUntil(ModalRoute.withName('/'));
   }
@@ -150,7 +150,7 @@ class AppUI {
     );
   }
 
-  static showMsgBox(
+  static void showMsgBox(
       BuildContext context, String title, String summary, Widget? child) {
     showDialog(
         useRootNavigator: false,
@@ -177,7 +177,7 @@ class AppUI {
         });
   }
 
-  static showAppMsgBox(
+  static void showAppMsgBox(
       BuildContext context, String title, String summary, Widget? child) {
     showDialog(
         context: context,

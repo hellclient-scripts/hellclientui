@@ -798,7 +798,7 @@ class Game {
     return alllinesScale.toDouble() / 100;
   }
 
-  static enterGame(String serverhost, String gameid) async {
+  static Future<void> enterGame(String serverhost, String gameid) async {
     for (final server in currentAppState.config.servers) {
       if (server.host == serverhost) {
         if (!currentAppState.inGame) {

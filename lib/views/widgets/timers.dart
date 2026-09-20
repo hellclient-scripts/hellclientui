@@ -6,7 +6,7 @@ import '../../forms/timerform.dart';
 import 'package:hellclientui/workers/game.dart';
 import 'dart:async';
 
-showCreateTimer(BuildContext context, bool byUser) async {
+Future<void> showCreateTimer(BuildContext context, bool byUser) async {
   showDialog(
     useRootNavigator: false,
     context: currentGame!.navigatorKey.currentState!.context,
@@ -28,7 +28,8 @@ showCreateTimer(BuildContext context, bool byUser) async {
   );
 }
 
-showUpdateTimer(BuildContext context, message.Timer timer, bool byUser) async {
+Future<void> showUpdateTimer(
+    BuildContext context, message.Timer timer, bool byUser) async {
   showDialog(
     useRootNavigator: false,
     context: currentGame!.navigatorKey.currentState!.context,

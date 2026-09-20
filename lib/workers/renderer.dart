@@ -14,7 +14,7 @@ class RenderPainter extends CustomPainter {
     return painter;
   }
 
-  dispose() {
+  void dispose() {
     renderer.dispose();
   }
 
@@ -176,7 +176,7 @@ class Row {
     return a.index.compareTo(b.index);
   }
 
-  dispose() {
+  void dispose() {
     picture.dispose();
   }
 }
@@ -200,7 +200,7 @@ class Renderer {
     resetFrame();
   }
 
-  dispose() {
+  void dispose() {
     for (var row in rows) {
       row.dispose();
     }
@@ -234,7 +234,7 @@ class Renderer {
     resetRows();
   }
 
-  check() {
+  void check() {
     lock.synchronized(() {
       if (updated) {
         repaint.notifyRepaint();
@@ -242,7 +242,7 @@ class Renderer {
     });
   }
 
-  draw() {
+  void draw() {
     if (!updated) {
       return;
     }

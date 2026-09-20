@@ -82,7 +82,7 @@ class DisplayState extends State<Display> {
   }
 
   bool gridDisplayed = false;
-  showGrid(BuildContext context, UserInput input) async {
+  Future<void> showGrid(BuildContext context, UserInput input) async {
     currentGame!.updateDatagrid(input);
     if (!gridDisplayed) {
       gridDisplayed = true;
