@@ -163,18 +163,17 @@ class DisplayState extends State<Display> {
     ScaffoldMessenger.of(context).showSnackBar(snackBar);
   }
 
-  Widget buildInlineAlllines(BuildContext context) {
-    return LayoutBuilder(
-        builder: (context, constraints) => Positioned(
-            top: 0,
-            left: 0,
-            right: 0,
-            child: Container(
-              padding: const EdgeInsets.fromLTRB(0, 0, 0, 2),
-              height: constraints.maxHeight * 0.5,
-              color: const Color.fromARGB(255, 242, 242, 242),
-              child: const AllLines(),
-            )));
+  Widget buildInlineAlllines(BuildContext context, BoxConstraints constraints) {
+    return Positioned(
+        top: 0,
+        left: 0,
+        right: 0,
+        height: constraints.maxHeight * 0.5,
+        child: Container(
+          padding: const EdgeInsets.fromLTRB(0, 0, 0, 2),
+          color: const Color.fromARGB(255, 242, 242, 242),
+          child: const AllLines(),
+        ));
   }
 
   Widget buildOutput(BuildContext context) {
@@ -275,6 +274,12 @@ class DisplayState extends State<Display> {
 
   @override
   build(BuildContext context) {
+    return LayoutBuilder(
+      builder: buildBody,
+    );
+  }
+
+  Widget buildBody(BuildContext context, BoxConstraints constraints) {
     var appState = context.watch<AppState>();
     final List<Widget> children = [
       const GameTop(),
@@ -287,7 +292,7 @@ class DisplayState extends State<Display> {
       );
       if (currentGame!.renderSettings.alllinesMode == AlllinesMode.inline &&
           currentGame!.showAllLines) {
-        items.add(buildInlineAlllines(context));
+        items.add(buildInlineAlllines(context, constraints));
       }
       items.add(
         buildPrompt(context),
