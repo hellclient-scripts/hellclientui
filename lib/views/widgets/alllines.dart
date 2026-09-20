@@ -5,6 +5,8 @@ import 'package:intl/intl.dart';
 import 'package:hellclientui/states/appstate.dart';
 import 'package:hellclientui/workers/game.dart';
 import '../../models/message.dart';
+import '../../models/rendersettings.dart';
+
 import 'dart:async';
 import 'package:flutter/services.dart';
 import 'package:toastification/toastification.dart';
@@ -15,28 +17,36 @@ import '../../workers/renderer.dart' as rendererlib;
 final _dateFormat = DateFormat("yyyy-MM-dd HH:mm:ss");
 
 Future<bool?> showAllLines(BuildContext context) async {
-  if (!context.mounted) {
-    return false;
+  if (currentGame!.renderSettings.alllinesMode == AlllinesMode.inline) {
+    currentAppState.updated();
+    currentGame!.showAllLines = true;
+    return null;
   }
-  return showDialog<bool>(
-      useRootNavigator: false,
-      context: currentGame!.navigatorKey.currentState!.context,
-      builder: (context) {
-        return Material(
-            type: MaterialType.transparency,
-            child: Flex(direction: Axis.horizontal, children: [
-              const Expanded(
-                flex: 1,
-                child: Center(),
-              ),
-              Expanded(
-                  flex: 9,
-                  child: Container(
-                      height: double.infinity,
-                      decoration: const BoxDecoration(color: Colors.white),
-                      child: const AllLines())),
-            ]));
-      });
+  if (currentGame!.renderSettings.alllinesMode == AlllinesMode.dialog) {
+    if (!context.mounted) {
+      return null;
+    }
+    return showDialog<bool>(
+        useRootNavigator: false,
+        context: currentGame!.navigatorKey.currentState!.context,
+        builder: (context) {
+          return Material(
+              type: MaterialType.transparency,
+              child: Flex(direction: Axis.horizontal, children: [
+                const Expanded(
+                  flex: 1,
+                  child: Center(),
+                ),
+                Expanded(
+                    flex: 9,
+                    child: Container(
+                        height: double.infinity,
+                        decoration: const BoxDecoration(color: Colors.white),
+                        child: const AllLines())),
+              ]));
+        });
+  }
+  return null;
 }
 
 class SearchData {
@@ -422,6 +432,27 @@ class AllLinesState extends State<AllLines> {
                 },
                 icon: const Icon(Icons.zoom_in_outlined),
                 iconSize: 16),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(10, 0, 0, 0),
+              child: IconButton(
+                  onPressed: () {
+                    if (currentGame!.renderSettings.alllinesMode ==
+                        AlllinesMode.inline) {
+                      currentGame!.showAllLines = false;
+                      currentGame!.commandStream
+                          .add(const UICommand(command: "refresh"));
+
+                      return;
+                    }
+                    if (currentGame!.renderSettings.alllinesMode ==
+                        AlllinesMode.dialog) {
+                      Navigator.of(context).pop(false);
+                      setState(() {});
+                    }
+                  },
+                  icon: const Icon(Icons.close),
+                  iconSize: 16),
+            ),
           ],
         ),
         SearchBarWidget(

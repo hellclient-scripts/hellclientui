@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hellclientui/models/feature.dart';
 import 'package:hellclientui/models/message.dart';
+import 'package:hellclientui/models/rendersettings.dart';
 import 'package:hellclientui/states/appstate.dart';
 import 'package:hellclientui/views/widgets/appui.dart';
 import 'package:provider/provider.dart';
@@ -99,6 +100,14 @@ class DisplayState extends State<Display> {
   void initState() {
     super.initState();
     subCommand = currentGame!.commandStream.stream.listen((event) async {
+      if (event is UICommand) {
+        switch (event.command) {
+          case "refresh":
+            setState(() {});
+            break;
+        }
+        return;
+      }
       if (event is GameCommand) {
         switch (event.command) {
           case "current":
@@ -152,6 +161,20 @@ class DisplayState extends State<Display> {
       content: Text(msg),
     );
     ScaffoldMessenger.of(context).showSnackBar(snackBar);
+  }
+
+  Widget buildInlineAlllines(BuildContext context) {
+    return LayoutBuilder(
+        builder: (context, constraints) => Positioned(
+            top: 0,
+            left: 0,
+            right: 0,
+            child: Container(
+              padding: const EdgeInsets.fromLTRB(0, 0, 0, 2),
+              height: constraints.maxHeight * 0.5,
+              color: const Color.fromARGB(255, 242, 242, 242),
+              child: const AllLines(),
+            )));
   }
 
   Widget buildOutput(BuildContext context) {
@@ -257,14 +280,23 @@ class DisplayState extends State<Display> {
       const GameTop(),
     ];
     if (currentGame!.current.isNotEmpty) {
+      List<Widget> items = [];
+      items.add(buildOutput(context));
+      items.add(
+        const Hud(),
+      );
+      if (currentGame!.renderSettings.alllinesMode == AlllinesMode.inline &&
+          currentGame!.showAllLines) {
+        items.add(buildInlineAlllines(context));
+      }
+      items.add(
+        buildPrompt(context),
+      );
+      items.add(
+        const DisplayBottom(),
+      );
       children.add(
-        Expanded(
-            child: Stack(children: [
-          buildOutput(context),
-          const Hud(),
-          buildPrompt(context),
-          const DisplayBottom(),
-        ])),
+        Expanded(child: Stack(children: items)),
       );
     } else {
       if (currentGame?.current == "") {

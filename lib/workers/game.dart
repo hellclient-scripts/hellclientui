@@ -16,6 +16,12 @@ import 'package:synchronized/synchronized.dart';
 
 Game? currentGame;
 
+class UICommand {
+  final String command;
+  final String data;
+  const UICommand({required this.command, this.data = ""});
+}
+
 class GameCommand {
   const GameCommand({required this.command, this.data = ""});
   final String command;
@@ -36,6 +42,7 @@ class Game {
   bool hideInput = false;
   String lastInput = "";
   bool showAllParams = false;
+  bool showAllLines = false;
   int alllinesScale = ScaleSettings.defaultScale;
   ClientInfo? currentClient;
   APIVersion? apiVersion;

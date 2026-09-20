@@ -493,6 +493,28 @@ class DisplaySettiingsFormState extends State<DisplaySettiingsForm> {
                   },
                 ),
                 DropdownButtonFormField(
+                  initialValue: config.alllinesMode,
+                  decoration: const InputDecoration(
+                    label: Text("历史输出模式"),
+                  ),
+                  items: const <DropdownMenuItem>[
+                    DropdownMenuItem(
+                      value: '',
+                      enabled: false,
+                      child: Text('<未选择>'),
+                    ),
+                    DropdownMenuItem(
+                        value: AlllinesMode.dialog, child: Text('弹窗')),
+                    DropdownMenuItem(
+                        value: AlllinesMode.inline, child: Text('内嵌')),
+                  ],
+                  onChanged: (value) {
+                    setState(() {
+                      config.alllinesMode = value;
+                    });
+                  },
+                ),
+                DropdownButtonFormField(
                   initialValue: config.minChars,
                   decoration: const InputDecoration(
                     label: Text("最小显示宽度"),

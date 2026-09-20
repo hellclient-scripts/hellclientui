@@ -20,6 +20,11 @@ class SuggestionMode {
   static const xxl = 4;
 }
 
+class AlllinesMode {
+  static const dialog = 0;
+  static const inline = 1;
+}
+
 class ScaleSettings {
   static List<int> list = [
     25,
@@ -82,6 +87,7 @@ class RenderConfig {
   bool defaultHideInput = false;
   int defaultScale = ScaleSettings.defaultScale;
   int minChars = MinCharsSettings.defaultMinChars;
+  int alllinesMode = AlllinesMode.dialog;
   RenderConfig.fromJson(Map<String, dynamic> json)
       : color = json['color'] != null ? Color(json['color']) : null,
         background =
@@ -120,7 +126,8 @@ class RenderConfig {
         defaultScale = json['defaultScale'] ?? ScaleSettings.defaultScale,
         minChars = MinCharsSettings.loadMinChars(json['minChars']),
         hudDragable = json['hudDragable'] ?? false,
-        compactMode = json['compactMode'] ?? false;
+        compactMode = json['compactMode'] ?? false,
+        alllinesMode = json['alllinesMode'] ?? AlllinesMode.dialog;
 
   Map<String, dynamic> toJson() => {
         'color': color?.toARGB32(),
@@ -152,6 +159,7 @@ class RenderConfig {
         'minChars': minChars,
         'hudDragable': hudDragable,
         'compactMode': compactMode,
+        'alllinesMode': alllinesMode,
       };
 
   RenderSettings getSettings() {
@@ -225,6 +233,7 @@ class RenderConfig {
     settings.minChars = minChars;
     settings.hudDragable = hudDragable == true;
     settings.compactMode = compactMode == true;
+    settings.alllinesMode = alllinesMode;
     return settings;
   }
 
@@ -296,6 +305,7 @@ class RenderSettings {
   int defaultScale = ScaleSettings.defaultScale;
   bool hudDragable = false;
   bool? compactMode;
+  int alllinesMode = AlllinesMode.dialog;
   Display getDisplay() {
     switch (commandDisplayMode) {
       case CommandDisplayMode.larger:
