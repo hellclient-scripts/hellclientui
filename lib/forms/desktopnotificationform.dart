@@ -45,11 +45,11 @@ class DesktopNotificationFormState extends State<DesktopNotificationForm> {
             ElevatedButton(
               child: const Text('选择音频'),
               onPressed: () async {
-                final result = await FilePicker.platform.pickFiles(
+                final result = await FilePicker.pickFiles(
                     type: FileType.audio, allowedExtensions: ['.mp3', '.wav']);
-                if (result != null) {
+                if (result.isNotEmpty) {
                   setState(() {
-                    audio = result.files.single.path!;
+                    audio = result.single.path!;
                   });
                 }
               },
