@@ -506,7 +506,9 @@ class DisplaySettiingsFormState extends State<DisplaySettiingsForm> {
                     DropdownMenuItem(
                         value: AlllinesMode.dialog, child: Text('弹窗')),
                     DropdownMenuItem(
-                        value: AlllinesMode.inline, child: Text('内嵌')),
+                        value: AlllinesMode.inlineTop, child: Text('内嵌(上)')),
+                    DropdownMenuItem(
+                        value: AlllinesMode.inlineRight, child: Text('内嵌(右)')),
                   ],
                   onChanged: (value) {
                     setState(() {

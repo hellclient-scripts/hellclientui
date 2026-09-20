@@ -22,7 +22,8 @@ class SuggestionMode {
 
 class AlllinesMode {
   static const dialog = 0;
-  static const inline = 1;
+  static const inlineTop = 1;
+  static const inlineRight = 2;
 }
 
 class ScaleSettings {
@@ -332,6 +333,15 @@ class RenderSettings {
         break;
     }
     return 5;
+  }
+
+  bool isAlllinesInline() {
+    return alllinesMode == AlllinesMode.inlineTop ||
+        alllinesMode == AlllinesMode.inlineRight;
+  }
+
+  bool isAlllinesInlineTop() {
+    return alllinesMode == AlllinesMode.inlineTop;
   }
 
   int getSuggestionDisplayed() {

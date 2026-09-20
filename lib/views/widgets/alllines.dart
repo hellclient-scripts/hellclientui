@@ -17,7 +17,7 @@ import '../../workers/renderer.dart' as rendererlib;
 final _dateFormat = DateFormat("yyyy-MM-dd HH:mm:ss");
 
 Future<bool?> showAllLines(BuildContext context) async {
-  if (currentGame!.renderSettings.alllinesMode == AlllinesMode.inline) {
+  if (currentGame!.renderSettings.isAlllinesInline()) {
     currentAppState.updated();
     currentGame!.showAllLines = true;
     return null;
@@ -436,8 +436,7 @@ class AllLinesState extends State<AllLines> {
               padding: const EdgeInsets.fromLTRB(10, 0, 0, 0),
               child: IconButton(
                   onPressed: () {
-                    if (currentGame!.renderSettings.alllinesMode ==
-                        AlllinesMode.inline) {
+                    if (currentGame!.renderSettings.isAlllinesInline()) {
                       currentGame!.showAllLines = false;
                       currentGame!.commandStream
                           .add(const UICommand(command: "refresh"));

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:hellclientui/helpers/displayhelper.dart';
 import 'package:hellclientui/models/feature.dart';
 import 'package:hellclientui/models/message.dart';
 import 'package:hellclientui/models/rendersettings.dart';
@@ -163,17 +164,14 @@ class DisplayState extends State<Display> {
     ScaffoldMessenger.of(context).showSnackBar(snackBar);
   }
 
-  Widget buildInlineAlllines(BuildContext context, BoxConstraints constraints) {
-    return Positioned(
-        top: 0,
-        left: 0,
-        right: 0,
-        height: constraints.maxHeight * 0.5,
-        child: Container(
-          padding: const EdgeInsets.fromLTRB(0, 0, 0, 2),
-          color: const Color.fromARGB(255, 242, 242, 242),
-          child: const AllLines(),
-        ));
+  Widget buildInlineAlllines(BuildContext context) {
+    return Container(
+      padding: currentGame!.renderSettings.isAlllinesInlineTop()
+          ? const EdgeInsets.fromLTRB(0, 0, 0, 2)
+          : const EdgeInsets.fromLTRB(2, 0, 0, 0),
+      color: const Color.fromARGB(255, 242, 242, 242),
+      child: const AllLines(),
+    );
   }
 
   Widget buildOutput(BuildContext context) {
@@ -274,12 +272,6 @@ class DisplayState extends State<Display> {
 
   @override
   build(BuildContext context) {
-    return LayoutBuilder(
-      builder: buildBody,
-    );
-  }
-
-  Widget buildBody(BuildContext context, BoxConstraints constraints) {
     var appState = context.watch<AppState>();
     final List<Widget> children = [
       const GameTop(),
@@ -287,12 +279,10 @@ class DisplayState extends State<Display> {
     if (currentGame!.current.isNotEmpty) {
       List<Widget> items = [];
       items.add(buildOutput(context));
-      items.add(
-        const Hud(),
-      );
-      if (currentGame!.renderSettings.alllinesMode == AlllinesMode.inline &&
-          currentGame!.showAllLines) {
-        items.add(buildInlineAlllines(context, constraints));
+      if (DisplayHelper().isHudVisible(currentGame!)) {
+        items.add(
+          const Hud(),
+        );
       }
       items.add(
         buildPrompt(context),
@@ -300,9 +290,31 @@ class DisplayState extends State<Display> {
       items.add(
         const DisplayBottom(),
       );
-      children.add(
-        Expanded(child: Stack(children: items)),
-      );
+      var display = Stack(children: items);
+      if (!currentGame!.showAllLines ||
+          !currentGame!.renderSettings.isAlllinesInline()) {
+        children.add(Expanded(child: display));
+      } else {
+        if (currentGame!.renderSettings.isAlllinesInlineTop()) {
+          children.add(Expanded(
+              child: Column(
+            children: [
+              Expanded(child: buildInlineAlllines(context)),
+              Expanded(child: display),
+            ],
+          )));
+        } else {
+          children.add(Expanded(
+              child: Row(
+            children: [
+              Expanded(child: display),
+              Expanded(
+                child: (buildInlineAlllines(context)),
+              ),
+            ],
+          )));
+        }
+      }
     } else {
       if (currentGame?.current == "") {
         children.add(const Expanded(child: Overview()));
