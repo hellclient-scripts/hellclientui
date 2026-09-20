@@ -468,6 +468,33 @@ class GameUI {
                             style: textStyleGameUIFieldLabel,
                           ),
                           Text(scriptSettings.onSubneg),
+                          currentGame!.support(Features.lineEvent)
+                              ? const Text(
+                                  '开始匹配函数',
+                                  style: textStyleGameUIFieldLabel,
+                                )
+                              : const Center(),
+                          currentGame!.support(Features.lineEvent)
+                              ? Text(scriptSettings.onLine)
+                              : const Center(),
+                          currentGame!.support(Features.lineEvent)
+                              ? const Text(
+                                  '结束匹配函数',
+                                  style: textStyleGameUIFieldLabel,
+                                )
+                              : const Center(),
+                          currentGame!.support(Features.lineEvent)
+                              ? Text(scriptSettings.onAfterLine)
+                              : const Center(),
+                          currentGame!.support(Features.lineEvent)
+                              ? const Text(
+                                  '开始发送函数',
+                                  style: textStyleGameUIFieldLabel,
+                                )
+                              : const Center(),
+                          currentGame!.support(Features.lineEvent)
+                              ? Text(scriptSettings.onSend)
+                              : const Center(),
                           const Text(
                             '获取焦点函数',
                             style: textStyleGameUIFieldLabel,

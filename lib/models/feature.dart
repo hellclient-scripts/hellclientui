@@ -16,7 +16,9 @@ abstract final class Features {
   static const Feature lineEvent =
       Feature(min: APIVersion(major: 2, year: 2026, month: 08, day: 31));
   static const Feature noPrompt =
-      Feature(min: APIVersion(major: 2, year: 2026, month: 08, day: 31));      
+      Feature(min: APIVersion(major: 2, year: 2026, month: 08, day: 31));
+  static const Feature noBufferEvent =
+      Feature(min: APIVersion(major: 2, year: 2026, month: 08, day: 31));
 }
 
 class Feature {

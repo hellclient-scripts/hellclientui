@@ -541,6 +541,9 @@ class ScriptInfo {
   String onOpen = "";
   String onResponse = "";
   String onSubneg = "";
+  String onLine = "";
+  String onAfterLine = "";
+  String onSend = "";
   String type = "";
   ScriptInfo.fromJson(Map<String, dynamic> json) {
     desc = json['Desc'] ?? "";
@@ -560,6 +563,9 @@ class ScriptInfo {
     onKeyUp = json['OnKeyUp'] ?? "";
     onResponse = json['OnResponse'] ?? "";
     onSubneg = json['OnSubneg'] ?? "";
+    onLine = json['OnLine'] ?? "";
+    onAfterLine = json['OnAfterLine'] ?? "";
+    onSend = json['OnSend'] ?? "";
     type = json['Type'] ?? "";
   }
 }
@@ -592,6 +598,9 @@ class ScriptSettings {
   String onOpen = '';
   String onResponse = '';
   String onSubneg = '';
+  String onLine = '';
+  String onAfterLine = '';
+  String onSend = '';
   String type = '';
   ScriptSettings.fromJson(Map<String, dynamic> json) {
     channel = json['Channel'] ?? "";
@@ -613,6 +622,9 @@ class ScriptSettings {
     onOpen = json['OnOpen'] ?? "";
     onResponse = json['OnResponse'] ?? "";
     onSubneg = json['OnSubneg'] ?? "";
+    onLine = json['OnLine'] ?? "";
+    onAfterLine = json['OnAfterLine'] ?? "";
+    onSend = json['OnSend'] ?? "";
     type = json['Type'] ?? "";
   }
 }
@@ -640,6 +652,9 @@ class UpdateScriptSettingsForm extends ScriptSettings {
         'OnOpen': onOpen,
         'OnResponse': onResponse,
         'OnSubneg': onSubneg,
+        'OnLine': onLine,
+        'OnAfterLine': onAfterLine,
+        'OnSend': onSend,
         'Type': type,
         'ID': id,
       };

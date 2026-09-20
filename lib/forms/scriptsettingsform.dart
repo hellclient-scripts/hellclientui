@@ -32,6 +32,9 @@ class ScriptSettingsFormState extends State<ScriptSettingsForm> {
   late TextEditingController onBufferMin;
   late TextEditingController onBufferMax;
   late TextEditingController onSubneg;
+  late TextEditingController onLine;
+  late TextEditingController onAfterLine;
+  late TextEditingController onSend;
   late TextEditingController onFocus;
   late TextEditingController onLoseFocus;
   late TextEditingController intro;
@@ -72,6 +75,13 @@ class ScriptSettingsFormState extends State<ScriptSettingsForm> {
         TextEditingValue(text: widget.settings.onBufferMax.toString()));
     onSubneg = TextEditingController.fromValue(
         TextEditingValue(text: widget.settings.onSubneg));
+    onLine = TextEditingController.fromValue(
+        TextEditingValue(text: widget.settings.onLine));
+    onAfterLine = TextEditingController.fromValue(
+        TextEditingValue(text: widget.settings.onAfterLine));
+    onSend = TextEditingController.fromValue(
+        TextEditingValue(text: widget.settings.onSend));
+
     onFocus = TextEditingController.fromValue(
         TextEditingValue(text: widget.settings.onFocus));
     onLoseFocus = TextEditingController.fromValue(
@@ -173,12 +183,14 @@ class ScriptSettingsFormState extends State<ScriptSettingsForm> {
         ),
         TextFormField(
           controller: onBuffer,
+          enabled: !currentGame!.support(Features.noBufferEvent),
           decoration: const InputDecoration(
             label: Text("Buffer处理函数"),
           ),
         ),
         TextFormField(
           controller: onBufferMin,
+          enabled: !currentGame!.support(Features.noBufferEvent),
           inputFormatters: <TextInputFormatter>[
             FilteringTextInputFormatter.digitsOnly
           ], // Only numbers can be entered
@@ -189,12 +201,13 @@ class ScriptSettingsFormState extends State<ScriptSettingsForm> {
         ),
         TextFormField(
           controller: onBufferMax,
+          enabled: !currentGame!.support(Features.noBufferEvent),
           inputFormatters: <TextInputFormatter>[
             FilteringTextInputFormatter.digitsOnly
           ], // Only numbers can be entered
           keyboardType: const TextInputType.numberWithOptions(decimal: true),
           decoration: const InputDecoration(
-            label: Text("Buffer处理函数最小响应字数"),
+            label: Text("Buffer处理函数最大响应字数"),
           ),
         ),
         TextFormField(
@@ -203,6 +216,30 @@ class ScriptSettingsFormState extends State<ScriptSettingsForm> {
             label: Text("SubNegotiation处理函数"),
           ),
         ),
+        currentGame!.support(Features.lineEvent)
+            ? TextFormField(
+                controller: onLine,
+                decoration: const InputDecoration(
+                  label: Text("开始匹配函数"),
+                ),
+              )
+            : const Center(),
+        currentGame!.support(Features.lineEvent)
+            ? TextFormField(
+                controller: onAfterLine,
+                decoration: const InputDecoration(
+                  label: Text("结束匹配函数"),
+                ),
+              )
+            : const Center(),
+        currentGame!.support(Features.lineEvent)
+            ? TextFormField(
+                controller: onSend,
+                decoration: const InputDecoration(
+                  label: Text("开始发送函数"),
+                ),
+              )
+            : const Center(),
         TextFormField(
           controller: onFocus,
           decoration: const InputDecoration(
