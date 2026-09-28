@@ -57,6 +57,7 @@ dependencies:
   audioplayers:
   file_picker: ^13.1.0
   app_links:
+  material_ui: ^1.4.0
 dev_dependencies:
   flutter_launcher_icons:
   flutter_test:

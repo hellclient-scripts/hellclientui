@@ -1,8 +1,10 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
+
 import 'package:hellclientui/views/pages/qapage.dart';
 import 'states/appstate.dart';
 import 'package:provider/provider.dart';
-import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:flutter_localizations/flutter_localizations.dart'
+    hide GlobalMaterialLocalizations;
 import 'views/pages/homepage.dart';
 import 'views/pages/createpage.dart';
 import 'views/pages/updatepage.dart';

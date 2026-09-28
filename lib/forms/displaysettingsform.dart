@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:hellclientui/states/appstate.dart';
 import 'package:flex_color_picker/flex_color_picker.dart';
 
@@ -19,49 +19,54 @@ class ColorItem extends StatelessWidget {
   final Function() onReset;
   @override
   Widget build(BuildContext context) {
-    return Padding(
-        padding: const EdgeInsets.all(8),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: [
-            Container(
-              width: 60,
-              alignment: Alignment.centerLeft,
-              child: Text(label),
-            ),
-            ColorIndicator(
-              onSelectFocus: false,
-              hasBorder: true,
-              color: color ?? defaultColor,
-              onSelect: () async {
-                final pickedColor =
-                    await showPickColor(context, color ?? defaultColor);
-                if (pickedColor != null) {
-                  onSelect(pickedColor);
-                }
-              },
-            ),
-            SizedBox(
-                width: 32,
-                child: color != null
-                    ? IconButton(
-                        tooltip: '重置',
-                        onPressed: () {
-                          onReset();
-                        },
-                        icon: const Icon(Icons.restore_sharp),
-                        iconSize: 32,
-                      )
-                    : const Center()),
-            const SizedBox(
-              width: 8,
-            )
-          ],
-        ));
+    return Builder(
+      // 👈 用 Builder 包裹
+      builder: (innerContext) {
+        return Padding(
+            padding: const EdgeInsets.all(8),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                Container(
+                  width: 60,
+                  alignment: Alignment.centerLeft,
+                  child: Text(label),
+                ),
+                ColorIndicator(
+                  onSelectFocus: false,
+                  hasBorder: true,
+                  color: color ?? defaultColor,
+                  onSelect: () async {
+                    final pickedColor =
+                        await showPickColer(context, color ?? defaultColor);
+                    if (pickedColor != null) {
+                      onSelect(pickedColor);
+                    }
+                  },
+                ),
+                SizedBox(
+                    width: 32,
+                    child: color != null
+                        ? IconButton(
+                            tooltip: '重置',
+                            onPressed: () {
+                              onReset();
+                            },
+                            icon: const Icon(Icons.restore_sharp),
+                            iconSize: 32,
+                          )
+                        : const Center()),
+                const SizedBox(
+                  width: 8,
+                )
+              ],
+            ));
+      },
+    );
   }
 }
 
-Future<Color?> showPickColor(BuildContext context, Color color) async {
+Future<Color?> showPickColer(BuildContext context, Color color) async {
   Color picked = color;
   if (await ColorPicker(
         color: picked,

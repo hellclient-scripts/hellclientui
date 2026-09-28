@@ -10,7 +10,7 @@ import '../models/config.dart';
 import '../models/connecting.dart';
 import '../models/server.dart';
 import '../models/rendersettings.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 late AppState currentAppState;
 

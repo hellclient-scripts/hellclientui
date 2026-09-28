@@ -1,4 +1,5 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
+
 import '../../models/message.dart';
 import '../../workers/game.dart';
 import '../../states/appstate.dart';
