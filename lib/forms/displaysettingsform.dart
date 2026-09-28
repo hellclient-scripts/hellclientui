@@ -35,7 +35,7 @@ class ColorItem extends StatelessWidget {
               color: color ?? defaultColor,
               onSelect: () async {
                 final pickedColor =
-                    await showPickColer(context, color ?? defaultColor);
+                    await showPickColor(context, color ?? defaultColor);
                 if (pickedColor != null) {
                   onSelect(pickedColor);
                 }
@@ -61,7 +61,7 @@ class ColorItem extends StatelessWidget {
   }
 }
 
-Future<Color?> showPickColer(BuildContext context, Color color) async {
+Future<Color?> showPickColor(BuildContext context, Color color) async {
   Color picked = color;
   if (await ColorPicker(
         color: picked,
